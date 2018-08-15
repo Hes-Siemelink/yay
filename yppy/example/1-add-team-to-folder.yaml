@@ -1,0 +1,33 @@
+request:
+  path: /api/v1/folders/find?byPath=Jenkins
+  result:
+    name: folderId
+    path: $[id]
+---
+request:
+  path: /api/v1/folders/Applications/${folderId}/teams
+  result:
+    name: teams
+    path: $
+---
+variables:
+- name: updatedTeams
+  merge:
+  - ${teams}
+  - teamName: My New Team
+    id: ${folderId}/NewTeam
+    members:
+    - name: admin
+      type: PRINCIPAL
+    permissions:
+    - group#edit
+    - folder#edit_configuration
+    - folder#view
+    - folder#edit_security
+    - folder#edit
+    - group#view
+# request:
+#   path: /api/v1/folders/${folderId}/teams
+#   method: POST
+#   body: ${updatedTeams}
+print_json: ${updatedTeams}
