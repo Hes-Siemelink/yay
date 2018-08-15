@@ -1,15 +1,18 @@
+name: Get Jenkins folder
 request:
   path: /api/v1/folders/find?byPath=Jenkins
   result:
     name: folderId
     path: $[id]
 ---
+name: Get teams
 request:
   path: /api/v1/folders/Applications/${folderId}/teams
   result:
     name: teams
     path: $
 ---
+name: Print teams
 variables:
 - name: updatedTeams
   merge:

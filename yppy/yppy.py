@@ -21,27 +21,26 @@ def main():
     handlers['variables'] = process_variables
     handlers['request'] = process_request
     handlers['print_json'] = print_json
+    handlers['name'] = print_text
 
     # Read YAML files
     tasks = read_yaml_files(fileArgument)
 
     # Process all
-    process_tasks(tasks, endpoint)
+    result = process_tasks(tasks)
+    if result: print_as_json(result)
 
-def process_tasks(tasks, endpoint, variables = {}):
-    separator = False
+def process_tasks(tasks, variables = {}):
     for task in tasks:
-        if separator:
-            print("- - - - - - - - - - - - ")
-        else:
-            separator = True
 
-        for type in handlers:
-            if type in task:
-                data = resolve_variables(task[type], variables)
-                last_result = handlers[type](data, variables)
+        for action in task:
+            if action in handlers:
+                data = resolve_variables(task[action], variables)
+                last_result = handlers[action](data, variables)
+            else:
+                print("Unknown action: {}".format(action))
 
-    if last_result: print_as_json(last_result)
+    return last_result
 
 #
 # HTTP Request task
@@ -64,7 +63,7 @@ def send_request(data, variables):
     body = data['body'] if 'body' in data else None
     method = data['method'] if 'method' in data else 'GET'
 
-    print("{} {}{}".format(method, url, path))
+    # print("{} {}{}".format(method, url, path))
 
     if method == 'GET':
         r = requests.get(url + path, headers = jsonHeaders)
@@ -157,8 +156,11 @@ def resolve_variables_in_list(list, variables):
 
 
 #
-# Printing task
+# Printing tasks
 #
+
+def print_text(data, variables):
+    print(data)
 
 def print_json(data, variables):
     print_as_json(data)
@@ -182,7 +184,6 @@ def read_file(filename):
 def read_yaml_file(fileArgument, data = []):
     with open(fileArgument, 'r') as stream:
         for fileData in yaml.load_all(stream):
-            fileData['$location'] = fileArgument
             data.append(fileData)
     return data
 
