@@ -38,13 +38,15 @@ def process_tasks(tasks, endpoint, variables = {}):
 
         for type in handlers:
             if type in task:
-                last_result = handlers[type](task[type], variables)
+                data = resolve_variables(task[type], variables)
+                last_result = handlers[type](data, variables)
 
     if last_result: print_as_json(last_result)
 
 #
-# Requests
+# HTTP Request task
 #
+
 def process_request(data, variables):
     result = send_request(data, variables)
 
@@ -59,9 +61,7 @@ def send_request(data, variables):
 
     url = global_context['endpoint']
     path = data['path'] if 'path' in data else ''
-    path = resolve_variables_in_string(path, variables)
     body = data['body'] if 'body' in data else None
-    body = resolve_variables(body, variables)
     method = data['method'] if 'method' in data else 'GET'
 
     print("{} {}{}".format(method, url, path))
@@ -91,7 +91,7 @@ def send_request(data, variables):
         return result
 
 #
-# Variables
+# Variables task
 #
 
 def process_variables(item, variables):
@@ -103,6 +103,22 @@ def process_variables(item, variables):
             content = merge_content(variable['merge'], variables)
         name = variable['name']
         variables[name] = content
+
+def merge_content(mergeList, variables):
+    content = None
+    for mergeItem in mergeList:
+        if content and type(content) is dict:
+            content.update(mergeItem)
+        if content and isinstance(content, list):
+            content.append(mergeItem)
+        else:
+            content = mergeItem
+
+    return content
+
+#
+# Variable resolving
+#
 
 def resolve_variables(item, variables):
     if not item:
@@ -139,25 +155,12 @@ def resolve_variables_in_list(list, variables):
         copy.append(resolve_variables(item, variables))
     return copy
 
-def merge_content(mergeList, variables):
-    content = None
-    for mergeItem in mergeList:
-        mergeItem = resolve_variables(mergeItem, variables)
-        if content and type(content) is dict:
-            content.update(mergeItem)
-        if content and isinstance(content, list):
-            content.append(mergeItem)
-        else:
-            content = mergeItem
-
-    return content
 
 #
-# Printing
+# Printing task
 #
 
 def print_json(data, variables):
-    data = resolve_variables(data, variables)
     print_as_json(data)
 
 #
