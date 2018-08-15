@@ -14,7 +14,7 @@ request:
 ---
 name: Print teams
 variables:
-- name: updatedTeams
+- var: updatedTeams
   merge:
   - ${teams}
   - teamName: My New Team

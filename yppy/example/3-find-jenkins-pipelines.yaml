@@ -8,6 +8,14 @@ foreach:
   var: job
   in: ${jobs}
   do:
-  - print: "Job:"
-  - print_json: ${job}
+  - variables:
+    - var: url
+      value: ${job}
+      path: $[url]
+    - var: name
+      value: ${job}
+      path: $[name]
+
+  - print: ${name}
+  - print: "Url: ${url}"
   - print: "   "

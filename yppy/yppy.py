@@ -85,10 +85,8 @@ def send_request(data, variables):
     result = json.loads(r.text)
 
     if 'result' in data:
-        jsonpath_expr = parse(data['result']['path'])
-        part = [match.value for match in jsonpath_expr.find(result)]
-        if len(part) == 1:
-            part = part[0]
+        part = get_json_path(result ,data['result']['path'])
+
         partResult = {
             data['result']['name']: part
         }
@@ -96,19 +94,31 @@ def send_request(data, variables):
     else:
         return result
 
+def get_json_path(data, path):
+    jsonpath_expr = parse(path)
+    part = [match.value for match in jsonpath_expr.find(data)]
+    if len(part) == 1:
+        part = part[0]
+    return part
+
 #
 # Variables task
 #
 
-def process_variables(item, variables):
-    if not item: return
+def process_variables(variableTask, variables):
+    if not variableTask: return
 
-    for variable in item:
+    for variableAssignment in variableTask:
         content = None
-        if 'merge' in variable:
-            content = merge_content(variable['merge'], variables)
-        name = variable['name']
-        variables[name] = content
+        if 'value' in variableAssignment:
+            content = variableAssignment['value']
+        if 'path' in variableAssignment:
+            content = get_json_path(content, variableAssignment['path'])
+        if 'merge' in variableAssignment:
+            content = merge_content(variableAssignment['merge'], variables)
+
+        var = variableAssignment['var']
+        variables[var] = content
 
 def merge_content(mergeList, variables):
     content = None
