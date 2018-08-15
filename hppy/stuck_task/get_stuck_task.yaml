@@ -1,0 +1,4 @@
+path: /api/v1/releases/byTitle?releaseTitle=Stuck
+result:
+  name: tasks
+  path: $..tasks

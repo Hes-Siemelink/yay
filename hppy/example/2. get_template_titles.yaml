@@ -1,0 +1,4 @@
+path: /api/v1/templates
+result:
+  name: titles
+  path: $[*].title
