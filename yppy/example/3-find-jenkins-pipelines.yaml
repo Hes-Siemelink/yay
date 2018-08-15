@@ -1,0 +1,13 @@
+request:
+  path: /api/json
+  result:
+    name: jobs
+    path: $[jobs]
+---
+foreach:
+  var: job
+  in: ${jobs}
+  do:
+  - print: "Job:"
+  - print_json: ${job}
+  - print: "   "

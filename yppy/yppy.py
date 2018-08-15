@@ -18,10 +18,15 @@ def main():
     global_context['endpoint'] = endpoint
 
     # Set up handlers
+    handlers['do'] = process_tasks
     handlers['variables'] = process_variables
     handlers['request'] = process_request
     handlers['print_json'] = print_json
     handlers['name'] = print_text
+    handlers['print'] = print_text
+    handlers['var'] = noop
+    handlers['in'] = noop
+    handlers['foreach'] = foreach
 
     # Read YAML files
     tasks = read_yaml_files(fileArgument)
@@ -32,14 +37,16 @@ def main():
 
 def process_tasks(tasks, variables = {}):
     for task in tasks:
+        last_result = process_task(task, variables)
+    return last_result
 
-        for action in task:
-            if action in handlers:
-                data = resolve_variables(task[action], variables)
-                last_result = handlers[action](data, variables)
-            else:
-                print("Unknown action: {}".format(action))
-
+def process_task(task, variables = {}):
+    for action in task:
+        if action in handlers:
+            data = resolve_variables(task[action], variables)
+            last_result = handlers[action](data, variables)
+        else:
+            print("Unknown action: {}".format(action))
     return last_result
 
 #
@@ -135,7 +142,11 @@ def resolve_variables_in_string(text, variables):
     match = re.search(regex, text)
     if match:
         variable = match.group(1)
-        return variables[variable]
+        if variable in variables:
+            return variables[variable]
+        else:
+            # Do not reolve or warn unknown variables so foreach can do late binding.
+            return text
     else:
         for key in variables:
             if type(variables[key]) is str:
@@ -164,6 +175,30 @@ def print_text(data, variables):
 
 def print_json(data, variables):
     print_as_json(data)
+
+#
+# Foreach
+#
+
+def foreach(data, variables):
+    for item in data['in']:
+        variable = data['var']
+
+        stash = None
+        if variable in variables:
+            stash = variables[variable]
+        variables[variable] = item
+
+        process_task(data, variables)
+
+        if (stash):
+            variables[variable] = stash
+        else:
+            del variables[variable]
+
+
+def noop(data, variables):
+    yield
 
 #
 # Util
