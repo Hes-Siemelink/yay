@@ -95,8 +95,13 @@ def send_request(data, variables):
         return result
 
 def get_json_path(data, path):
+    if not path:
+        return data
+
     jsonpath_expr = parse(path)
     part = [match.value for match in jsonpath_expr.find(data)]
+    if len(part) == 0:
+        return None
     if len(part) == 1:
         part = part[0]
     return part
@@ -136,6 +141,8 @@ def merge_content(mergeList, variables):
 # Variable resolving
 #
 
+varSyntax = r"\$\{(.*?)\}"
+
 def resolve_variables(item, variables):
     if not item:
         return
@@ -151,16 +158,14 @@ def resolve_variables_in_string(text, variables):
     regex = r"^\$\{(.*)\}$"
     match = re.search(regex, text)
     if match:
-        variable = match.group(1)
-        if variable in variables:
-            return variables[variable]
-        else:
-            # Do not reolve or warn unknown variables so foreach can do late binding.
-            return text
+        variable = match.group(0)
+        return get_value_with_path(variable, variables)
     else:
-        for key in variables:
-            if type(variables[key]) is str:
-                text = text.replace('${' + key + '}', variables[key])
+        variablesInText = set(re.findall(r"\$\{.*?\}", text))
+        for variable in variablesInText:
+            value = get_value_with_path(variable, variables)
+            if value:
+                text = text.replace(variable, value)
         return text
 
 def resolve_variables_in_dict(dict, variables):
@@ -175,6 +180,25 @@ def resolve_variables_in_list(list, variables):
         copy.append(resolve_variables(item, variables))
     return copy
 
+def get_value_with_path(variable, variables):
+    var = variable
+    match = re.search(varSyntax, var)
+    if match:
+        var = match.group(1)
+
+    path = None
+    pathSyntax = r"^(.*)\.(.*)$"
+    match = re.search(pathSyntax, var)
+    if match:
+        var = match.group(1)
+        path = match.group(2)
+
+    if var in variables:
+        value = variables[var]
+        return get_json_path(value, path)
+    else:
+        # Do not reolve or warn about unknown variables so foreach can do late binding.
+        return variable
 
 #
 # Printing tasks

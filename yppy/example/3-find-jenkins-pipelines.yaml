@@ -11,11 +11,8 @@ foreach:
   - variables:
     - var: url
       value: ${job}
-      path: $[url]
-    - var: name
-      value: ${job}
-      path: $[name]
+      path: url
 
-  - print: ${name}
-  - print: "Url: ${url}"
+  - print: ${job.name} (${job._class})
+  - print: ${url}
   - print: "   "
