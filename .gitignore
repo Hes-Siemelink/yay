@@ -1,0 +1,37 @@
+# use glob syntax.
+syntax: glob
+.gradle/
+
+# Gradle environment specific properties
+
+# Build output
+build/
+out/
+target/
+bin/
+test-output
+
+# Eclipse
+.metadata/
+.settings/
+.classpath
+.project
+.pydevproject
+.scala_dependencies
+.cache-main
+.cache-tests
+
+# IntelliJ
+.shelf/
+.idea
+#!.idea/codeStyleSettings.xml
+*.iml
+*.ipr
+*.iws
+*.log
+
+# Mac
+.DS_Store
+
+# Python
+__pycache__
