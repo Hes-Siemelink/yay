@@ -34,4 +34,7 @@ test-output
 .DS_Store
 
 # Python
+dist
 __pycache__
+.pytest_cache
+*.egg-info
