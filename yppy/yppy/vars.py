@@ -2,7 +2,7 @@
 # Variable resolving
 #
 import re
-import util
+from yppy import util
 
 varSyntax = r"\$\{(.*?)\}"
 

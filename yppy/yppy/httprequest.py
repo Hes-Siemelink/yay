@@ -6,8 +6,8 @@ import json
 
 import config
 
-from util import get_json_path
-from util import print_as_json
+from yppy.util import get_json_path
+from yppy.util import print_as_json
 
 jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 

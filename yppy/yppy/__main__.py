@@ -6,9 +6,9 @@ import config
 import httprequest
 import vars
 
-from util import print_as_json
-from util import print_as_yaml
-from util import read_yaml_files
+from yppy.util import print_as_json
+from yppy.util import print_as_yaml
+from yppy.util import read_yaml_files
 
 def main():
 

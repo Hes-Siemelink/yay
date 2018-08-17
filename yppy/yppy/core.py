@@ -4,9 +4,9 @@
 
 import vars
 
-from util import get_json_path
-from util import print_as_json
-from util import print_as_yaml
+from yppy.util import get_json_path
+from yppy.util import print_as_json
+from yppy.util import print_as_yaml
 
 #
 # Control flow
@@ -18,6 +18,7 @@ def process_tasks(tasks, variables = {}):
     return last_result
 
 def process_task(task, variables = {}):
+    last_result = None
     for action in task:
         if action in handlers:
             data = vars.resolve_variables(task[action], variables)
