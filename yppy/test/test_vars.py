@@ -13,7 +13,8 @@ class TestVariableResolution():
             'nested': {
                 'item': 'stuff'
             }
-        }
+        },
+        'list' : [0, 1, 2]
     }
 
 
@@ -88,6 +89,20 @@ class TestVariableResolution():
         result = vars.resolve_variables(input, self.variables)
 
         assert result == 'My stuff'
+
+    def test_resolve_unknow_json_path(self):
+        input = '${dict.unknown}'
+
+        result = vars.resolve_variables(input, self.variables)
+
+        assert result == input
+
+    def test_resolve_json_path_index(self):
+        input = '${list[0]}'
+
+        result = vars.resolve_variables(input, self.variables)
+
+        assert result == 0
 
     #
     # Not implemented yet

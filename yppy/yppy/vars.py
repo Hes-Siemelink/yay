@@ -50,18 +50,36 @@ def get_value_with_path(variable, variables):
     if match:
         var = match.group(1)
 
-    path = None
-    pathSyntax = r"^(.*?)\.(.*)$"
-    match = re.search(pathSyntax, var)
-    if match:
-        var = match.group(1)
-        path = match.group(2)
+    # Check if we have a JSON path syntax and split variable into root and path component
+    (var, path) = split_jsonpath(var)
 
-    print("Path: {}".format(path))
-
-    if var in variables:
-        value = variables[var]
-        return util.get_json_path(value, path)
-    else:
-        # Do not reolve or warn about unknown variables so foreach can do late binding.
+    # Do not resolve or warn about unknown variables so foreach can do late binding.
+    if not var in variables:
         return variable
+
+    value = variables[var]
+
+    if path:
+        part = util.get_json_path(value, path)
+        if not part == None:
+            return part
+        else:
+            return variable
+    else:
+        return value
+
+def split_jsonpath(var):
+    PATH_SYNTAX  = r"^(.*?)\.(.*)$"
+    INDEX_SYNTAX = r"^(.*?)(\[.*)$"
+    (var, path) = match_two_groups(var, PATH_SYNTAX)
+    if not path:
+        (var, path) = match_two_groups(var, INDEX_SYNTAX)
+
+    return (var, path)
+
+def match_two_groups(text, regex):
+    match = re.search(regex, text)
+    if match:
+        return (match.group(1), match.group(2))
+    else:
+        return (text, None)
