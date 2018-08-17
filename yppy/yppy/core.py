@@ -2,7 +2,7 @@
 # Core tasks
 #
 
-import vars
+from yppy import vars
 
 from yppy.util import get_json_path
 from yppy.util import print_as_json

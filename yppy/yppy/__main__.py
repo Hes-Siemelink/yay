@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import sys
 
-import core
-import config
-import httprequest
-import vars
+from yppy import core
+from yppy import config
+from yppy import httprequest
 
 from yppy.util import print_as_json
 from yppy.util import print_as_yaml

@@ -4,7 +4,8 @@
 import requests
 import json
 
-import config
+from yppy import config
+from yppy import core
 
 from yppy.util import get_json_path
 from yppy.util import print_as_json
@@ -53,5 +54,4 @@ def send_request(data, variables):
         return result
 
 # Register task
-import core
 core.register('request', process_request)
