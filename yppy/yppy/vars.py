@@ -50,11 +50,13 @@ def get_value_with_path(variable, variables):
         var = match.group(1)
 
     path = None
-    pathSyntax = r"^(.*)\.(.*)$"
+    pathSyntax = r"^(.*?)\.(.*)$"
     match = re.search(pathSyntax, var)
     if match:
         var = match.group(1)
         path = match.group(2)
+
+    print("Path: {}".format(path))
 
     if var in variables:
         value = variables[var]

@@ -1,4 +1,5 @@
 from yppy import vars
+from yppy import util
 
 import pytest
 
@@ -8,14 +9,17 @@ class TestVariableResolution():
         'one' : '1',
         'two' : '2',
         'dict': {
-            'entry': 'value'
+            'entry': 'value',
+            'nested': {
+                'item': 'stuff'
+            }
         }
     }
 
 
     def test_resolve_variables_in_string(self):
         input = "Count from ${one} to ${two}."
-        
+
         result = vars.resolve_variables_in_string(input, self.variables)
 
         assert result == "Count from 1 to 2."
@@ -71,8 +75,22 @@ class TestVariableResolution():
         assert type(result[3]) is dict
         assert result[3]['entry'] == 'value'
 
+    def test_resolve_json_path(self):
+        input = 'My ${dict.entry}'
+
+        result = vars.resolve_variables(input, self.variables)
+
+        assert result == 'My value'
+
+    def test_resolve_json_path_nested(self):
+        input = 'My ${dict.nested.item}'
+
+        result = vars.resolve_variables(input, self.variables)
+
+        assert result == 'My stuff'
+
     #
-    # Unresolved
+    # Not implemented yet
     #
 
     @pytest.mark.skip(reason="Referring to a dict inside a string with more content is not defined.")
