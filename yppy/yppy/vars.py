@@ -8,7 +8,7 @@ varSyntax = r"\$\{(.*?)\}"
 
 def resolve_variables(item, variables):
     if not item:
-        return
+        return item
     if type(item) is str:
         return resolve_variables_in_string(item, variables)
     if type(item) is dict:
