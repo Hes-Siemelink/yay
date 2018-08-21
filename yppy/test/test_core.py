@@ -1,17 +1,11 @@
 from collections import namedtuple
 import yaml
+import pytest
+import textwrap
+
 from yppy import core
 from yppy import util
 
-import pytest
-
-Invocation = namedtuple('Invocation', ['data', 'variables'])
-class MockTask:
-    def __init__(self):
-        self.invocations = []
-
-    def invoke(self, data, variables):
-        self.invocations.append(Invocation(data, variables.copy()))
 
 class TestVariableResolution():
 
@@ -33,7 +27,12 @@ class TestVariableResolution():
 
 
     def test_process_tasks(self):
-        tasks = [{'test':'something'}, {'test':'something else'}]
+        yaml = """
+        test: something
+        ---
+        test: something else
+        """
+        tasks = from_yaml(yaml)
         mock = self.get_test_mock()
 
         core.process_tasks(tasks)
@@ -44,8 +43,9 @@ class TestVariableResolution():
         assert mock.invocations[1].data == 'something else'
         assert mock.invocations[0].variables == {}
 
+
     def test_for_each(self):
-        tasks = yaml.load_all("""
+        tasks = from_yaml("""
         foreach:
             var: item
             in:
@@ -65,3 +65,18 @@ class TestVariableResolution():
         assert mock.invocations[1].variables == {'item' : 'two'}
         assert mock.invocations[2].data == 'three'
         assert mock.invocations[2].variables == {'item' : 'three'}
+
+#
+# Test util
+#
+
+def from_yaml(text):
+    return list(yaml.load_all(textwrap.dedent(text)))
+
+Invocation = namedtuple('Invocation', ['data', 'variables'])
+class MockTask:
+    def __init__(self):
+        self.invocations = []
+
+    def invoke(self, data, variables):
+        self.invocations.append(Invocation(data, variables.copy()))
