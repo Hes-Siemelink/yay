@@ -90,6 +90,9 @@ def print_text(data, variables):
 def print_json(data, variables):
     print_as_json(data)
 
+def print_yaml(data, variables):
+    print_as_yaml(data)
+
 #
 # Handlers
 #
@@ -102,6 +105,7 @@ register('do', process_tasks)
 register('foreach', foreach)
 register('variables', process_variables)
 register('print_json', print_json)
+register('print_yaml', print_yaml)
 register('name',  print_text)
 register('print',  print_text)
 register('var',  noop)
