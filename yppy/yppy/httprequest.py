@@ -8,7 +8,6 @@ from yppy import config
 from yppy import core
 
 from yppy.util import get_json_path
-from yppy.util import print_as_json
 
 jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
@@ -24,12 +23,10 @@ def send_request(data, variables):
 
     if not data: return
 
-    url = config.context['endpoint']
+    url = data['url'] if 'url' in data else config.context['url']
     path = data['path'] if 'path' in data else ''
     body = data['body'] if 'body' in data else None
     method = data['method'] if 'method' in data else 'GET'
-
-    # print("{} {}{}".format(method, url, path))
 
     if method == 'GET':
         r = requests.get(url + path, headers = jsonHeaders)

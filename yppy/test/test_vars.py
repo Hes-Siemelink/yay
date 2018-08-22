@@ -1,5 +1,4 @@
 from yppy import vars
-from yppy import util
 
 import pytest
 
