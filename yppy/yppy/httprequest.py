@@ -4,7 +4,6 @@
 import requests
 import json
 
-from yppy import config
 from yppy import core
 
 from yppy.util import get_json_path
@@ -23,7 +22,7 @@ def send_request(data, variables):
 
     if not data: return
 
-    url = data['url'] if 'url' in data else config.context['url']
+    url = data['url'] if 'url' in data else variables['url']
     path = data['path'] if 'path' in data else ''
     body = data['body'] if 'body' in data else None
     method = data['method'] if 'method' in data else 'GET'
