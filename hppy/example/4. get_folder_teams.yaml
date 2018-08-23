@@ -1,9 +1,0 @@
-path: /api/v1/folders/find?byPath=Jenkins
-result:
-  name: folderId
-  path: $[id]
----
-path: /api/v1/folders/Applications/${folderId}/teams
-result:
-  name: teams
-  path: $

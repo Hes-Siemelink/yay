@@ -1,4 +1,0 @@
-path: /api/v1/folders/find?byPath=Jenkins
-result:
-  name: id
-  path: $[id]
