@@ -2,11 +2,11 @@
 # Core tasks
 #
 
-from yppy import vars
+from yay import vars
 
-from yppy.util import get_json_path
-from yppy.util import print_as_json
-from yppy.util import print_as_yaml
+from yay.util import get_json_path
+from yay.util import print_as_json
+from yay.util import print_as_yaml
 
 #
 # Control flow

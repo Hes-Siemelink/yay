@@ -2,11 +2,11 @@
 import sys
 
 # Register handlers
-from yppy import core
-from yppy import httprequest
+from yay import core
+from yay import httprequest
 
-from yppy.util import print_as_json
-from yppy.util import read_yaml_files
+from yay.util import print_as_json
+from yay.util import read_yaml_files
 
 def main():
 

@@ -3,8 +3,8 @@ import yaml
 import pytest
 import textwrap
 
-from yppy import core
-from yppy import util
+from yay import core
+from yay import util
 
 
 class TestVariableResolution():

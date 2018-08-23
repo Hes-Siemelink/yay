@@ -3,7 +3,7 @@
 #
 import re
 
-from yppy import util
+from yay import util
 
 varSyntax = r"\$\{(.*?)\}"
 

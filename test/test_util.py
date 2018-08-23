@@ -1,4 +1,4 @@
-from yppy import util
+from yay import util
 
 class TestJsonpath():
 

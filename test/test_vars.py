@@ -1,4 +1,4 @@
-from yppy import vars
+from yay import vars
 
 import pytest
 

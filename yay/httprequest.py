@@ -4,9 +4,9 @@
 import requests
 import json
 
-from yppy import core
+from yay import core
 
-from yppy.util import get_json_path
+from yay.util import get_json_path
 
 jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
