@@ -1,11 +1,8 @@
 from collections import namedtuple
 import yaml
-import pytest
 import textwrap
 
 from yay import core
-from yay import util
-
 
 class TestVariableResolution():
 
@@ -60,11 +57,72 @@ class TestVariableResolution():
 
         assert len(mock.invocations) == 3
         assert mock.invocations[0].data == 'one'
-        assert mock.invocations[0].variables == {'item' : 'one'}
+        assert mock.invocations[0].variables['item'] == 'one'
         assert mock.invocations[1].data == 'two'
-        assert mock.invocations[1].variables == {'item' : 'two'}
+        assert mock.invocations[1].variables['item'] == 'two'
         assert mock.invocations[2].data == 'three'
-        assert mock.invocations[2].variables == {'item' : 'three'}
+        assert mock.invocations[2].variables['item'] == 'three'
+
+    def test_pipe_result(self):
+        tasks = from_yaml("""
+        test: something
+        ---
+        test: ${result}
+        """)
+        mock = self.get_test_mock()
+
+        core.process_tasks(tasks)
+
+        assert len(mock.invocations) == 2
+        assert mock.invocations[1].data == 'something'
+
+    def test_store_result(self):
+        tasks = from_yaml("""
+        test: something
+        result:
+            var: test_outcome
+        ---
+        test: ${test_outcome}
+        """)
+        mock = self.get_test_mock()
+
+        core.process_tasks(tasks)
+
+        assert len(mock.invocations) == 2
+        assert mock.invocations[1].data == 'something'
+
+    def test_store_result_part(self):
+        tasks = from_yaml("""
+        test:
+            something: nested
+
+        result:
+            var: test_outcome
+            path: something
+        ---
+        test: ${test_outcome}
+        """)
+        mock = self.get_test_mock()
+
+        core.process_tasks(tasks, {})
+
+        assert mock.invocations[1].data == 'nested'
+
+    def test_change_result_part(self):
+        tasks = from_yaml("""
+        test: 
+            something: nested
+                
+        result:
+            path: something
+        ---
+        test: ${result}
+        """)
+        mock = self.get_test_mock()
+
+        core.process_tasks(tasks, {})
+
+        assert mock.invocations[1].data == 'nested'
 
 #
 # Test util
@@ -80,3 +138,4 @@ class MockTask:
 
     def invoke(self, data, variables):
         self.invocations.append(Invocation(data, variables.copy()))
+        return data

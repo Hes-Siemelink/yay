@@ -14,18 +14,20 @@ from yay.util import print_as_yaml
 
 def process_tasks(tasks, variables = {}):
     for task in tasks:
-        last_result = process_task(task, variables)
-    return last_result
+        result = process_task(task, variables)
+    return result
 
 def process_task(task, variables = {}):
-    last_result = None
+    result = None
     for action in task:
         if action in handlers:
             data = vars.resolve_variables(task[action], variables)
-            last_result = handlers[action](data, variables)
+            result = handlers[action](data, variables)
+            if not result == None:
+                variables['result'] = result
         else:
             print("Unknown action: {}".format(action))
-    return last_result
+    return result
 
 def foreach(data, variables):
     for item in data['in']:
@@ -43,6 +45,21 @@ def foreach(data, variables):
         else:
             del variables[variable]
 
+def store_result(data, variables):
+    if not 'result' in variables:
+        return
+    value = variables['result']
+
+    if 'var' in data:
+        var = data['var']
+    else:
+        var = 'result'
+
+
+    if 'path' in data:
+        value = get_json_path(value, data['path'])
+
+    variables[var] = value
 
 def noop(data, variables):
     yield
@@ -110,3 +127,4 @@ register('name',  print_text)
 register('print',  print_text)
 register('var',  noop)
 register('in',  noop)
+register('result',  store_result)
