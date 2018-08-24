@@ -10,6 +10,22 @@ from yay.util import get_json_path
 
 jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
+def http_get(data, variables):
+    data['method'] = 'GET'
+    return process_request(data, variables)
+
+def http_post(data, variables):
+    data['method'] = 'POST'
+    return process_request(data, variables)
+
+def http_put(data, variables):
+    data['method'] = 'PUT'
+    return process_request(data, variables)
+
+def http_delete(data, variables):
+    data['method'] = 'DELETE'
+    return process_request(data, variables)
+
 def process_request(data, variables):
     result = send_request(data, variables)
 
@@ -31,6 +47,10 @@ def send_request(data, variables):
         r = requests.get(url + path, headers = jsonHeaders)
     if method == 'POST':
         r = requests.post(url + path, data = json.dumps(body), headers = jsonHeaders)
+    if method == 'PUT':
+        r = requests.put(url + path, data = json.dumps(body), headers = jsonHeaders)
+    if method == 'DELETE':
+        r = requests.delete(url + path, headers = jsonHeaders)
 
     if r.status_code != 200:
         print(r.status_code)
@@ -49,5 +69,9 @@ def send_request(data, variables):
     else:
         return result
 
-# Register task
-core.register('request', process_request)
+# Register tasks
+core.register('http.get', http_get)
+core.register('http.post', http_post)
+core.register('http.put', http_put)
+core.register('http.delete', http_delete)
+core.register('http', process_request)

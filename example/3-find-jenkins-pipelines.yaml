@@ -1,4 +1,4 @@
-request:
+http.get:
   path: /api/json
   result:
     name: jobs

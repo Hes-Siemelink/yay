@@ -2,7 +2,7 @@ variables:
 - var: folderName
   value: Jenkins/Import
 ---
-request:
+http.get:
   path: /api/v1/folders/find?byPath=${folderName}
   result:
     name: folder
@@ -10,7 +10,7 @@ request:
 ---
 print: ${folder}
 ---
-request:
+http.get:
   path: /api/v1/folders/Applications/${folder}/templates
   result:
     name: templates
