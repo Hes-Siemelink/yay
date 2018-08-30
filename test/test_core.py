@@ -1,6 +1,7 @@
 from collections import namedtuple
 import yaml
 import textwrap
+import os
 
 from yay import core
 
@@ -135,12 +136,34 @@ class TestVariableResolution():
 
         assert mock.invocations[1].data == 'nested'
 
+    def test_store_multiple_variables_from_result(self):
+        tasks = from_file('resources/store_multiple_variables_from_result.yaml')
+        mock = self.get_test_mock()
+
+        variables = {}
+        core.process_tasks(tasks, variables)
+
+        assert len(mock.invocations) == 1
+        assert 'stuff' in variables
+        assert variables['stuff'] == 'one'
+        assert 'all' in variables
+        assert variables['all'] == {'data': {'item1': 'one', 'item2': 'two'}}
+
+
+
 #
 # Test util
 #
 
 def from_yaml(text):
     return list(yaml.load_all(textwrap.dedent(text)))
+
+def from_file(file):
+    path = dir_path = os.path.dirname(os.path.realpath(__file__))
+    file = os.path.join(path, file)
+    with open (file, "r") as myfile:
+        data = myfile.read()
+    return from_yaml(data)
 
 Invocation = namedtuple('Invocation', ['data', 'variables'])
 class MockTask:

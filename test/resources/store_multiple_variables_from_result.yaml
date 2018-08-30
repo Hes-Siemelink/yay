@@ -1,0 +1,17 @@
+test:
+  data:
+    item1: one
+    item2: two
+set:
+  stuff: ${result.data.item1}
+  all: ${result}
+---
+assert:
+- equals:
+  - ${stuff}
+  - one
+- equals:
+  - ${all}
+  - data:
+      item1: one
+      item2: two
