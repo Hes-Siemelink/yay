@@ -1,17 +1,17 @@
 foreach:
   number:
-    - One
-    - Two
-    - Three
+  - One
+  - Two
+  - Three
   do:
     print: ${number}
 ---
 print: "- - - - -"
 foreach:
   number:
-    - One
-    - Two
-    - Three
+  - One
+  - Two
+  - Three
   do:
   - print: ${number}
   - print: Mississipi

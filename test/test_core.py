@@ -35,12 +35,12 @@ class TestCore():
     def test_for_each(self):
         tasks = from_yaml("""
         foreach:
-            item:
-            - one
-            - two
-            - three
-            do:
-              test: ${item}
+          item:
+          - one
+          - two
+          - three
+          do:
+            test: ${item}
         """)
         mock = get_test_mock()
 
@@ -85,7 +85,7 @@ class TestCore():
         tasks = from_yaml("""
         test: something
         set:
-            test_outcome: ${result}
+          test_outcome: ${result}
         ---
         test: ${test_outcome}
         """)
@@ -99,9 +99,9 @@ class TestCore():
     def test_store_result_with_path(self):
         tasks = from_yaml("""
         test:
-            something: nested
+          something: nested
         set:
-            test_outcome: ${result.something}
+          test_outcome: ${result.something}
         ---
         test: ${test_outcome}
         """)
@@ -114,9 +114,9 @@ class TestCore():
     def test_change_result_part(self):
         tasks = from_yaml("""
         test: 
-            something: nested
+          something: nested
         set:
-            result: ${result.something}
+          result: ${result.something}
         ---
         test: ${result}
         """)

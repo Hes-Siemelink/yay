@@ -1,8 +1,7 @@
 http.get:
   path: /api/json
-  result:
-    name: jobs
-    path: $[jobs]
+set:
+  jobs: ${result.jobs}
 ---
 foreach:
   job: ${jobs}
