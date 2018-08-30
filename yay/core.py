@@ -38,9 +38,13 @@ def invoke_single_handler(handler, rawData, variables):
     return result
 
 def foreach(data, variables):
-    for item in data['in']:
-        variable = data['var']
+    variable = get_parameter(data, 'var')
+    del data['var']
 
+    items = get_parameter(data, 'in')
+    del data['in']
+
+    for item in items:
         stash = None
         if variable in variables:
             stash = variables[variable]
@@ -122,8 +126,6 @@ def register(type, handler):
 
 register('do', process_task)
 register('foreach', foreach)
-register('var',  noop)
-register('in',  noop)
 register('assert equals', assert_equals)
 
 register('set', set_variable)
