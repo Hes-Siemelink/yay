@@ -40,7 +40,6 @@ def invoke_single_handler(handler, rawData, variables):
         variables[RESULT_VARIABLE] = result
     return result
 
-
 def foreach(data, variables):
     for item in data['in']:
         variable = data['var']
@@ -90,20 +89,18 @@ def assert_equals(terms, variables):
 # Variables
 #
 
-def process_variables(variableTask, variables):
-    if not variableTask: return
+def process_variables(variableAssignment, variables):
+    var = variableAssignment['var']
 
-    for variableAssignment in variableTask:
-        content = None
-        if 'value' in variableAssignment:
-            content = variableAssignment['value']
-        if 'path' in variableAssignment:
-            content = get_json_path(content, variableAssignment['path'])
-        if 'merge' in variableAssignment:
-            content = merge_content(variableAssignment['merge'], variables)
+    content = None
+    if 'value' in variableAssignment:
+        content = variableAssignment['value']
+    if 'path' in variableAssignment:
+        content = get_json_path(content, variableAssignment['path'])
+    if 'merge' in variableAssignment:
+        content = merge_content(variableAssignment['merge'], variables)
 
-        var = variableAssignment['var']
-        variables[var] = content
+    variables[var] = content
 
 def merge_content(mergeList, variables):
     content = None
@@ -139,7 +136,7 @@ handlers = {}
 def register(type, handler):
     handlers[type] = handler
 
-register('do', process_tasks)
+register('do', process_task)
 register('foreach', foreach)
 register('variables', process_variables)
 register('print_json', print_json)
