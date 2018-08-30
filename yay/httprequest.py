@@ -6,7 +6,7 @@ import json
 
 from yay import core
 
-from yay.util import get_json_path
+from yay.util import *
 
 jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
@@ -29,7 +29,7 @@ def http_delete(data, variables):
 def process_request(data, variables):
     result = send_request(data, variables)
 
-    if (type(result) is dict):
+    if is_dict(result):
         variables.update(result)
 
     return result
@@ -74,4 +74,4 @@ core.register('http.get', http_get)
 core.register('http.post', http_post)
 core.register('http.put', http_put)
 core.register('http.delete', http_delete)
-core.register('http', process_request)
+core.register('http.request', process_request)

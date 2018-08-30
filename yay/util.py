@@ -54,3 +54,18 @@ def read_yaml_files(fileArgument, data = []):
         read_yaml_file(fileArgument, data)
 
     return data
+
+def is_dict(item):
+    return type(item) is dict
+
+def is_list(item):
+    return isinstance(item, list)
+
+def is_scalar(item):
+    return type(item) is str
+
+def is_empty(item):
+    if item is None: return True
+    if is_scalar(item):
+        if not item: return False
+    return True

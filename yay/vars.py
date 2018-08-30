@@ -3,18 +3,18 @@
 #
 import re
 
-from yay import util
+from yay.util import *
 
 varSyntax = r"\$\{(.*?)\}"
 
 def resolve_variables(item, variables):
     if not item:
         return item
-    if type(item) is str:
+    if is_scalar(item):
         return resolve_variables_in_string(item, variables)
-    if type(item) is dict:
+    if is_dict(item):
         return resolve_variables_in_dict(item, variables)
-    if isinstance(item, list):
+    if is_list(item):
         return resolve_variables_in_list(item, variables)
     return item
 
@@ -60,7 +60,7 @@ def get_value_with_path(variable, variables):
     value = variables[var]
 
     if path:
-        part = util.get_json_path(value, path)
+        part = get_json_path(value, path)
         if not part == None:
             return part
         else:

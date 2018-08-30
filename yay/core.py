@@ -4,9 +4,7 @@
 
 from yay import vars
 
-from yay.util import get_json_path
-from yay.util import print_as_json
-from yay.util import print_as_yaml
+from yay.util import *
 
 #
 # Control flow
@@ -22,6 +20,8 @@ def process_task(task, variables = {}):
     for action in task:
         if action in handlers:
             data = vars.resolve_variables(task[action], variables)
+            # TODO: if data is a list then run the task for each action
+
             result = handlers[action](data, variables)
             if not result == None:
                 variables['result'] = result
@@ -48,6 +48,7 @@ def foreach(data, variables):
 def store_result(data, variables):
     if not 'result' in variables:
         return
+
     value = variables['result']
 
     if 'var' in data:
@@ -87,9 +88,9 @@ def process_variables(variableTask, variables):
 def merge_content(mergeList, variables):
     content = None
     for mergeItem in mergeList:
-        if content and type(content) is dict:
+        if content and is_dict(content):
             content.update(mergeItem)
-        if content and isinstance(content, list):
+        if content and is_list(content):
             content.append(mergeItem)
         else:
             content = mergeItem
