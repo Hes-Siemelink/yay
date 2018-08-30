@@ -91,6 +91,20 @@ class TestVariableResolution():
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
+    def test_store_result_short_form(self):
+        tasks = from_yaml("""
+        test: something
+        set: test_outcome
+        ---
+        test: ${test_outcome}
+        """)
+        mock = self.get_test_mock()
+
+        core.process_tasks(tasks)
+
+        assert len(mock.invocations) == 2
+        assert mock.invocations[1].data == 'something'
+
     def test_store_result_part(self):
         tasks = from_yaml("""
         test:

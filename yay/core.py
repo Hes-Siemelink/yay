@@ -52,11 +52,22 @@ def store_result(data, variables):
 
     value = variables[RESULT_VARIABLE]
 
+    if is_scalar(data):
+        # set: varname
+        # => will set the result into 'varname'
+        variables[data] = value
+        return
+
     if 'var' in data:
+        # set:
+        #   var: varname
+        # => will set the result into 'varname'
         var = data['var']
     else:
+        # set:
+        #   path: $.something
+        # => will transfrom the ${res} variable
         var = RESULT_VARIABLE
-
 
     if 'path' in data:
         value = get_json_path(value, data['path'])
