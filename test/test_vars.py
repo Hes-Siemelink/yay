@@ -103,12 +103,3 @@ class TestVariableResolution():
 
         assert result == 0
 
-    #
-    # Not implemented yet
-    #
-
-    @pytest.mark.skip(reason="Referring to a dict inside a string with more content is not defined.")
-    def test_resolve_dict_from_string_embedded(self):
-        result = vars.resolve_variables('I have ${dict}', self.variables)
-
-        print(result)
