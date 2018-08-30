@@ -80,7 +80,7 @@ class TestVariableResolution():
         tasks = from_yaml("""
         test: something
         set:
-            var: test_outcome
+            test_outcome: ${res}
         ---
         test: ${test_outcome}
         """)
@@ -109,10 +109,8 @@ class TestVariableResolution():
         tasks = from_yaml("""
         test:
             something: nested
-
         set:
-            var: test_outcome
-            path: something
+            test_outcome: ${res.something}
         ---
         test: ${test_outcome}
         """)
@@ -126,9 +124,8 @@ class TestVariableResolution():
         tasks = from_yaml("""
         test: 
             something: nested
-                
         set:
-            path: something
+            res: ${res.something}
         ---
         test: ${res}
         """)

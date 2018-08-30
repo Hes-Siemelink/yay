@@ -47,32 +47,18 @@ def foreach(data, variables):
             del variables[variable]
 
 def store_result(data, variables):
-    if not RESULT_VARIABLE in variables:
-        return
 
-    value = variables[RESULT_VARIABLE]
-
+    # set: varname
+    # => will set the result into 'varname'
     if is_scalar(data):
-        # set: varname
-        # => will set the result into 'varname'
-        variables[data] = value
+        variables[data] = variables[RESULT_VARIABLE]
         return
 
-    if 'var' in data:
-        # set:
-        #   var: varname
-        # => will set the result into 'varname'
-        var = data['var']
-    else:
-        # set:
-        #   path: $.something
-        # => will transfrom the ${res} variable
-        var = RESULT_VARIABLE
-
-    if 'path' in data:
-        value = get_json_path(value, data['path'])
-
-    variables[var] = value
+    # set:
+    #   varname: ${result.}
+    # => will set the result into 'varname'. You can also use literal values or variables with paths.
+    for var in data:
+        variables[var] = data[var]
 
 def noop(data, variables):
     yield
