@@ -2,6 +2,7 @@ from collections import namedtuple
 import yaml
 import textwrap
 import os
+import pytest
 
 from yay import core
 
@@ -136,18 +137,33 @@ class TestVariableResolution():
 
         assert mock.invocations[1].data == 'nested'
 
+    def test_assert(self):
+        tasks = from_yaml("""
+        assert: 
+            equals:
+            - one
+            - one
+        """)
+
+        core.process_tasks(tasks, {})
+
+    def test_assertion_failure(self):
+        tasks = from_yaml("""
+        assert: 
+            equals:
+            - one
+            - two
+        """)
+
+        with pytest.raises(AssertionError):
+            core.process_tasks(tasks, {})
+
     def test_store_multiple_variables_from_result(self):
         tasks = from_file('resources/store_multiple_variables_from_result.yaml')
         mock = self.get_test_mock()
 
         variables = {}
         core.process_tasks(tasks, variables)
-
-        assert len(mock.invocations) == 1
-        assert 'stuff' in variables
-        assert variables['stuff'] == 'one'
-        assert 'all' in variables
-        assert variables['all'] == {'data': {'item1': 'one', 'item2': 'two'}}
 
 
 

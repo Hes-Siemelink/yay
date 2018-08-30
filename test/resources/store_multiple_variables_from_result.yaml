@@ -7,10 +7,12 @@ set:
   all: ${result}
 ---
 assert:
-- equals:
+  equals:
   - ${stuff}
   - one
-- equals:
+---
+assert:
+  equals:
   - ${all}
   - data:
       item1: one

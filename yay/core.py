@@ -63,6 +63,17 @@ def store_result(data, variables):
 def noop(data, variables):
     yield
 
+def assert_handler(data, variables):
+    if 'equals' in data:
+        assert_equals(data['equals'], variables)
+
+def assert_equals(terms, variables):
+    if len(terms) < 2:
+        return
+    if len(terms) > 2:
+        raise Exception("Assert equals only takes 2 arguments.")
+
+    assert terms[0] == terms[1], "\nExpected: {}\nActual:   {}".format(terms[0], terms[1])
 
 #
 # Variables
@@ -127,3 +138,4 @@ register('print',  print_text)
 register('var',  noop)
 register('in',  noop)
 register('set',  store_result)
+register('assert',  assert_handler)
