@@ -59,15 +59,7 @@ def send_request(data, variables):
 
     result = json.loads(r.text)
 
-    if 'result' in data:
-        part = get_json_path(result ,data['result']['path'])
-
-        partResult = {
-            data['result']['name']: part
-        }
-        return partResult
-    else:
-        return result
+    return result
 
 # Register tasks
 core.register('http.get', http_get)
