@@ -1,12 +1,7 @@
-from collections import namedtuple
-import yaml
-import textwrap
-import os
 import pytest
+from yay.test import *
 
-from yay import core
-
-class TestVariableResolution():
+class TestCore():
 
     def test_process_task(self):
         task = {'test':'something'}
@@ -150,9 +145,6 @@ class TestVariableResolution():
         with pytest.raises(AssertionError):
             core.process_tasks(tasks, {})
 
-    def test_store_multiple_variables_from_result(self):
-        run_yay_test('resources/store_multiple_variables_from_result.yaml')
-
     def test_multiple_invocations_with_list(self):
         tasks = from_yaml("""
         test: 
@@ -181,41 +173,6 @@ class TestVariableResolution():
         assert len(mock.invocations) == 2
         assert variables['result'] == 'again'
 
-    def test_join(self):
-        run_yay_test('resources/test_join.yaml')
 
 
-#
-# Test util
-#
 
-Invocation = namedtuple('Invocation', ['data', 'variables'])
-class MockTask:
-    def __init__(self):
-        self.invocations = []
-
-    def invoke(self, data, variables):
-        self.invocations.append(Invocation(data, variables.copy()))
-        return data
-
-def get_test_mock():
-    mock = MockTask()
-    core.register('test', mock.invoke)
-    return mock
-
-def from_yaml(text):
-    return list(yaml.load_all(textwrap.dedent(text)))
-
-def from_file(file):
-    path = dir_path = os.path.dirname(os.path.realpath(__file__))
-    file = os.path.join(path, file)
-    with open (file, "r") as myfile:
-        data = myfile.read()
-    return from_yaml(data)
-
-def run_yay_test(file):
-    tasks = from_file(file)
-    mock = get_test_mock()
-
-    variables = {}
-    core.process_tasks(tasks, variables)
