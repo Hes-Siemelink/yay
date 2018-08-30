@@ -9,7 +9,7 @@ from yay.util import *
 #
 # Control flow
 #
-RESULT_VARIABLE = 'res'
+RESULT_VARIABLE = 'result'
 
 def process_tasks(tasks, variables = {}):
     for task in tasks:

@@ -67,7 +67,7 @@ class TestVariableResolution():
         tasks = from_yaml("""
         test: something
         ---
-        test: ${res}
+        test: ${result}
         """)
         mock = self.get_test_mock()
 
@@ -77,21 +77,6 @@ class TestVariableResolution():
         assert mock.invocations[1].data == 'something'
 
     def test_store_result(self):
-        tasks = from_yaml("""
-        test: something
-        set:
-            test_outcome: ${res}
-        ---
-        test: ${test_outcome}
-        """)
-        mock = self.get_test_mock()
-
-        core.process_tasks(tasks)
-
-        assert len(mock.invocations) == 2
-        assert mock.invocations[1].data == 'something'
-
-    def test_store_result_short_form(self):
         tasks = from_yaml("""
         test: something
         set: test_outcome
@@ -105,12 +90,27 @@ class TestVariableResolution():
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
-    def test_store_result_part(self):
+    def test_store_result_long_form(self):
+        tasks = from_yaml("""
+        test: something
+        set:
+            test_outcome: ${result}
+        ---
+        test: ${test_outcome}
+        """)
+        mock = self.get_test_mock()
+
+        core.process_tasks(tasks)
+
+        assert len(mock.invocations) == 2
+        assert mock.invocations[1].data == 'something'
+
+    def test_store_result_with_path(self):
         tasks = from_yaml("""
         test:
             something: nested
         set:
-            test_outcome: ${res.something}
+            test_outcome: ${result.something}
         ---
         test: ${test_outcome}
         """)
@@ -125,9 +125,9 @@ class TestVariableResolution():
         test: 
             something: nested
         set:
-            res: ${res.something}
+            result: ${result.something}
         ---
-        test: ${res}
+        test: ${result}
         """)
         mock = self.get_test_mock()
 
