@@ -20,15 +20,26 @@ def process_task(task, variables = {}):
     result = None
     for action in task:
         if action in handlers:
-            data = vars.resolve_variables(task[action], variables)
-            # TODO: if data is a list then run the task for each action
-
-            result = handlers[action](data, variables)
-            if not result == None:
-                variables[RESULT_VARIABLE] = result
+            result = invoke_handler(handlers[action], task[action], variables)
         else:
             print("Unknown action: {}".format(action))
     return result
+
+
+def invoke_handler(handler, dataList, variables):
+    if not is_list(dataList):
+        dataList = [dataList]
+    for rawData in dataList:
+        result = invoke_single_handler(handler, rawData, variables)
+    return result
+
+def invoke_single_handler(handler, rawData, variables):
+    data = vars.resolve_variables(rawData, variables)
+    result = handler(data, variables)
+    if not result == None:
+        variables[RESULT_VARIABLE] = result
+    return result
+
 
 def foreach(data, variables):
     for item in data['in']:

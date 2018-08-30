@@ -165,6 +165,19 @@ class TestVariableResolution():
         variables = {}
         core.process_tasks(tasks, variables)
 
+    def test_multiple_invocations_with_list(self):
+        tasks = from_yaml("""
+        test: 
+        - something
+        - again
+        """)
+        mock = self.get_test_mock()
+
+        variables = {}
+        core.process_tasks(tasks, variables)
+
+        assert len(mock.invocations) == 2
+        assert variables['result'] == 'again'
 
 
 #

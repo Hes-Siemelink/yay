@@ -1,18 +1,14 @@
 name: Get Jenkins folder
 http.get:
   path: /api/v1/folders/find?byPath=Jenkins
-#set:
-#  folderId: $id
 set:
-  var: folderId
-  path: id
+  folderId: ${result.id}
 print: ${folderId}
 ---
 name: Get teams
 http.get:
   path: /api/v1/folders/Applications/${folderId}/teams
-set:
-  var: teams
+set: teams
 ---
 name: Print teams
 variables:
