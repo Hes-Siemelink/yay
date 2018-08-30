@@ -3,7 +3,6 @@
 #
 
 from yay import vars
-
 from yay.util import *
 
 #
@@ -54,20 +53,6 @@ def foreach(data, variables):
         else:
             del variables[variable]
 
-def store_result(data, variables):
-
-    # set: varname
-    # => will set the result into 'varname'
-    if is_scalar(data):
-        variables[data] = variables[RESULT_VARIABLE]
-        return
-
-    # set:
-    #   varname: ${result.}
-    # => will set the result into 'varname'. You can also use literal values or variables with paths.
-    for var in data:
-        variables[var] = data[var]
-
 def noop(data, variables):
     yield
 
@@ -82,30 +67,19 @@ def assert_equals(data, variables):
 # Variables
 #
 
-def process_variables(variableAssignment, variables):
-    var = variableAssignment['var']
+def set_variable(data, variables):
 
-    content = None
-    if 'value' in variableAssignment:
-        content = variableAssignment['value']
-    if 'path' in variableAssignment:
-        content = get_json_path(content, variableAssignment['path'])
-    if 'merge' in variableAssignment:
-        content = merge_content(variableAssignment['merge'], variables)
+    # set: varname
+    # => will set the result into 'varname'
+    if is_scalar(data):
+        variables[data] = variables[RESULT_VARIABLE]
+        return
 
-    variables[var] = content
-
-def merge_content(mergeList, variables):
-    content = None
-    for mergeItem in mergeList:
-        if content and is_dict(content):
-            content.update(mergeItem)
-        if content and is_list(content):
-            content.append(mergeItem)
-        else:
-            content = mergeItem
-
-    return content
+    # set:
+    #   varname: ${result.}
+    # => will set the result into 'varname'. You can also use literal values or variables with paths.
+    for var in data:
+        variables[var] = data[var]
 
 def join(data, variables):
     for var in data:
@@ -148,13 +122,14 @@ def register(type, handler):
 
 register('do', process_task)
 register('foreach', foreach)
-register('variables', process_variables)
+register('var',  noop)
+register('in',  noop)
+register('assert equals', assert_equals)
+
+register('set', set_variable)
+register('join', join)
+
 register('print_json', print_json)
 register('print_yaml', print_yaml)
 register('name',  print_text)
 register('print',  print_text)
-register('var',  noop)
-register('in',  noop)
-register('set',  store_result)
-register('assert equals', assert_equals)
-register('join', join)
