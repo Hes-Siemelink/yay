@@ -1,18 +1,17 @@
 foreach:
-  var: job
-  in:
-    - One
-    - Two
-    - Three
-  print: ${job}
----
-print: ---
-foreach:
-  var: job
-  in:
+  number:
     - One
     - Two
     - Three
   do:
-  - print: ${job}
+    print: ${number}
+---
+print: "- - - - -"
+foreach:
+  number:
+    - One
+    - Two
+    - Three
+  do:
+  - print: ${number}
   - print: Mississipi

@@ -38,24 +38,30 @@ def invoke_single_handler(handler, rawData, variables):
     return result
 
 def foreach(data, variables):
-    variable = get_parameter(data, 'var')
-    del data['var']
+    actions = get_parameter(data, 'do')
+    if len(data) != 2:
+        raise YayException("Foreach needs exactly two parameters: 'do' and the name of the variable.")
 
-    items = get_parameter(data, 'in')
-    del data['in']
+    variable = get_foreach_variable(data)
 
-    for item in items:
+    for item in data[variable]:
         stash = None
         if variable in variables:
             stash = variables[variable]
         variables[variable] = item
 
-        process_task(data, variables)
+        invoke_handler(process_task, actions, variables)
 
         if (stash):
             variables[variable] = stash
         else:
             del variables[variable]
+
+def get_foreach_variable(data):
+    for variable in data:
+        if variable == 'do':
+            continue
+        return variable
 
 def noop(data, variables):
     yield

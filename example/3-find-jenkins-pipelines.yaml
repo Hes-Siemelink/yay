@@ -5,9 +5,9 @@ http.get:
     path: $[jobs]
 ---
 foreach:
-  var: job
-  in: ${jobs}
-  print:
-  - ${job.name} (${job._class})
-  - ${job.url}
-  - "   "
+  job: ${jobs}
+  do:
+    print:
+    - ${job.name} (${job._class})
+    - ${job.url}
+    - "   "

@@ -40,12 +40,12 @@ class TestVariableResolution():
     def test_for_each(self):
         tasks = from_yaml("""
         foreach:
-            var: item
-            in:
+            item:
             - one
             - two
             - three
-            test: ${item}
+            do:
+              test: ${item}
         """)
         mock = get_test_mock()
 

@@ -17,11 +17,17 @@ def get_json_path(data, path):
         part = part[0]
     return part
 
+def format_json(dict):
+    return json.dumps(dict, indent=2, sort_keys=True)
+
 def print_as_json(dict):
-    print(json.dumps(dict, indent=2, sort_keys=True))
+    print(format_json(dict))
+
+def format_yaml(dict):
+    return yaml.dump(dict, default_flow_style=False)
 
 def print_as_yaml(dict):
-    print(yaml.dump(dict, default_flow_style=False))
+    print(format_yaml(dict))
 
 def read_file(filename):
     with open(filename, 'r') as file:
