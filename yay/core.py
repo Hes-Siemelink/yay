@@ -26,10 +26,8 @@ def process_task(task, variables = {}):
     return result
 
 
-def invoke_handler(handler, dataList, variables):
-    if not is_list(dataList):
-        dataList = [dataList]
-    for rawData in dataList:
+def invoke_handler(handler, data, variables):
+    for rawData in as_list(data):
         result = invoke_single_handler(handler, rawData, variables)
     return result
 
@@ -79,6 +77,7 @@ def assert_equals(data, variables):
 
     assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
 
+
 #
 # Variables
 #
@@ -107,6 +106,23 @@ def merge_content(mergeList, variables):
             content = mergeItem
 
     return content
+
+def join(data, variables):
+    for var in data:
+        join_single_variable(var, data[var], variables)
+
+def join_single_variable(var, updates, variables):
+    value = variables.get(var)
+    for update in as_list(updates):
+        if value is None:
+            value = update
+            continue
+
+        if is_dict(value):
+            value.update(update)
+        elif is_list(value):
+            value.extend(as_list(update))
+    variables[var] = value
 
 
 #
@@ -141,3 +157,4 @@ register('var',  noop)
 register('in',  noop)
 register('set',  store_result)
 register('assert equals', assert_equals)
+register('join', join)

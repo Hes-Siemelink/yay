@@ -11,9 +11,8 @@ http.get:
 set: teams
 ---
 name: Print teams
-variables:
-- var: updatedTeams
-  merge:
+join:
+- updatedTeams:
   - ${teams}
   - teamName: My New Team
     id: ${folderId}/NewTeam

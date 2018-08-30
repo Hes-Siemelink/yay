@@ -71,6 +71,11 @@ def is_empty(item):
         if not item: return False
     return True
 
+def as_list(item):
+    if not is_list(item):
+        return [item]
+    return item
+
 def get_parameter(data, name):
     parameter = data.get(name)
     if parameter is None:

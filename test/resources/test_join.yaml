@@ -1,0 +1,89 @@
+name: Join two dicts, second one overwrites properties from the first.
+
+join:
+  package:
+  - label: first
+    header: accept
+  - label: second
+    content: body
+
+assert equals:
+  actual: ${package}
+  expected:
+    label: second
+    header: accept
+    content: body
+
+---
+name: Join into a variable that already exists
+
+join:
+  package:
+    footer: end
+
+assert equals:
+  actual: ${package}
+  expected:
+    label: second
+    header: accept
+    content: body
+    footer: end
+
+---
+name: Join two lists
+
+# Given
+set:
+  list1:
+  - 1
+  - 2
+  - 3
+  list2:
+  - 4
+  - 5
+  - 6
+
+# When
+join:
+  completeList:
+  - ${list1}
+  - ${list2}
+
+# Then
+assert equals:
+  actual: ${completeList}
+  expected:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+---
+name: Join list with more items
+
+# Given
+set:
+  list1:
+  - 1
+  - 2
+  - 3
+
+# When
+join:
+  newList:
+  - ${list1}
+  - 4
+  - 5
+  - 6
+
+# Then
+assert equals:
+  actual: ${newList}
+  expected:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6

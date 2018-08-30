@@ -8,15 +8,9 @@ from yay import core
 
 class TestVariableResolution():
 
-    def get_test_mock(self):
-        mock = MockTask()
-        core.register('test', mock.invoke)
-        return mock
-
-
     def test_process_task(self):
         task = {'test':'something'}
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         core.process_task(task)
 
@@ -32,7 +26,7 @@ class TestVariableResolution():
         test: something else
         """
         tasks = from_yaml(yaml)
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         core.process_tasks(tasks)
 
@@ -53,7 +47,7 @@ class TestVariableResolution():
             - three
             test: ${item}
         """)
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         core.process_tasks(tasks)
 
@@ -71,7 +65,7 @@ class TestVariableResolution():
         ---
         test: ${result}
         """)
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         core.process_tasks(tasks)
 
@@ -85,7 +79,7 @@ class TestVariableResolution():
         ---
         test: ${test_outcome}
         """)
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         core.process_tasks(tasks)
 
@@ -100,7 +94,7 @@ class TestVariableResolution():
         ---
         test: ${test_outcome}
         """)
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         core.process_tasks(tasks)
 
@@ -116,7 +110,7 @@ class TestVariableResolution():
         ---
         test: ${test_outcome}
         """)
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         core.process_tasks(tasks, {})
 
@@ -131,7 +125,7 @@ class TestVariableResolution():
         ---
         test: ${result}
         """)
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         core.process_tasks(tasks, {})
 
@@ -157,11 +151,7 @@ class TestVariableResolution():
             core.process_tasks(tasks, {})
 
     def test_store_multiple_variables_from_result(self):
-        tasks = from_file('resources/store_multiple_variables_from_result.yaml')
-        mock = self.get_test_mock()
-
-        variables = {}
-        core.process_tasks(tasks, variables)
+        run_yay_test('resources/store_multiple_variables_from_result.yaml')
 
     def test_multiple_invocations_with_list(self):
         tasks = from_yaml("""
@@ -169,7 +159,7 @@ class TestVariableResolution():
         - something
         - again
         """)
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         variables = {}
         core.process_tasks(tasks, variables)
@@ -183,7 +173,7 @@ class TestVariableResolution():
         - test: something 
         - test: again 
         """)
-        mock = self.get_test_mock()
+        mock = get_test_mock()
 
         variables = {}
         core.process_tasks(tasks, variables)
@@ -191,10 +181,27 @@ class TestVariableResolution():
         assert len(mock.invocations) == 2
         assert variables['result'] == 'again'
 
+    def test_join(self):
+        run_yay_test('resources/test_join.yaml')
+
 
 #
 # Test util
 #
+
+Invocation = namedtuple('Invocation', ['data', 'variables'])
+class MockTask:
+    def __init__(self):
+        self.invocations = []
+
+    def invoke(self, data, variables):
+        self.invocations.append(Invocation(data, variables.copy()))
+        return data
+
+def get_test_mock():
+    mock = MockTask()
+    core.register('test', mock.invoke)
+    return mock
 
 def from_yaml(text):
     return list(yaml.load_all(textwrap.dedent(text)))
@@ -206,11 +213,9 @@ def from_file(file):
         data = myfile.read()
     return from_yaml(data)
 
-Invocation = namedtuple('Invocation', ['data', 'variables'])
-class MockTask:
-    def __init__(self):
-        self.invocations = []
+def run_yay_test(file):
+    tasks = from_file(file)
+    mock = get_test_mock()
 
-    def invoke(self, data, variables):
-        self.invocations.append(Invocation(data, variables.copy()))
-        return data
+    variables = {}
+    core.process_tasks(tasks, variables)
