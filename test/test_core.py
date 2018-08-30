@@ -67,7 +67,7 @@ class TestVariableResolution():
         tasks = from_yaml("""
         test: something
         ---
-        test: ${result}
+        test: ${res}
         """)
         mock = self.get_test_mock()
 
@@ -116,7 +116,7 @@ class TestVariableResolution():
         result:
             path: something
         ---
-        test: ${result}
+        test: ${res}
         """)
         mock = self.get_test_mock()
 

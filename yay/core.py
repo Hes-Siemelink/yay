@@ -9,6 +9,7 @@ from yay.util import *
 #
 # Control flow
 #
+RESULT_VARIABLE = 'res'
 
 def process_tasks(tasks, variables = {}):
     for task in tasks:
@@ -24,7 +25,7 @@ def process_task(task, variables = {}):
 
             result = handlers[action](data, variables)
             if not result == None:
-                variables['result'] = result
+                variables[RESULT_VARIABLE] = result
         else:
             print("Unknown action: {}".format(action))
     return result
@@ -46,15 +47,15 @@ def foreach(data, variables):
             del variables[variable]
 
 def store_result(data, variables):
-    if not 'result' in variables:
+    if not RESULT_VARIABLE in variables:
         return
 
-    value = variables['result']
+    value = variables[RESULT_VARIABLE]
 
     if 'var' in data:
         var = data['var']
     else:
-        var = 'result'
+        var = RESULT_VARIABLE
 
 
     if 'path' in data:
