@@ -79,7 +79,7 @@ class TestVariableResolution():
     def test_store_result(self):
         tasks = from_yaml("""
         test: something
-        result:
+        set:
             var: test_outcome
         ---
         test: ${test_outcome}
@@ -96,7 +96,7 @@ class TestVariableResolution():
         test:
             something: nested
 
-        result:
+        set:
             var: test_outcome
             path: something
         ---
@@ -113,7 +113,7 @@ class TestVariableResolution():
         test: 
             something: nested
                 
-        result:
+        set:
             path: something
         ---
         test: ${res}
