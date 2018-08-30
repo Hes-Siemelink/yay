@@ -1,0 +1,2 @@
+class YayException(Exception):
+    pass

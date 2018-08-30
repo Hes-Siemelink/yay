@@ -22,7 +22,7 @@ def process_task(task, variables = {}):
         if action in handlers:
             result = invoke_handler(handlers[action], task[action], variables)
         else:
-            print("Unknown action: {}".format(action))
+            raise YayException("Unknown action: {}".format(action))
     return result
 
 
@@ -73,17 +73,11 @@ def store_result(data, variables):
 def noop(data, variables):
     yield
 
-def assert_handler(data, variables):
-    if 'equals' in data:
-        assert_equals(data['equals'], variables)
+def assert_equals(data, variables):
+    actual = get_parameter(data, 'actual')
+    expected = get_parameter(data, 'expected')
 
-def assert_equals(terms, variables):
-    if len(terms) < 2:
-        return
-    if len(terms) > 2:
-        raise Exception("Assert equals only takes 2 arguments.")
-
-    assert terms[0] == terms[1], "\nExpected: {}\nActual:   {}".format(terms[0], terms[1])
+    assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
 
 #
 # Variables
@@ -146,4 +140,4 @@ register('print',  print_text)
 register('var',  noop)
 register('in',  noop)
 register('set',  store_result)
-register('assert',  assert_handler)
+register('assert equals', assert_equals)

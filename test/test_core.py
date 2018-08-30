@@ -139,20 +139,18 @@ class TestVariableResolution():
 
     def test_assert(self):
         tasks = from_yaml("""
-        assert: 
-            equals:
-            - one
-            - one
+        assert equals: 
+          actual:   one
+          expected: one
         """)
 
         core.process_tasks(tasks, {})
 
     def test_assertion_failure(self):
         tasks = from_yaml("""
-        assert: 
-            equals:
-            - one
-            - two
+        assert equals: 
+          actual:   one
+          expected: two
         """)
 
         with pytest.raises(AssertionError):

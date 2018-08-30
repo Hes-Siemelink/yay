@@ -3,6 +3,7 @@ import yaml
 import os
 
 from jsonpath_rw import jsonpath, parse
+from yay import YayException
 
 def get_json_path(data, path):
     if not path:
@@ -69,3 +70,10 @@ def is_empty(item):
     if is_scalar(item):
         if not item: return False
     return True
+
+def get_parameter(data, name):
+    parameter = data.get(name)
+    if parameter is None:
+        raise YayException("Missing parameter '{}' in:\n{}".format(name, yaml.dump(data, default_flow_style=False)))
+    return parameter
+
