@@ -1,5 +1,6 @@
 name: Get Jenkins folder
 http.get:
+  url: ${xlrUrl}
   path: /api/v1/folders/find?byPath=Jenkins
 set:
   folderId: ${result.id}
@@ -7,6 +8,7 @@ print: ${folderId}
 ---
 name: Get teams
 http.get:
+  url: ${xlrUrl}
   path: /api/v1/folders/Applications/${folderId}/teams
 set: teams
 ---
@@ -27,6 +29,7 @@ join:
     - folder#edit
     - group#view
 # http.post:
+#   url: ${xlrUrl}
 #   path: /api/v1/folders/${folderId}/teams
 #   body: ${updatedTeams}
 print_json: ${updatedTeams}

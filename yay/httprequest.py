@@ -38,7 +38,7 @@ def send_request(data, variables):
 
     if not data: return
 
-    url = data['url'] if 'url' in data else variables['url']
+    url = get_parameter(data, 'url')
     path = data['path'] if 'path' in data else ''
     body = data['body'] if 'body' in data else None
     method = data['method'] if 'method' in data else 'GET'

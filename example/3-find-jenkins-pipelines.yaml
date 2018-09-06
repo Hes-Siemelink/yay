@@ -1,4 +1,5 @@
 http.get:
+  url: ${jenkinsUrl}
   path: /api/json
 set:
   jobs: ${result.jobs}
