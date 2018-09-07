@@ -11,3 +11,7 @@ foreach:
     - ${job.name} (${job._class})
     - ${job.url}
     - "   "
+---
+write file:
+  name: jenkins-jobs.yaml
+  content: ${jobs}

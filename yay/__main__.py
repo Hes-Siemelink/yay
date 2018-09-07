@@ -5,6 +5,7 @@ import os
 # Register handlers
 from yay import core
 from yay import httprequest
+from yay import files
 
 from yay.util import *
 
