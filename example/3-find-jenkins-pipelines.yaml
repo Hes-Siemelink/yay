@@ -14,4 +14,4 @@ For each:
 ---
 Write file:
   name: jenkins-jobs.yaml
-  content: ${jobs}
+  contents: ${jobs}
