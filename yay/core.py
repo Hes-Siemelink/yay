@@ -135,9 +135,10 @@ register('For each', foreach)
 register('Assert equals', assert_equals)
 
 register('Set', set_variable)
+register('Set variable', set_variable)
 register('Join', join)
 
 register('Print JSON', print_json)
-register('Print Yaml', print_yaml)
+register('Print YAML', print_yaml)
 register('Name',  print_text)
 register('Print',  print_text)
