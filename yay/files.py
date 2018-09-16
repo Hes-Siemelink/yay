@@ -10,4 +10,4 @@ def write_file(data, variables):
         file.write(format_yaml(content))
 
 # Register tasks
-core.register('write file', write_file)
+core.register('Write file', write_file)

@@ -4,7 +4,7 @@ from yay.test import *
 class TestCore():
 
     def test_process_task(self):
-        task = {'test':'something'}
+        task = {'Test':'something'}
         mock = get_test_mock()
 
         core.process_task(task)
@@ -16,9 +16,9 @@ class TestCore():
 
     def test_process_tasks(self):
         yaml = """
-        test: something
+        Test: something
         ---
-        test: something else
+        Test: something else
         """
         tasks = from_yaml(yaml)
         mock = get_test_mock()
@@ -34,13 +34,13 @@ class TestCore():
 
     def test_for_each(self):
         tasks = from_yaml("""
-        foreach:
+        For each:
           item:
           - one
           - two
           - three
-          do:
-            test: ${item}
+          Do:
+            Test: ${item}
         """)
         mock = get_test_mock()
 
@@ -56,9 +56,9 @@ class TestCore():
 
     def test_pipe_result(self):
         tasks = from_yaml("""
-        test: something
+        Test: something
         ---
-        test: ${result}
+        Test: ${result}
         """)
         mock = get_test_mock()
 
@@ -69,10 +69,10 @@ class TestCore():
 
     def test_store_result(self):
         tasks = from_yaml("""
-        test: something
-        set: test_outcome
+        Test: something
+        Set: test_outcome
         ---
-        test: ${test_outcome}
+        Test: ${test_outcome}
         """)
         mock = get_test_mock()
 
@@ -83,11 +83,11 @@ class TestCore():
 
     def test_store_result_long_form(self):
         tasks = from_yaml("""
-        test: something
-        set:
+        Test: something
+        Set:
           test_outcome: ${result}
         ---
-        test: ${test_outcome}
+        Test: ${test_outcome}
         """)
         mock = get_test_mock()
 
@@ -98,12 +98,12 @@ class TestCore():
 
     def test_store_result_with_path(self):
         tasks = from_yaml("""
-        test:
+        Test:
           something: nested
-        set:
+        Set:
           test_outcome: ${result.something}
         ---
-        test: ${test_outcome}
+        Test: ${test_outcome}
         """)
         mock = get_test_mock()
 
@@ -113,12 +113,12 @@ class TestCore():
 
     def test_change_result_part(self):
         tasks = from_yaml("""
-        test: 
+        Test: 
           something: nested
-        set:
+        Set:
           result: ${result.something}
         ---
-        test: ${result}
+        Test: ${result}
         """)
         mock = get_test_mock()
 
@@ -128,7 +128,7 @@ class TestCore():
 
     def test_assert(self):
         tasks = from_yaml("""
-        assert equals: 
+        Assert equals: 
           actual:   one
           expected: one
         """)
@@ -137,7 +137,7 @@ class TestCore():
 
     def test_assertion_failure(self):
         tasks = from_yaml("""
-        assert equals: 
+        Assert equals: 
           actual:   one
           expected: two
         """)
@@ -147,7 +147,7 @@ class TestCore():
 
     def test_multiple_invocations_with_list(self):
         tasks = from_yaml("""
-        test: 
+        Test: 
         - something
         - again
         """)
@@ -161,9 +161,9 @@ class TestCore():
 
     def test_do(self):
         tasks = from_yaml("""
-        do:
-        - test: something 
-        - test: again 
+        Do:
+        - Test: something 
+        - Test: again 
         """)
         mock = get_test_mock()
 

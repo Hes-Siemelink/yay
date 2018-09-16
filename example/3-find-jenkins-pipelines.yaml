@@ -1,17 +1,17 @@
-http GET:
+Http GET:
   url: ${jenkinsUrl}
   path: /api/json
-set:
+Set:
   jobs: ${result.jobs}
 ---
-foreach:
+For each:
   job: ${jobs}
-  do:
-    print:
+  Do:
+    Print:
     - ${job.name} (${job._class})
     - ${job.url}
     - "   "
 ---
-write file:
+Write file:
   name: jenkins-jobs.yaml
   content: ${jobs}

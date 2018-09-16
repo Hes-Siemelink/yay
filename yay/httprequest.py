@@ -62,8 +62,8 @@ def send_request(data, variables):
     return result
 
 # Register tasks
-core.register('http GET', http_get)
-core.register('http POST', http_post)
-core.register('http PUT', http_put)
-core.register('http DELETE', http_delete)
-core.register('http', process_request)
+core.register('Http GET', http_get)
+core.register('Http POST', http_post)
+core.register('Http PUT', http_put)
+core.register('Http DELETE', http_delete)
+core.register('Http', process_request)

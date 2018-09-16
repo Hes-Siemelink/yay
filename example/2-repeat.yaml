@@ -1,17 +1,17 @@
-foreach:
+For each:
   number:
   - One
   - Two
   - Three
-  do:
-    print: ${number}
+  Do:
+    Print: ${number}
 ---
-print: "- - - - -"
-foreach:
+Print: "- - - - -"
+For each:
   number:
   - One
   - Two
   - Three
-  do:
-  - print: ${number}
-  - print: Mississipi
+  Do:
+  - Print: ${number}
+  - Print: Mississipi

@@ -1,12 +1,12 @@
-test:
+Test:
   data:
     item1: one
     item2: two
-set:
+Set:
   stuff: ${result.data.item1}
   all: ${result}
 ---
-assert equals:
+Assert equals:
 
 - actual: ${stuff}
   expected: one

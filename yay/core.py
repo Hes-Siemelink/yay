@@ -38,7 +38,7 @@ def invoke_single_handler(handler, rawData, variables):
     return result
 
 def foreach(data, variables):
-    actions = get_parameter(data, 'do')
+    actions = get_parameter(data, 'Do')
     if len(data) != 2:
         raise YayException("Foreach needs exactly two parameters: 'do' and the name of the variable.")
 
@@ -59,7 +59,7 @@ def foreach(data, variables):
 
 def get_foreach_variable(data):
     for variable in data:
-        if variable == 'do':
+        if variable == 'Do':
             continue
         return variable
 
@@ -130,14 +130,14 @@ handlers = {}
 def register(type, handler):
     handlers[type] = handler
 
-register('do', process_task)
-register('foreach', foreach)
-register('assert equals', assert_equals)
+register('Do', process_task)
+register('For each', foreach)
+register('Assert equals', assert_equals)
 
-register('set', set_variable)
-register('join', join)
+register('Set', set_variable)
+register('Join', join)
 
-register('print_json', print_json)
-register('print_yaml', print_yaml)
-register('name',  print_text)
-register('print',  print_text)
+register('Print JSON', print_json)
+register('Print Yaml', print_yaml)
+register('Name',  print_text)
+register('Print',  print_text)

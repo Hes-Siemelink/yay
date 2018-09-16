@@ -20,7 +20,7 @@ class MockTask:
 
 def get_test_mock():
     mock = MockTask()
-    core.register('test', mock.invoke)
+    core.register('Test', mock.invoke)
     return mock
 
 def from_yaml(text):
