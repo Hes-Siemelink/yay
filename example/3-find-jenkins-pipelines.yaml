@@ -1,4 +1,4 @@
-http.get:
+http GET:
   url: ${jenkinsUrl}
   path: /api/json
 set:
