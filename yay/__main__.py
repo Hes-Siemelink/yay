@@ -16,9 +16,6 @@ def main():
     # Load default variables
     defaultValuesFile = os.path.join(os.path.expanduser('~'), '.yay/default-variables.yaml')
     add_from_yaml_file(defaultValuesFile, variables)
-    print("Default variables:")
-    print_as_yaml(variables)
-
 
     # Parse arguments
     fileArgument = sys.argv[1]
@@ -32,7 +29,7 @@ def main():
 
     # Process all
     result = core.process_tasks(tasks, variables)
-    if result: print_as_json(result)
+    # if result: print_as_json(result)
 
 # Execute script
 if __name__ == '__main__':
