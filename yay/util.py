@@ -82,8 +82,10 @@ def as_list(item):
         return [item]
     return item
 
-def get_parameter(data, name):
+def get_parameter(data, name, default = None):
     parameter = data.get(name)
+    if parameter is None:
+        parameter = default
     if parameter is None:
         raise YayException("Missing parameter '{}' in:\n{}".format(name, yaml.dump(data, default_flow_style=False)))
     return parameter

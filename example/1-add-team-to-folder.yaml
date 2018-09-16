@@ -1,15 +1,13 @@
+Http endpoint: ${xlreleaseUrl}
+---
 Name: Get Jenkins folder
-Http GET:
-  url: ${xlrUrl}
-  path: /api/v1/folders/find?byPath=JenkinsWorld
+Http GET: /api/v1/folders/find?byPath=JenkinsWorld
 Set:
   folderId: ${result.id}
 Print: ${folderId}
 ---
 Name: Get teams
-Http GET:
-  url: ${xlrUrl}
-  path: /api/v1/folders/Applications/${folderId}/teams
+Http GET: /api/v1/folders/Applications/${folderId}/teams
 Set: teams
 ---
 Name: Print teams
@@ -29,7 +27,6 @@ Join:
     - folder#edit
     - group#view
 # Http POST:
-#   url: ${xlrUrl}
 #   path: /api/v1/folders/${folderId}/teams
 #   body: ${updatedTeams}
 Print JSON: ${updatedTeams}

@@ -9,8 +9,17 @@ from yay import core
 from yay.util import *
 
 jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
+DEFAULT_URL = '$http.url'
+
+def http_set_url(data, variables):
+    variables[DEFAULT_URL] = data
+    return data
 
 def http_get(data, variables):
+    if is_scalar(data):
+        data = {
+          'path': data
+        }
     data['method'] = 'GET'
     return process_request(data, variables)
 
@@ -38,7 +47,7 @@ def send_request(data, variables):
 
     if not data: return
 
-    url = get_parameter(data, 'url')
+    url = get_parameter(data, 'url', variables[DEFAULT_URL])
     path = data['path'] if 'path' in data else ''
     body = data['body'] if 'body' in data else None
     method = data['method'] if 'method' in data else 'GET'
@@ -67,3 +76,4 @@ core.register('Http POST', http_post)
 core.register('Http PUT', http_put)
 core.register('Http DELETE', http_delete)
 core.register('Http', process_request)
+core.register('Http endpoint', http_set_url)
