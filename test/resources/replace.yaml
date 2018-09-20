@@ -1,0 +1,8 @@
+Replace:
+  part: me
+  in: Hello me
+  with: World
+---
+Assert equals:
+- actual: ${result}
+  expected: Hello World

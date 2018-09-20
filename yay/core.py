@@ -108,6 +108,17 @@ def join_single_variable(var, updates, variables):
             value.extend(as_list(update))
     variables[var] = value
 
+#
+#
+#
+
+def replace_text(data, variables):
+    part = get_parameter(data, 'part')
+    text = get_parameter(data, 'in')
+    replacement = get_parameter(data, 'with')
+
+    return text.replace(part, replacement)
+
 
 #
 # Printing
@@ -142,3 +153,4 @@ register('Print JSON', print_json)
 register('Print YAML', print_yaml)
 register('Name',  print_text)
 register('Print',  print_text)
+register('Replace',  replace_text)
