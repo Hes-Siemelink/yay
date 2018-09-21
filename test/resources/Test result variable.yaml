@@ -1,0 +1,17 @@
+Result: something
+---
+Assert equals:
+- actual: ${result}
+  expected: something
+---
+For each:
+  item:
+  - one
+  - two
+  - three
+  Do:
+  - Result: ${result} ${item}
+---
+Assert equals:
+- actual: ${result}
+  expected: something three

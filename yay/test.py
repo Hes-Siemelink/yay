@@ -26,7 +26,6 @@ def get_test_mock():
 def from_yaml(text):
     return list(yaml.load_all(textwrap.dedent(text)))
 
-
 def get_files(testDir):
     basePath = os.path.dirname(os.path.realpath(__file__))
     path = os.path.join(basePath, testDir)
@@ -51,3 +50,7 @@ def run_yay_test(file):
 
     variables = {}
     core.process_tasks(tasks, variables)
+
+def result(data, variables):
+    return data
+core.register('Result', result)

@@ -13,7 +13,9 @@ class TestVariableResolution():
                 'item': 'stuff'
             }
         },
-        'list' : [0, 1, 2]
+        'list' : [0, 1, 2],
+        'a': 'Would like to be ${one}',
+        'b': 'Would like to be ${b}'
     }
 
 
@@ -103,3 +105,23 @@ class TestVariableResolution():
 
         assert result == 0
 
+    def test_resolve_another_variable(self):
+        input = '${a}'
+
+        result = vars.resolve_variables(input, self.variables)
+
+        assert result == 'Would like to be 1'
+
+    def test_resolve_two_variablea(self):
+        input = '${one}${two}'
+
+        result = vars.resolve_variables(input, self.variables)
+
+        assert result == '12'
+
+    # def test_resolve_recursive(self):
+    #     input = '${b}'
+    #
+    #     result = vars.resolve_variables(input, self.variables)
+    #
+    #     assert result == 'Would like to be ${b}'

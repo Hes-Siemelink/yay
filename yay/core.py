@@ -86,7 +86,8 @@ def set_variable(data, variables):
         return
 
     # set:
-    #   varname: ${result.}
+    #   var1: ${result}
+    #   var2: Something else
     # => will set the result into 'varname'. You can also use literal values or variables with paths.
     for var in data:
         variables[var] = data[var]
