@@ -148,6 +148,7 @@ register('Assert equals', assert_equals)
 
 register('Set', set_variable)
 register('Set variable', set_variable)
+register('Result', set_variable)
 register('Join', join)
 
 register('Print JSON', print_json)
