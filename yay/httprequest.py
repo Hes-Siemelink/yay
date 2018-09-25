@@ -61,9 +61,12 @@ def send_request(data, variables):
     if method == 'DELETE':
         r = requests.delete(url + path, headers = jsonHeaders)
 
-    if r.status_code != 200:
+    if r.status_code >= 300:
         print(r.status_code)
         print(r.text)
+        return
+
+    if r.status_code > 200:
         return
 
     result = json.loads(r.text)
