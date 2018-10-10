@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="yay",
-    version="0.3",
+    version="0.4",
     author="Hes Siemelink",
     author_email="author@example.com",
     description="YAML script",
@@ -19,6 +19,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
+        'pyyaml',
         'requests',
         'jsonpath_rw'
     ],
