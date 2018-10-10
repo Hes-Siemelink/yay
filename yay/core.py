@@ -64,14 +64,13 @@ def get_foreach_variable(data):
         return variable
 
 def noop(data, variables):
-    yield
+    pass
 
 def assert_equals(data, variables):
     actual = get_parameter(data, 'actual')
     expected = get_parameter(data, 'expected')
 
     assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
-
 
 #
 # Variables
@@ -153,6 +152,7 @@ register('Join', join)
 
 register('Print JSON', print_json)
 register('Print YAML', print_yaml)
-register('Name',  print_text)
+register('Name',  noop)
+register('Task',  noop)
 register('Print',  print_text)
 register('Replace',  replace_text)
