@@ -1,5 +1,4 @@
-Set variable:
-  greeting: Hello
+${greeting}: Hello
 Python: |
   result = greeting + ' World!'
 

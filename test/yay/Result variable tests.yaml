@@ -10,7 +10,7 @@ For each:
   - two
   - three
   Do:
-  - Result: ${result} ${item}
+  - ${result}: ${result} ${item}
 ---
 Assert equals:
 - actual: ${result}

@@ -1,6 +1,7 @@
 #
 # Core tasks
 #
+import re
 
 from yay import vars
 from yay.util import *
@@ -18,7 +19,10 @@ def process_tasks(tasks, variables = {}):
 def process_task(task, variables = {}):
     result = None
     for action in task:
-        if action in handlers:
+        variableMatch = re.search(vars.ONE_VARIABLE_ONLY_REGEX, action)
+        if variableMatch:
+            variables[variableMatch.group(1)] = task[action]
+        elif action in handlers:
             result = invoke_handler(handlers[action], task[action], variables)
         else:
             raise YayException("Unknown action: {}".format(action))

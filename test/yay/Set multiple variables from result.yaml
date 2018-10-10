@@ -5,6 +5,27 @@ Test:
 Set:
   stuff: ${result.data.item1}
   all: ${result}
+
+---
+Assert equals:
+
+- actual: ${stuff}
+  expected: one
+
+- actual: ${all}
+  expected:
+    data:
+      item1: one
+      item2: two
+
+---
+Test:
+  data:
+    item1: one
+    item2: two
+${stuff}: ${result.data.item1}
+${all}: ${result}
+
 ---
 Assert equals:
 
