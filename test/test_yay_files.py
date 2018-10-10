@@ -3,7 +3,7 @@ from yay.test import *
 
 from yay import script
 
-yay_test_files = get_files('../test/resources')
+yay_test_files = get_files('../test/yay')
 
 @pytest.mark.parametrize("file", yay_test_files)
 def test_yay_files(file):

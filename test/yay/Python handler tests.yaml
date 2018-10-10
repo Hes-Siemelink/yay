@@ -5,6 +5,5 @@ Python: |
 
 ---
 Assert equals:
-
 - actual: ${result}
   expected: Hello World!
