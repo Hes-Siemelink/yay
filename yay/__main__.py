@@ -24,12 +24,14 @@ def main():
         key, value = argument.split('=')
         variables[key] = value
 
-    # Read YAML script
-    tasks = read_yaml_files(fileArgument)
+    try:
+        # Read YAML script
+        tasks = read_yaml_files(fileArgument)
 
-    # Process all
-    result = core.process_tasks(tasks, variables)
-    # if result: print_as_json(result)
+        # Process all
+        result = core.process_tasks(tasks, variables)
+    except Exception as exception:
+        print(exception)
 
 # Execute script
 if __name__ == '__main__':
