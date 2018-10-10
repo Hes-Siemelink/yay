@@ -6,6 +6,7 @@ import os
 from yay import core
 from yay import httprequest
 from yay import files
+from yay import script
 
 from yay.util import *
 
