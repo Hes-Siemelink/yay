@@ -1,0 +1,123 @@
+Query with:
+- likes: [mary, food]
+- likes: [mary, wine]
+- likes: [john, wine]
+- likes: [john, mary]
+---
+Query:
+  likes: [mary, food]
+Assert: true
+---
+Query:
+  likes: [john, wine]
+---
+Query:
+  likes: [john, food]
+---
+
+Query with:
+- male: [james]
+- male: [james1]
+- male: [charles1]
+- male: [charles2]
+- male: [james2]
+- male: [george1]
+
+- female: [catherine]
+- female: [elizabeth]
+- female: [sophia]
+
+- parent: [charles1, james1]
+- parent: [elizabeth, james1]
+- parent: [charles2, charles1]
+- parent: [catherine, charles1]
+- parent: [james2, charles1]
+- parent: [sophia, elizabeth]
+- parent: [george1, sophia]
+---
+Query:
+  parent: [charles1, george1]
+---
+Query:
+  parent: [charles1, $parent]
+Assert equals:
+  actual: ${parent}
+  expected: james1
+---
+Query all:
+  parent: [$child, charles1]
+---
+
+Query with:
+- size: [[],0]
+- size:
+    match:
+    - ${head|tail}
+    - ${size}
+    if:
+    - size: [$tail, $tailsize]
+    - plus: [$tailsize, 1, $size]
+
+Query:
+  size:
+    - [1, 2, 3, 4]
+    - ${size}
+
+---
+
+Query with:
+- move:
+    match:
+    - 1
+    - ${from}
+    - ${to}
+    - ${_any_}
+    Do:
+      Print: "Move top disk from ${from} to ${to}."
+- move:
+    match:
+    - ${height}
+    - ${one}
+    - ${two}
+    - ${three}
+    if:
+    - plus: [$one_lower, 1, $height]
+    - move: [$one_lower, $one, $three, $two]
+    - move: [1, $one, $two, $_any_]
+    - move: [$one_lower, $three, $two, $one]
+---
+
+Query with:
+- Match:
+  on: ${data}
+  matchers:
+  - move.height.1
+  - move.one.${from}
+  - move.two.${to}
+  Do:
+    Print: "Move top disk from ${from} to ${to}."
+- Match:
+  on: ${data}
+  matchers:
+  - move.height.${height}
+  - move.one.${one}
+  - move.two.${two}
+  - move.three.${three}
+  Match:
+    matchers:
+    - plus: [$one_lower, 1, $height]
+    - move:
+        height: ${one_lower}
+        one: ${one}
+        two: ${three}
+        three: ${two}
+    - move:
+        height: 1
+        one: ${one}
+        two: ${two}
+        three: ${_any_}
+    - move:
+        height: ${one_lower}
+        one: ${three}
+        two: ${two}
+        three: ${one}
