@@ -1,4 +1,4 @@
-Name: Join two dicts, second one overwrites properties from the first.
+Task: Join two dicts, second one overwrites properties from the first.
 
 Join:
   package:
@@ -15,7 +15,7 @@ Assert equals:
     content: body
 
 ---
-Name: Join into a variable that already exists
+Task: Join into a variable that already exists
 
 Join:
   package:
@@ -30,7 +30,7 @@ Assert equals:
     footer: end
 
 ---
-Name: Join two lists
+Task: Join two lists
 
 # Given
 Set:
@@ -60,7 +60,7 @@ Assert equals:
   - 5
   - 6
 ---
-Name: Join list with more items
+Task: Join list with more items
 
 # Given
 Set:

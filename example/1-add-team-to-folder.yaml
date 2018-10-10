@@ -1,16 +1,16 @@
 Http endpoint: ${xlreleaseUrl}
 ---
-Name: Get Jenkins folder
+Task: Get Jenkins folder
 Http GET: /api/v1/folders/find?byPath=JenkinsWorld
 Set:
   folderId: ${result.id}
 Print: ${folderId}
 ---
-Name: Get teams
+Task: Get teams
 Http GET: /api/v1/folders/Applications/${folderId}/teams
 Set: teams
 ---
-Name: Print teams
+Task: Print teams
 Join:
 - updatedTeams:
   - ${teams}
