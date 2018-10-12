@@ -21,6 +21,7 @@ setuptools.setup(
     install_requires=[
         'pyyaml',
         'requests',
-        'jsonpath_rw'
+        'jsonpath_rw',
+        'PyInquirer'
     ],
 )

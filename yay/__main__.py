@@ -7,6 +7,8 @@ from yay import core
 from yay import httprequest
 from yay import files
 from yay import script
+from yay import input
+from yay import xl_cli
 
 from yay.util import *
 
