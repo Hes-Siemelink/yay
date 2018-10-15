@@ -10,9 +10,8 @@ def xl_apply(data, variables):
     try:
         with os.fdopen(file, 'w') as tmp:
             tmp.write(format_yaml(data))
-            print(path)
-            command = "xl apply -f {}".format(path)
-            call(command, shell=True)
+        command = "xl apply -f {}".format(path)
+        call(command, shell=True)
     finally:
         os.remove(path)
 
