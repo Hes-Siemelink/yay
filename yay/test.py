@@ -50,7 +50,3 @@ def run_yay_test(file):
 
     variables = {}
     core.process_tasks(tasks, variables)
-
-def result(data, variables):
-    return data
-core.register('Result', result)

@@ -95,6 +95,9 @@ def set_variable(data, variables):
     for var in data:
         variables[var] = data[var]
 
+def result(data, variables):
+    return data
+
 def join(data, variables):
     for var in data:
         join_single_variable(var, data[var], variables)
@@ -151,7 +154,7 @@ register('Assert equals', assert_equals)
 
 register('Set', set_variable)
 register('Set variable', set_variable)
-register('Result', set_variable)
+register('Result', result)
 register('Join', join)
 
 register('Print JSON', print_json)
