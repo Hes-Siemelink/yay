@@ -20,21 +20,39 @@ def main():
     defaultValuesFile = os.path.join(os.path.expanduser('~'), '.yay/default-variables.yaml')
     add_from_yaml_file(defaultValuesFile, variables)
 
-    # Parse arguments
-    fileArgument = sys.argv[1]
-
-    for argument in sys.argv[2:]:
-        key, value = argument.split('=')
-        variables[key] = value
-
     try:
+        # Make sure we can find the file
+        filename = get_file(sys.argv[1])
+
+        # Parse arguments into values
+        for argument in sys.argv[2:]:
+            key, value = argument.split('=')
+            variables[key] = value
+
         # Read YAML script
-        tasks = read_yaml_files(fileArgument)
+        tasks = read_yaml_files(filename)
 
         # Process all
         result = core.process_tasks(tasks, variables)
+
     except Exception as exception:
         print(exception)
+
+
+def get_file(filename):
+    if os.path.isfile(filename):
+        return filename
+
+    yayFile = filename + ".yay"
+    if os.path.isfile(yayFile):
+        return yayFile
+
+    yamlFile = filename + ".yaml"
+    if os.path.isfile(yamlFile):
+        return yamlFile
+
+    raise YayException(f"Could not find file: {filename}")
+
 
 # Execute script
 if __name__ == '__main__':
