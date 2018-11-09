@@ -12,6 +12,7 @@ from yay.util import *
 RESULT_VARIABLE = 'result'
 
 def process_tasks(tasks, variables = {}):
+    result = None
     for task in tasks:
         result = process_task(task, variables)
     return result
@@ -158,7 +159,9 @@ register('Result', result)
 register('Join', join)
 
 register('Print JSON', print_json)
+register('Print as JSON', print_json)
 register('Print YAML', print_yaml)
+register('Print as YAML', print_yaml)
 register('Name',  noop)
 register('Task',  noop)
 register('Test case',  noop)

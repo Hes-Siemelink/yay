@@ -36,6 +36,8 @@ def main():
         result = core.process_tasks(tasks, variables)
 
     except Exception as exception:
+        # import traceback
+        # traceback.print_exc()
         print(exception)
 
 

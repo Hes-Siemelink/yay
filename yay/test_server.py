@@ -1,4 +1,6 @@
 import flask
+from flask import request
+
 from threading import Thread
 
 #
@@ -37,6 +39,27 @@ def reset():
     data.clear()
     data.update(default_data())
     return ''
+
+
+search_data = {
+    'My stuff': ['apples, pears'],
+    'Other stuff': ['oranges', 'lemons']
+}
+
+@app.route('/rest/search', methods=['GET'])
+def search():
+    query = request.args.get('query')
+
+    search_result = {}
+    if query:
+        for key in search_data:
+            if query in key:
+                search_result[key] = search_data[key]
+    else:
+        search_result = search_data
+
+    return flask.jsonify(search_result)
+
 
 #
 # Server start

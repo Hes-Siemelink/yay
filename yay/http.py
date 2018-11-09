@@ -9,7 +9,7 @@ from yay import core
 from yay.util import *
 
 jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
-DEFAULT_URL = '$http.url'
+DEFAULT_URL = 'http.url'
 
 def http_set_url(data, variables):
     variables[DEFAULT_URL] = data
