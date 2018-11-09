@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="yay",
-    version="0.5",
+    version="0.6",
     author="Hes Siemelink",
     author_email="author@example.com",
     description="YAML script",
@@ -22,7 +22,8 @@ setuptools.setup(
         'pyyaml',
         'requests',
         'jsonpath_rw',
-        'PyInquirer'
+        'PyInquirer',
+        'flask'
     ],
     entry_points = {
         'console_scripts': [

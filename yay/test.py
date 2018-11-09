@@ -50,3 +50,4 @@ def run_yay_test(file):
 
     variables = {}
     core.process_tasks(tasks, variables)
+
