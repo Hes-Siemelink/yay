@@ -1,7 +1,7 @@
 import pytest
 import time
 
-from yay import httprequest
+from yay import http
 from yay import test_server
 from yay.test import *
 

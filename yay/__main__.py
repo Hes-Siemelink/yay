@@ -4,7 +4,7 @@ import os
 
 # Register handlers
 from yay import core
-from yay import httprequest
+from yay import http
 from yay import files
 from yay import script
 from yay import input
