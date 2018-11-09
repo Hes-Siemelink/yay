@@ -47,7 +47,7 @@ def send_request(data, variables):
 
     if not data: return
 
-    url = get_parameter(data, 'url', variables[DEFAULT_URL])
+    url = get_parameter(data, 'url', variables.get(DEFAULT_URL))
     path = data['path'] if 'path' in data else ''
     body = data['body'] if 'body' in data else None
     method = data['method'] if 'method' in data else 'GET'
@@ -69,7 +69,10 @@ def send_request(data, variables):
     if r.status_code > 200:
         return
 
-    result = json.loads(r.text)
+    try:
+        result = json.loads(r.text)
+    except ValueError:
+        result = r.text
 
     return result
 

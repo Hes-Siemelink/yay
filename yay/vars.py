@@ -5,8 +5,10 @@ import re
 
 from yay.util import *
 
-VARIABLE_REGEX = r'\$\{([^\}]+)\}'
-ONE_VARIABLE_ONLY_REGEX = r'^' + VARIABLE_REGEX + '$'
+
+class VariableMatcher:
+    VARIABLE_REGEX = r'\$\{([^\}]+)\}'
+    ONE_VARIABLE_ONLY_REGEX = r'^' + VARIABLE_REGEX + '$'
 
 def resolve_variables(item, variables):
     if not item:
@@ -20,12 +22,12 @@ def resolve_variables(item, variables):
     return item
 
 def resolve_variables_in_string(text, variables):
-    match = re.search(ONE_VARIABLE_ONLY_REGEX, text)
+    match = re.search(VariableMatcher.ONE_VARIABLE_ONLY_REGEX, text)
     if match:
         variable = match.group(1)
         return get_value_with_path(variable, variables)
     else:
-        variablesInText = set(re.findall(VARIABLE_REGEX, text))
+        variablesInText = set(re.findall(VariableMatcher.VARIABLE_REGEX, text))
         for variable in variablesInText:
             value = get_value_with_path(variable, variables)
             if value:

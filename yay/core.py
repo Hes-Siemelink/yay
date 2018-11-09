@@ -19,7 +19,7 @@ def process_tasks(tasks, variables = {}):
 def process_task(task, variables = {}):
     result = None
     for action in task:
-        variableMatch = re.search(vars.ONE_VARIABLE_ONLY_REGEX, action)
+        variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, action)
         if variableMatch:
             variables[variableMatch.group(1)] = task[action]
         elif action in handlers:

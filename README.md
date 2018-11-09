@@ -27,7 +27,7 @@ Invoke it using yay:
     $ yay search_stuff.yay
 
 What happens here:
-1. `Http get` is a Yay task that does a HTTP request. A task in Yay is a command name followed by parameter data. By convention, commands in yay are spelled using a capital letter.
+1. `Http GET` is a Yay task that does a HTTP request. A task in Yay is a command name followed by parameter data. By convention, commands in yay are spelled using a capital letter.
 2. The result is printed in JSON format using the `Print as JSON` command.
 
 
@@ -66,7 +66,7 @@ exampleUrl: http://user:pass@example.com
 
 **File: search_stuff.yay**
 ```
-Http Get:
+Http GET:
   url:  ${exampleUrl}
   path: /rest/search?query=stuff
 Print as JSON: ${result}
@@ -74,6 +74,8 @@ Print as JSON: ${result}
 
 
 ## Chain requests
+
+## Inspect result using JSON path
 
 ## Ask for parameters
 
