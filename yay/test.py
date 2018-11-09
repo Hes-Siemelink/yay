@@ -32,7 +32,7 @@ def get_files(testDir):
     print(path)
     files = []
     for file in os.listdir(path):
-        if file.endswith('.yaml'):
+        if file.endswith('.yay'):
             files.append(os.path.join(path, file))
     return files
 
