@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="yay",
-    version="0.4",
+    version="0.5",
     author="Hes Siemelink",
     author_email="author@example.com",
     description="YAML script",
@@ -24,4 +24,8 @@ setuptools.setup(
         'jsonpath_rw',
         'PyInquirer'
     ],
-)
+    entry_points = {
+        'console_scripts': [
+            'yay = yay.__main__:main',
+        ],
+    },)
