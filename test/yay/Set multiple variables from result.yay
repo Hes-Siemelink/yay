@@ -6,7 +6,7 @@ Set:
   stuff: ${result.data.item1}
   all: ${result}
 
----
+
 Assert equals:
 
 - actual: ${stuff}
@@ -26,7 +26,7 @@ Test:
 ${stuff}: ${result.data.item1}
 ${all}: ${result}
 
----
+
 Assert equals:
 
 - actual: ${stuff}

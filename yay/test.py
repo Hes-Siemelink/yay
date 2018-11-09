@@ -2,10 +2,10 @@
 # Test util
 #
 
-import yaml
-import textwrap
-import os
 from collections import namedtuple
+import os
+import textwrap
+import yaml
 
 from yay import core
 
@@ -29,7 +29,8 @@ def from_yaml(text):
 def get_files(testDir):
     basePath = os.path.dirname(os.path.realpath(__file__))
     path = os.path.join(basePath, testDir)
-    print(path)
+    path = os.path.relpath(path)
+
     files = []
     for file in os.listdir(path):
         if file.endswith('.yay'):

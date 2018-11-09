@@ -2,7 +2,6 @@ ${greeting}: Hello
 Python: |
   result = greeting + ' World!'
 
----
 Assert equals:
 - actual: ${result}
   expected: Hello World!

@@ -1,0 +1,32 @@
+Http endpoint: http://localhost:5000
+---
+Test case: GET with explicit parameters
+
+Http GET:
+  path: /items
+
+Assert equals:
+- actual: ${result}
+  expected: ['1', '2', '3']
+
+---
+Test case: POST and simple GET
+
+Http POST:
+  path: /items
+Http GET: /items
+
+Assert equals:
+- actual: ${result}
+  expected: ['1', '2', '3', '4']
+
+---
+Test case: Reset data
+
+Http POST:
+  path: /reset
+Http GET: /items
+
+Assert equals:
+- actual: ${result}
+  expected: ['1', '2', '3']

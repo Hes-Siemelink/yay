@@ -1,8 +1,9 @@
 Result: something
----
+
 Assert equals:
 - actual: ${result}
   expected: something
+
 ---
 For each:
   item:
@@ -11,7 +12,7 @@ For each:
   - three
   Do:
   - ${result}: ${result} ${item}
----
+
 Assert equals:
 - actual: ${result}
   expected: something three

@@ -1,25 +1,51 @@
 import flask
-import threading
-import sys
+from threading import Thread
+
+#
+# Server setup
+#
+
+app = flask.Flask("Yay test server")
+app.env = 'Sample'
+
+
+#
+# Server data and behavior
+#
+
+def default_data():
+    return {
+        '1': 'One',
+        '2': 'Two',
+        '3': 'Three'
+    }
+
+data = default_data()
+
+@app.route('/items', methods=['GET'])
+def list_items():
+    return flask.jsonify(list(data.keys()))
+
+@app.route('/items', methods=['POST'])
+def add_item():
+    data['4'] = 'Four'
+    return flask.jsonify({'4': 'Four'})
+
+@app.route('/reset', methods=['POST'])
+def reset():
+    print ("Resetting data")
+    data.clear()
+    data.update(default_data())
+    return ''
+
+#
+# Server start
+#
 
 def start():
-    thread = threading.Thread(name = 'http.server', target = start_server)
+    thread = Thread(name = 'http.server', target = app.run)
     thread.setDaemon(True)
     thread.start()
 
-
-def start_server():
-    app = flask.Flask("Yay test server")
-    app.add_url_rule("/users", view_func = get_users)
-    app.env = True
-    app.run()
-
-
-users = [1 ,2, 3]
-
-def get_users():
-    return flask.jsonify(users)
-
-
 if __name__ == '__main__':
-    start_server()
+    app.run()
