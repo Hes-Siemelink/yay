@@ -1,0 +1,86 @@
+# Simple if with equals
+If:
+  item: a value
+  equals: a value
+  Do:
+    ${result}: Match
+
+Assert equals:
+- actual: ${result}
+  expected: Match
+
+---
+# Simple if with 'in'
+If:
+  item: chocolate
+  in:
+  - milk
+  - chocolate
+  - cookies
+  Do:
+    ${chocolate}: Found
+
+Assert equals:
+- actual: ${chocolate}
+  expected: Found
+
+---
+# If with and / or
+If:
+  all:
+  - item: a value
+    equals: a value
+  - any:
+    - item: selection
+      equals: nothing
+    - item: selection
+      equals: selection
+  Do:
+    ${result}: Any Match
+
+Assert equals:
+- actual: ${result}
+  expected: Any Match
+
+---
+# If, matching any, no break
+If:
+- item: one
+  equals: one
+  Do:
+    ${one}: 1
+- item: two
+  equals: two
+  Do:
+    ${two}: 2
+
+Assert equals:
+- actual:
+  - ${one}
+  - ${two}
+  expected:
+  - 1
+  - 2
+
+---
+# If then else, break after each condition
+Switch:
+- item: a value
+  equals: a value
+  Do:
+    ${first}: First match
+- item: another value
+  in: another value
+  Do:
+    ${second}: Second match
+- ${default}: Deafult match
+
+Assert equals:
+- actual:
+  - ${first}
+  - ${second}
+  - ${default}
+  expected:
+  - First match
+  - ${second}
+  - ${default}
