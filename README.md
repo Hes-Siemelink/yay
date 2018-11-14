@@ -43,7 +43,8 @@ Running the above example will give the following output:
 $ yay search
 {
   "My stuff": [
-    "apples, pears"
+    "apples",
+    "pears"
   ],
   "Other stuff": [
     "oranges",
@@ -76,9 +77,10 @@ We also change the output to be YAML using the `Print as YAML` task.
 You can pass variable values through the command line:
 
 ```
-$ yay search2 query=My
+$ yay search2 query='My stuff'
 My stuff:
-- apples, pears
+- apples
+- pears
 ```
     
 
@@ -96,14 +98,15 @@ exampleUrl: http://user:pass@localhost:5000
 ```
 Http GET:
   url:  ${exampleUrl}
-  path: /rest/search?query=stuff
-Print as JSON: ${result}
+  path: /rest/search?query=${query}
+Print as YAML: ${result}
 ```
+
+## Inspect result using JSON path
+
 
 
 ## Chain requests
-
-## Inspect result using JSON path
 
 ## Ask for parameters
 

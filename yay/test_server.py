@@ -42,7 +42,7 @@ def reset():
 
 
 search_data = {
-    'My stuff': ['apples, pears'],
+    'My stuff': ['apples', 'pears'],
     'Other stuff': ['oranges', 'lemons']
 }
 
