@@ -9,6 +9,7 @@ from yay.util import *
 #
 # Control flow
 #
+
 RESULT_VARIABLE = 'result'
 
 def process_tasks(tasks, variables = {}):
@@ -51,6 +52,9 @@ class FlowBreak(Exception):
     def __init__(self, result = None):
         self.result = result
 
+def noop(data, variables):
+    pass
+
 #
 # For each
 #
@@ -82,7 +86,7 @@ def get_foreach_variable(data):
         return variable
 
 #
-# If
+# If and Switch
 #
 
 def if_statement(data, variables):
@@ -174,8 +178,9 @@ class Any():
     def __repr__(self):
         return f"OR {self.list}"
 
-def noop(data, variables):
-    pass
+#
+# Assert
+#
 
 def assert_equals(data, variables):
     actual = get_parameter(data, 'actual')
