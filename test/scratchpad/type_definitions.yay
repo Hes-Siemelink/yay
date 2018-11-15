@@ -1,0 +1,45 @@
+Task definition:
+
+  Name: Replace
+  Description: |
+    Find and replaces text.
+
+  Parameters:
+  - part:
+      description: |
+        The part that will be replaced.
+      required: true
+      type: text
+  - in:
+      description: |
+        The text to search in.
+      required: true
+      type: text
+  - with:
+      description: |
+        The text to replace the search string with
+      required: true
+      type: text
+
+  Output:
+    result:
+      description: |
+        The replaced text
+      type: text
+
+  Implementation:
+    python: |
+      text = parameter('in')
+      replacement = parameter('with')
+
+      output['result'] = parameter['in'].replace(parameter['part'], parameter['with'])
+
+  Test cases:
+  - Replace:
+      part: me
+      in: Hello me
+      with: World
+
+    Assert equals:
+    - actual: ${result}
+      expected: Hello World
