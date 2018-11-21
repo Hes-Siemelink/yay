@@ -32,7 +32,7 @@ Task definition:
       text = parameter('in')
       replacement = parameter('with')
 
-      output['result'] = parameter['in'].replace(parameter['part'], parameter['with'])
+      output['result'] = text.replace(parameter['part'], replacement)
 
   Test cases:
   - Replace:

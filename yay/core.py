@@ -7,34 +7,50 @@ from yay import vars
 from yay.util import *
 
 #
-# Control flow
+# Execution logic
 #
 
 RESULT_VARIABLE = 'result'
 
 def process_tasks(tasks, variables = {}):
+    # Execute all tasks
     result = None
     for task in tasks:
         result = process_task(task, variables)
     return result
 
 def process_task(task, variables = {}):
+
+    # Execute all handlers in a task
     result = None
     for action in task:
+
+        # Variable assignement
         variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, action)
         if variableMatch:
             variables[variableMatch.group(1)] = task[action]
+
+        # Execute handler
         elif action in handlers:
             result = invoke_handler(handlers[action], task[action], variables)
+
+        # Unknown action
         else:
             raise YayException("Unknown action: {}".format(action))
+
     return result
 
 
 def invoke_handler(handler, data, variables):
+
+    # Process list as a sequence of actions
     for taskData in as_list(data):
+
+        # Execute the handler
         try:
             result = invoke_single_handler(handler, taskData, variables)
+
+        # Stop processing on a break statement
         except FlowBreak as f:
             result = f.result
             break
@@ -42,8 +58,14 @@ def invoke_handler(handler, data, variables):
     return result
 
 def invoke_single_handler(handler, rawData, variables):
+
+    # Resolve variables
     data = vars.resolve_variables(rawData, variables)
+
+    # Execute action
     result = handler(data, variables)
+
+    # Store result
     if not result == None:
         variables[RESULT_VARIABLE] = result
     return result
@@ -52,12 +74,15 @@ class FlowBreak(Exception):
     def __init__(self, result = None):
         self.result = result
 
+
+#
+# Control flow
+#
+
 def noop(data, variables):
     pass
 
-#
 # For each
-#
 
 def foreach(data, variables):
     actions = get_parameter(data, 'Do')
@@ -85,24 +110,20 @@ def get_foreach_variable(data):
             continue
         return variable
 
-#
-# If and Switch
-#
+# If and if any
 
-def if_statement(data, variables):
+def if_any_statement(data, variables):
+    if_statement(data, variables, True)
+
+def if_statement(data, variables, break_on_success = False):
     actions = get_parameter(data, 'Do')
     term = parse_conditions(data)
 
     if term.is_true():
         invoke_handler(process_task, actions, variables)
 
-def switch_statement(data, variables):
-    actions = get_parameter(data, 'Do')
-    term = parse_conditions(data)
-
-    if term.is_true():
-        invoke_handler(process_task, actions, variables)
-        raise FlowBreak()
+        if break_on_success:
+            raise FlowBreak()
 
 def parse_conditions(data):
     if 'item' in data:
@@ -263,7 +284,7 @@ def register(type, handler):
 register('Do', process_task)
 register('For each', foreach)
 register('If', if_statement)
-register('Switch', switch_statement)
+register('If any', if_any_statement)
 register('Assert equals', assert_equals)
 
 register('Set', set_variable)

@@ -64,7 +64,7 @@ Assert equals:
 
 ---
 # If then else, break after each condition
-Switch:
+If any:
 - item: a value
   equals: a value
   Do:
