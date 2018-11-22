@@ -197,7 +197,129 @@ This will give the same output as above.
 
 ## Inspect results using JSON path
 
+Suppose you get a structured response and you want need only part of the data.
+
+For example, let's try to find the list of ingredients for a certain recipe using our example server.
+
+First, we will get the entire recipe.
+
+**File: show-recipe.yay**
+```
+Http endpoint: ${exampleUrl}
+---
+Http GET: /recipe/${recipe}
+Print as YAML: ${result}
+```
+
+The result is:
+
+```
+$ yay show-recipe recipe='Roasted Asparagus'
+ingredients:
+- name: Asparagus
+  quantity: 1 lb
+  type: Produce
+- name: olive oil
+  quantity: 1 1/2 tbsp
+  type: Condiments
+- name: kosher salt
+  quantity: 1/2 tsp
+  type: Baking
+name: Roasted Asparagus
+steps:
+- "Preheat oven to 425\xB0F."
+- Cut off the woody bottom part of the asparagus spears and discard.
+- With a vegetable peeler, peel off the skin on the bottom 2-3 inches of the spears
+  (this keeps the asparagus from being all.",string.", and if you eat asparagus you
+  know what I mean by that).
+- Place asparagus on foil-lined baking sheet and drizzle with olive oil.
+- Sprinkle with salt.
+- With your hands, roll the asparagus around until they are evenly coated with oil
+  and salt.
+- Roast for 10-15 minutes, depending on the thickness of your stalks and how tender
+  you like them.
+- They should be tender when pierced with the tip of a knife.
+- The tips of the spears will get very brown but watch them to prevent burning.
+- They are great plain, but sometimes I serve them with a light vinaigrette if we
+  need something acidic to balance out our meal.
+vegetarian: true
+```
+
+We see that the ingredients are listed in the key `ingredients`. We can extract the ingredients by simply adding the key to the result variable using JSON path syntax.
+
+**File: show-ingredients-only.yay**
+```
+Http endpoint: ${exampleUrl}
+---
+Http GET: /recipe/${recipe}
+Print as YAML: ${result.ingredients}
+```
+
+The result is:
+
+```
+$ yay show-ingredients-only recipe='Roasted Asparagus'
+- name: Asparagus
+  quantity: 1 lb
+  type: Produce
+- name: olive oil
+  quantity: 1 1/2 tbsp
+  type: Condiments
+- name: kosher salt
+  quantity: 1/2 tsp
+  type: Baking
+```
+
 ## Chain requests
+
+Yay makes it easy to chain requests, and allow for some interaction. In the previous example, we needed to specify the name of the recipe as a command-line parameter. This is awkward, because you need to type the precise name.
+
+In this example, we get the list of recipes, then ask the user to choose a recipe and show the ingredients.
+
+**File: show-ingredients.yay**
+```
+Http endpoint: ${exampleUrl}
+---
+Http GET: /recipes
+---
+User Input:
+  type: list
+  message: Select recipe
+  name: recipe
+  choices: ${result}
+---
+Http GET: /recipe/${recipe}
+Print: |
+  Ingredients for ${recipe}:
+  ${result.ingredients}
+```
+
+This will result in the following interaction:
+```
+$ yay show-ingredients
+? Select recipe  (Use arrow keys)
+   Crock Pot Roast
+ > Roasted Asparagus
+   Curried Lentils and Rice
+   Big Night Pizza
+   Cranberry and Apple Stuffed Acorn Squash Recipe
+   Mic's Yorkshire Puds
+   Old-Fashioned Oatmeal Cookies
+   Blueberry Oatmeal Squares
+   Curried chicken salad
+
+Ingredients for Roasted Asparagus:
+- name: Asparagus
+  quantity: 1 lb
+  type: Produce
+- name: olive oil
+  quantity: 1 1/2 tbsp
+  type: Condiments
+- name: kosher salt
+  quantity: 1/2 tsp
+  type: Baking
+
+```
 
 ## GET-modify-POST pattern
 

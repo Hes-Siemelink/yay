@@ -1,0 +1,14 @@
+Http endpoint: ${exampleUrl}
+---
+Http GET: /recipes
+---
+User Input:
+  type: list
+  message: Select recipe
+  name: recipe
+  choices: ${result}
+---
+Http GET: /recipe/${recipe}
+Print: |
+  Ingredients for ${recipe}:
+  ${result.ingredients}

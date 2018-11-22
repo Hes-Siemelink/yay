@@ -51,13 +51,19 @@ def load_demo_data(file_name):
 demo_data = load_demo_data('test_server_demo_data.yaml')
 
 @app.route('/recipes', methods=['GET'])
-def get_recipes():
+def get_recipe_list():
     recipes = [item['name'] for item in demo_data]
 
     return flask.jsonify(recipes)
 
+@app.route('/recipe/<name>', methods=['GET'])
+def get_recipe(name):
+    recipe = next(recipe for recipe in demo_data if recipe['name'] == name)
+
+    return flask.jsonify(recipe)
+
 @app.route('/recipes/search', methods=['GET'])
-def get_recipe():
+def search():
     query = request.args.get('keyword')
 
     recipes = [item['name'] for item in demo_data if query in item['name']]
