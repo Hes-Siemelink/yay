@@ -24,7 +24,7 @@ Print as JSON: ${result}
   
 Invoke it using the `yay` command:
 
-    $ yay search
+    $ yay list-recipes
 
 What happens here:
 1. Yay appends `.yay` and finds the file `search.yay`. 
@@ -42,15 +42,9 @@ Running the above example will give the following output:
 ```
 $ yay list-recipes
 [
-  "Crock Pot Roast",
-  "Roasted Asparagus",
-  "Curried Lentils and Rice",
-  "Big Night Pizza",
-  "Cranberry and Apple Stuffed Acorn Squash Recipe",
-  "Mic's Yorkshire Puds",
-  "Old-Fashioned Oatmeal Cookies",
-  "Blueberry Oatmeal Squares",
-  "Curried chicken salad"
+  "Mango and coconut ice cream",
+  "Ratatouille",
+  "Meatballs"
 ]
 ```
 
@@ -78,9 +72,8 @@ We also change the output to be YAML using the `Print as YAML` task.
 You can pass variable values through the command line:
 
 ```
-$ yay search keyword=Oatmeal
-- Old-Fashioned Oatmeal Cookies
-- Blueberry Oatmeal Squares
+$ yay search keyword=Mango
+- Mango and coconut ice cream
 ```
     
 ## Store your credentials
@@ -103,9 +96,8 @@ Print as YAML: ${result}
 This gives the same output as before:
 
 ```
-$ yay search2 keyword=Oatmeal
-- Old-Fashioned Oatmeal Cookies
-- Blueberry Oatmeal Squares
+$ yay search2 keyword=Mango
+- Mango and coconut ice cream
 ```
 
 ## Ask for parameters
@@ -128,9 +120,8 @@ You will now get a question on the command line. Very useful if you don't want t
 
 ```
 $ yay search-recipes
-? Search recipes with keyword:  Oatmeal
-- Old-Fashioned Oatmeal Cookies
-- Blueberry Oatmeal Squares
+? Search recipes with keyword:  Mango
+- Mango and coconut ice cream
 ```
 
 ## Multiple requests
@@ -161,17 +152,11 @@ Here is the output:
 ```
 $ yay list-options
 Vegetarian options:
-- Roasted Asparagus
-- Curried Lentils and Rice
-- Big Night Pizza
-- Cranberry and Apple Stuffed Acorn Squash Recipe
-- Mic's Yorkshire Puds
-- Old-Fashioned Oatmeal Cookies
-- Blueberry Oatmeal Squares
+- Mango and coconut ice cream
+- Ratatouille
 
 Non-vegetarian options:
-- Crock Pot Roast
-- Curried chicken salad
+- Meatballs
 ```
 
 ## Setting a default endpoint
@@ -214,34 +199,29 @@ Print as YAML: ${result}
 The result is:
 
 ```
-$ yay show-recipe recipe='Roasted Asparagus'
+$ yay show-recipe recipe='Mango and coconut ice cream'
 ingredients:
-- name: Asparagus
-  quantity: 1 lb
-  type: Produce
-- name: olive oil
-  quantity: 1 1/2 tbsp
+- name: Mangos
+  quantity: '2'
+  type: Fruit
+- name: Coconut milk
+  quantity: 1 can
+  type: Diary
+- name: Condensed milk
+  quantity: 1 can
+  type: Diary
+- name: Cardamom
+  quantity: 4 seeds
   type: Condiments
-- name: kosher salt
-  quantity: 1/2 tsp
-  type: Baking
-name: Roasted Asparagus
+- name: Sugar
+  quantity: 2 tbsp
+  type: Condiments
+name: Mango and coconut ice cream
 steps:
-- "Preheat oven to 425\xB0F."
-- Cut off the woody bottom part of the asparagus spears and discard.
-- With a vegetable peeler, peel off the skin on the bottom 2-3 inches of the spears
-  (this keeps the asparagus from being all.",string.", and if you eat asparagus you
-  know what I mean by that).
-- Place asparagus on foil-lined baking sheet and drizzle with olive oil.
-- Sprinkle with salt.
-- With your hands, roll the asparagus around until they are evenly coated with oil
-  and salt.
-- Roast for 10-15 minutes, depending on the thickness of your stalks and how tender
-  you like them.
-- They should be tender when pierced with the tip of a knife.
-- The tips of the spears will get very brown but watch them to prevent burning.
-- They are great plain, but sometimes I serve them with a light vinaigrette if we
-  need something acidic to balance out our meal.
+- Put everything in the blender and mix it twice in 'Smoothie' mode.
+- Let it cool in the fridge for two hours
+- Mix in ice cream maker for 20 minutes
+- Freeze for 30 minutes, mix with hand mixer. Do this twice
 vegetarian: true
 ```
 
@@ -258,16 +238,22 @@ Print as YAML: ${result.ingredients}
 The result is:
 
 ```
-$ yay show-ingredients-only recipe='Roasted Asparagus'
-- name: Asparagus
-  quantity: 1 lb
-  type: Produce
-- name: olive oil
-  quantity: 1 1/2 tbsp
+$ yay show-ingredients-only recipe='Mango and coconut ice cream'
+- name: Mangos
+  quantity: '2'
+  type: Fruit
+- name: Coconut milk
+  quantity: 1 can
+  type: Diary
+- name: Condensed milk
+  quantity: 1 can
+  type: Diary
+- name: Cardamom
+  quantity: 4 seeds
   type: Condiments
-- name: kosher salt
-  quantity: 1/2 tsp
-  type: Baking
+- name: Sugar
+  quantity: 2 tbsp
+  type: Condiments
 ```
 
 ## Chain requests
@@ -298,26 +284,26 @@ This will result in the following interaction:
 ```
 $ yay show-ingredients
 ? Select recipe  (Use arrow keys)
-   Crock Pot Roast
- > Roasted Asparagus
-   Curried Lentils and Rice
-   Big Night Pizza
-   Cranberry and Apple Stuffed Acorn Squash Recipe
-   Mic's Yorkshire Puds
-   Old-Fashioned Oatmeal Cookies
-   Blueberry Oatmeal Squares
-   Curried chicken salad
-
-Ingredients for Roasted Asparagus:
-- name: Asparagus
-  quantity: 1 lb
-  type: Produce
-- name: olive oil
-  quantity: 1 1/2 tbsp
+ > Mango and coconut ice cream
+   Ratatouille
+   Meatballs
+   
+Ingredients for Mango and coconut ice cream:
+- name: Mangos
+  quantity: '2'
+  type: Fruit
+- name: Coconut milk
+  quantity: 1 can
+  type: Diary
+- name: Condensed milk
+  quantity: 1 can
+  type: Diary
+- name: Cardamom
+  quantity: 4 seeds
   type: Condiments
-- name: kosher salt
-  quantity: 1/2 tsp
-  type: Baking
+- name: Sugar
+  quantity: 2 tbsp
+  type: Condiments
 
 ```
 
