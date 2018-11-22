@@ -18,7 +18,9 @@ Assert equals:
 
 ---
 Test case: Use list in text
-${list_replacement}: "My list:\n${list}"
+${list_replacement}: |
+  My list:
+  ${list}
 
 
 Assert equals:
@@ -31,7 +33,9 @@ Assert equals:
 
 ---
 Test case: Use map in text
-${map_replacement}: "My map:\n${map}"
+${map_replacement}: |
+  My map:
+  ${map}
 
 
 Assert equals:
