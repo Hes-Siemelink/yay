@@ -1,0 +1,43 @@
+${text}: some text
+${list}:
+- 1
+- 2
+- 3
+${map}:
+  1: One
+  2: Two
+  3: Three
+
+---
+Test case: Text replacement
+${text_replacement}: Here is ${text}
+
+Assert equals:
+  actual: ${text_replacement}
+  expected: Here is some text
+
+---
+Test case: Use list in text
+${list_replacement}: "My list:\n${list}"
+
+
+Assert equals:
+  actual: ${list_replacement}
+  expected: |
+    My list:
+    - 1
+    - 2
+    - 3
+
+---
+Test case: Use map in text
+${map_replacement}: "My map:\n${map}"
+
+
+Assert equals:
+  actual: ${map_replacement}
+  expected: |
+    My map:
+    1: One
+    2: Two
+    3: Three

@@ -31,6 +31,8 @@ def resolve_variables_in_string(text, variables):
         for variable in variablesInText:
             value = get_value_with_path(variable, variables)
             if value:
+                if is_dict(value) or is_list(value):
+                    value = format_yaml(value).strip()
                 text = text.replace(in_var_syntax(variable), value)
         return text
 

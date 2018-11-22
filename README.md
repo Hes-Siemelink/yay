@@ -142,17 +142,19 @@ You can do multiple requests in one file. Just use the YAML `---` syntax to sepa
 Http GET:
   url:  ${exampleUrl}
   path: /recipes/options?vegetarian=true
-Print: 'Vegetarian options:'
-Print as YAML: ${result}
+Print: |
+  Vegetarian options:
+  ${result}
 ---
 Http GET:
   url:  ${exampleUrl}
   path: /recipes/options?vegetarian=false
-Print: 'Non-vegetarian options:'
-Print as YAML: ${result}
+Print: |
+  Non-vegetarian options:
+  ${result}
 ```
 
-We use a task called **Print**, which does what you would expect: printing regular text. Keep in mind that  you need to quote a printable string when using special YAML characters like `:`.
+We use a task called **Print**, which does what you would expect: printing regular text. You can refer to variables in the text and they will be expanded to YAML.
  
 Here is the output:
 
@@ -181,13 +183,14 @@ Usually if you make multiple requests you will use the same endpoint, so we shou
 Http endpoint: ${exampleUrl}
 ---
 Http GET: /recipes/options?vegetarian=true
-Print: 'Vegetarian options:'
-Print as YAML: ${result}
+Print: |
+  Vegetarian options:
+  ${result}
 ---
 Http GET: /recipes/options?vegetarian=false
-Print: 'Non-vegetarian options:'
-Print as YAML: ${result}
-
+Print: |
+  Non-vegetarian options:
+  ${result}
 ```
 
 This will give the same output as above.
