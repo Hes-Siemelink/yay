@@ -1,0 +1,84 @@
+Test case: Merge two dicts, second one overwrites properties from the first.
+
+Merge:
+- label: first
+  header: accept
+- label: second
+  content: body
+
+Assert equals:
+  actual: ${result}
+  expected:
+    label: second
+    header: accept
+    content: body
+
+---
+Test case: Merge with variable
+
+${package}:
+  label: second
+  header: accept
+  content: body
+
+Merge:
+- ${package}
+- footer: end
+
+Assert equals:
+  actual: ${result}
+  expected:
+    label: second
+    header: accept
+    content: body
+    footer: end
+
+---
+Test case: Merge two lists
+
+${list1}:
+- 1
+- 2
+- 3
+${list2}:
+- 4
+- 5
+- 6
+
+Merge:
+- ${list1}
+- ${list2}
+
+Assert equals:
+  actual: ${result}
+  expected:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+
+---
+Test case: Join list with more items
+
+${list1}:
+- 1
+- 2
+- 3
+
+Merge:
+- ${list1}
+- 4
+- 5
+- 6
+
+Assert equals:
+  actual: ${result}
+  expected:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6

@@ -11,6 +11,7 @@ from yay.util import *
 #
 
 RESULT_VARIABLE = 'result'
+INDICATES_FIRST = '_first'
 
 def process_tasks(tasks, variables = {}):
     # Execute all tasks
@@ -43,8 +44,14 @@ def process_task(task, variables = {}):
 
 def invoke_handler(handler, data, variables):
 
+    first = True
+
     # Process list as a sequence of actions
     for taskData in as_list(data):
+
+        if first:
+            variables[INDICATES_FIRST] = True
+            first = False
 
         # Execute the handler
         try:
@@ -54,6 +61,10 @@ def invoke_handler(handler, data, variables):
         except FlowBreak as f:
             result = f.result
             break
+
+        finally:
+            if INDICATES_FIRST in variables:
+                del variables[INDICATES_FIRST]
 
     return result
 
@@ -248,6 +259,19 @@ def join_single_variable(var, updates, variables):
             value.extend(as_list(update))
     variables[var] = value
 
+def merge(data, variables):
+    if variables.get(INDICATES_FIRST):
+        variables[RESULT_VARIABLE] = data
+        return
+
+    value = variables[RESULT_VARIABLE]
+    if is_dict(value):
+        value.update(data)
+    elif is_list(value):
+        value.extend(as_list(data))
+
+    return value
+
 #
 # Replace
 #
@@ -291,6 +315,8 @@ register('Set', set_variable)
 register('Set variable', set_variable)
 register('Result', result)
 register('Join', join)
+register('Merge into variable', join)
+register('Merge', merge)
 
 register('Print JSON', print_json)
 register('Print as JSON', print_json)

@@ -11,7 +11,6 @@ class TestCore():
 
         assert len(mock.invocations) == 1
         assert mock.invocations[0].data == 'something'
-        assert mock.invocations[0].variables == {}
 
 
     def test_process_tasks(self):
@@ -27,9 +26,7 @@ class TestCore():
 
         assert len(mock.invocations) == 2
         assert mock.invocations[0].data == 'something'
-        assert mock.invocations[0].variables == {}
         assert mock.invocations[1].data == 'something else'
-        assert mock.invocations[0].variables == {}
 
 
     def test_for_each(self):
