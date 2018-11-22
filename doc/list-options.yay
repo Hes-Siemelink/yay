@@ -1,0 +1,11 @@
+Http GET:
+  url:  ${exampleUrl}
+  path: /recipes/options?vegetarian=true
+Print: 'Vegetarian options:'
+Print as YAML: ${result}
+---
+Http GET:
+  url:  ${exampleUrl}
+  path: /recipes/options?vegetarian=false
+Print: 'Non-vegetarian options:'
+Print as YAML: ${result}

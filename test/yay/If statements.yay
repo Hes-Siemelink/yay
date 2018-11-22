@@ -43,7 +43,7 @@ Assert equals:
   expected: Any Match
 
 ---
-# If, matching any, no break
+# If matching each item; no break
 If:
 - item: one
   equals: one
@@ -63,7 +63,7 @@ Assert equals:
   - 2
 
 ---
-# If then else, break after each condition
+# If then else; break after successful match
 If any:
 - item: a value
   equals: a value

@@ -1,4 +1,4 @@
 Http GET:
   url:  http://localhost:5000
-  path: /rest/search?query=stuff
-Print as JSON: ${result}
+  path: /recipes/search?keyword=${keyword}
+Print as YAML: ${result}

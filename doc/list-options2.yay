@@ -1,0 +1,9 @@
+Http endpoint: ${exampleUrl}
+---
+Http GET: /recipes/options?vegetarian=true
+Print: 'Vegetarian options:'
+Print as YAML: ${result}
+---
+Http GET: /recipes/options?vegetarian=false
+Print: 'Non-vegetarian options:'
+Print as YAML: ${result}

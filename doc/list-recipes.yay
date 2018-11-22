@@ -1,0 +1,4 @@
+Http GET:
+  url:  http://localhost:5000
+  path: /recipes
+Print as JSON: ${result}

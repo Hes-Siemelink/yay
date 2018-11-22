@@ -2,6 +2,7 @@ import flask
 from flask import request
 
 from threading import Thread
+from yay.util import *
 
 #
 # Server setup
@@ -41,25 +42,37 @@ def reset():
     return ''
 
 
-search_data = {
-    'My stuff': ['apples', 'pears'],
-    'Other stuff': ['oranges', 'lemons']
-}
+def load_demo_data(file_name):
+    basePath = os.path.dirname(os.path.realpath(__file__))
+    file = os.path.join(basePath, file_name)
 
-@app.route('/rest/search', methods=['GET'])
-def search():
-    query = request.args.get('query')
+    return read_yaml_file(file)[0]
 
-    search_result = {}
-    if query:
-        for key in search_data:
-            if query in key:
-                search_result[key] = search_data[key]
-    else:
-        search_result = search_data
+demo_data = load_demo_data('test_server_demo_data.yaml')
 
-    return flask.jsonify(search_result)
+@app.route('/recipes', methods=['GET'])
+def get_recipes():
+    recipes = [item['name'] for item in demo_data]
 
+    return flask.jsonify(recipes)
+
+@app.route('/recipes/search', methods=['GET'])
+def get_recipe():
+    query = request.args.get('keyword')
+
+    recipes = [item['name'] for item in demo_data if query in item['name']]
+
+    return flask.jsonify(recipes)
+
+@app.route('/recipes/options', methods=['GET'])
+def get_options():
+    vegetarian = request.args.get('vegetarian')
+    if vegetarian != None:
+        vegetarian = vegetarian=='true'
+
+    recipes = [item['name'] for item in demo_data if vegetarian == None or item['vegetarian'] == vegetarian]
+
+    return flask.jsonify(recipes)
 
 #
 # Server start

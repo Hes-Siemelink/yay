@@ -1,4 +1,0 @@
-Http GET:
-  url:  ${exampleUrl}
-  path: /rest/search?query=${query}
-Print as YAML: ${result}
