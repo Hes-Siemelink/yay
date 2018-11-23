@@ -1,7 +1,6 @@
 User Input:
   type: checkbox
   message: Select region
-  name: region
   choices:
   - name: Africa
   - name: Asia
@@ -11,4 +10,4 @@ User Input:
   - name: Australia/Oceania
 ---
 Print: 'You chose:'
-Print YAML: ${region}
+Print YAML: ${result}

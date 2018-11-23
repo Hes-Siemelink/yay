@@ -108,11 +108,10 @@ You can make the script interactive by asking the parameters on the command line
 ```
 User Input:
   type: input
-  name: keyword
   message: "Search recipes with keyword:"
 Http GET:
   url:  ${exampleUrl}
-  path: /recipes/search?keyword=${keyword}
+  path: /recipes/search?keyword=${result}
 Print as YAML: ${result}
 ```
 
@@ -271,16 +270,17 @@ Http GET: /recipes
 User Input:
   type: list
   message: Select recipe
-  name: recipe
   choices: ${result}
+Set: recipe
 ---
 Http GET: /recipe/${recipe}
 Print: |
-  Ingredients for ${recipe}:
+  Ingredients for ${result.name}:
   ${result.ingredients}
 ```
 
 This will result in the following interaction:
+
 ```
 $ yay show-ingredients
 ? Select recipe  (Use arrow keys)
@@ -304,7 +304,6 @@ Ingredients for Mango and coconut ice cream:
 - name: Sugar
   quantity: 2 tbsp
   type: Condiments
-
 ```
 
 ## GET-modify-POST pattern

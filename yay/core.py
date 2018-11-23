@@ -11,7 +11,7 @@ from yay.util import *
 #
 
 RESULT_VARIABLE = 'result'
-FIRST_EXECUTION_IN_LIST = '_first'
+FIRST_EXECUTION_IN_LIST = '_first_execution_of_list'
 
 def process_tasks(tasks, variables = {}):
     # Execute all tasks
