@@ -11,7 +11,7 @@ from yay.util import *
 #
 
 RESULT_VARIABLE = 'result'
-INDICATES_FIRST = '_first'
+FIRST_EXECUTION_IN_LIST = '_first'
 
 def process_tasks(tasks, variables = {}):
     # Execute all tasks
@@ -49,8 +49,10 @@ def invoke_handler(handler, data, variables):
     # Process list as a sequence of actions
     for taskData in as_list(data):
 
-        if first:
-            variables[INDICATES_FIRST] = True
+        # Indicates if this is the first execution of a list
+        # Hack to get 'Merge' working
+        if first and is_list(data):
+            variables[FIRST_EXECUTION_IN_LIST] = True
             first = False
 
         # Execute the handler
@@ -63,8 +65,8 @@ def invoke_handler(handler, data, variables):
             break
 
         finally:
-            if INDICATES_FIRST in variables:
-                del variables[INDICATES_FIRST]
+            if FIRST_EXECUTION_IN_LIST in variables:
+                del variables[FIRST_EXECUTION_IN_LIST]
 
     return result
 
@@ -260,7 +262,7 @@ def join_single_variable(var, updates, variables):
     variables[var] = value
 
 def merge(data, variables):
-    if variables.get(INDICATES_FIRST):
+    if variables.get(FIRST_EXECUTION_IN_LIST):
         variables[RESULT_VARIABLE] = data
         return
 
