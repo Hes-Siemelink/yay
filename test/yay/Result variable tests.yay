@@ -13,6 +13,4 @@ For each:
   Do:
   - ${result}: ${result} ${item}
 
-Assert equals:
-- actual: ${result}
-  expected: something three
+Assert result equals: something three

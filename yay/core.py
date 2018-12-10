@@ -222,6 +222,12 @@ def assert_equals(data, variables):
 
     assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
 
+def assert_result_equals(data, variables):
+    actual = variables.get(RESULT_VARIABLE)
+    expected = data
+
+    assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
+
 #
 # Variables
 #
@@ -312,6 +318,7 @@ register('For each', foreach)
 register('If', if_statement)
 register('If any', if_any_statement)
 register('Assert equals', assert_equals)
+register('Assert result equals', assert_result_equals)
 
 register('Set', set_variable)
 register('Set variable', set_variable)

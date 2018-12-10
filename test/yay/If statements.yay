@@ -5,9 +5,7 @@ If:
   Do:
     ${result}: Match
 
-Assert equals:
-- actual: ${result}
-  expected: Match
+Assert result equals: Match
 
 ---
 # Simple if with 'in'
@@ -38,9 +36,7 @@ If:
   Do:
     ${result}: Any Match
 
-Assert equals:
-- actual: ${result}
-  expected: Any Match
+Assert result equals: Any Match
 
 ---
 # If matching each item; no break
