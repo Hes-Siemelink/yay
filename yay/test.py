@@ -32,9 +32,23 @@ def get_files(testDir):
     path = os.path.relpath(path)
 
     files = []
+    setup_file = None
+    teardown_file = None
     for file in os.listdir(path):
         if file.endswith('.yay'):
-            files.append(os.path.join(path, file))
+            file_with_path = os.path.join(path, file)
+            if 'setup.yay' == file:
+                setup_file = file_with_path
+            elif 'teardown.yay' == file:
+                teardown_file = file_with_path
+            else:
+                files.append(file_with_path)
+
+    if setup_file:
+        files.insert(0, setup_file)
+    if teardown_file:
+        files.append(teardown_file)
+
     return files
 
 def from_yaml(text):
