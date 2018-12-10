@@ -1,0 +1,11 @@
+Assert equals:
+  actual:
+    something:
+      id: 123
+      path: /home
+      token: !any
+  expected:
+    something:
+      id: !any
+      path: /home
+      token: 456
