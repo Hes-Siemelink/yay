@@ -100,7 +100,7 @@ def noop(data, variables):
 def foreach(data, variables):
     actions = get_parameter(data, 'Do')
     if len(data) != 2:
-        raise YayException("Foreach needs exactly two parameters: 'do' and the name of the variable.")
+        raise YayException("Foreach needs exactly two parameters: 'Do' and the name of the variable.")
 
     variable = get_foreach_variable(data)
 
