@@ -109,24 +109,24 @@ def do(data, variables):
 def foreach(data, variables):
     actions = get_parameter(data, 'Do')
     if len(data) != 2:
-        raise YayException("Foreach needs exactly two parameters: 'do' and the name of the variable.")
+        raise YayException("'For each' needs exactly two parameters: 'do' and the name of the variable.")
 
-    variable = get_foreach_variable(data)
+    loop_variable = get_foreach_variable(data)
 
-    items = vars.resolve_variables(data[variable], variables)
+    items = vars.resolve_variables(data[loop_variable], variables)
 
     for item in items:
         stash = None
-        if variable in variables:
-            stash = variables[variable]
-        variables[variable] = item
+        if loop_variable in variables:
+            stash = variables[loop_variable]
+        variables[loop_variable] = item
 
         invoke_handler(do, actions, variables)
 
         if (stash):
-            variables[variable] = stash
+            variables[loop_variable] = stash
         else:
-            del variables[variable]
+            del variables[loop_variable]
 
 def get_foreach_variable(data):
     for variable in data:
