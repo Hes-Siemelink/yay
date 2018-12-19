@@ -38,5 +38,5 @@ For each:
   Do:
   - ${result}: ${result} ${item}
 
-Expected result: something three
+Expected result: something one two three
 

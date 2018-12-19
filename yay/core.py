@@ -73,7 +73,11 @@ def invoke_handler(handler, data, variables):
 def invoke_single_handler(handler, rawData, variables):
 
     # Resolve variables
-    data = vars.resolve_variables(rawData, variables)
+    # Don't resolve variables if handler is Do or For each -- they will be resolved just in time
+    if handler in [do, foreach]:
+        data = rawData
+    else:
+        data = vars.resolve_variables(rawData, variables)
 
     # Execute action
     result = handler(data, variables)
@@ -95,6 +99,11 @@ class FlowBreak(Exception):
 def noop(data, variables):
     pass
 
+# Do task
+def do(data, variables):
+    data = vars.resolve_variables(data, variables)
+    process_task(data, variables)
+
 # For each
 
 def foreach(data, variables):
@@ -104,13 +113,15 @@ def foreach(data, variables):
 
     variable = get_foreach_variable(data)
 
-    for item in data[variable]:
+    items = vars.resolve_variables(data[variable], variables)
+
+    for item in items:
         stash = None
         if variable in variables:
             stash = variables[variable]
         variables[variable] = item
 
-        invoke_handler(process_task, actions, variables)
+        invoke_handler(do, actions, variables)
 
         if (stash):
             variables[variable] = stash
@@ -310,7 +321,7 @@ handlers = {}
 def register(type, handler):
     handlers[type] = handler
 
-register('Do', process_task)
+register('Do', do)
 register('For each', foreach)
 register('If', if_statement)
 register('If any', if_any_statement)
