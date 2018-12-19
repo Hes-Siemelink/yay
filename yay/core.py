@@ -247,9 +247,6 @@ def set_variable(data, variables):
     for var in data:
         variables[var] = data[var]
 
-def result(data, variables):
-    return data
-
 def join(data, variables):
     for var in data:
         join_single_variable(var, data[var], variables)
@@ -318,11 +315,11 @@ register('For each', foreach)
 register('If', if_statement)
 register('If any', if_any_statement)
 register('Assert equals', assert_equals)
-register('Assert result equals', assert_result_equals)
+register('Expected result', assert_result_equals)
 
 register('Set', set_variable)
 register('Set variable', set_variable)
-register('Result', result)
+register('Result', set_variable)
 register('Join', join)
 register('Merge into variable', join)
 register('Merge', merge)

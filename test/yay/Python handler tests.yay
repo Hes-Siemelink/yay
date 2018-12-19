@@ -2,4 +2,4 @@ ${greeting}: Hello
 Python: |
   result = greeting + ' World!'
 
-Assert result equals: Hello World!
+Expected result: Hello World!

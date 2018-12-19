@@ -5,9 +5,10 @@ If:
   Do:
     ${result}: Match
 
-Assert result equals: Match
+Expected result: Match
 
 ---
+
 # Simple if with 'in'
 If:
   item: chocolate
@@ -23,6 +24,7 @@ Assert equals:
   expected: Found
 
 ---
+
 # If with and / or
 If:
   all:
@@ -36,9 +38,10 @@ If:
   Do:
     ${result}: Any Match
 
-Assert result equals: Any Match
+Expected result: Any Match
 
 ---
+
 # If matching each item; no break
 If:
 - item: one
@@ -59,6 +62,7 @@ Assert equals:
   - 2
 
 ---
+
 # If then else; break after successful match
 If any:
 - item: a value

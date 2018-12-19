@@ -3,4 +3,4 @@ Replace:
   in: Hello me
   with: World
 
-Assert result equals: Hello World
+Expected result: Hello World

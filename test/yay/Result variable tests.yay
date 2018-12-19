@@ -1,10 +1,35 @@
-Result: something
+Test: a result
+
+Expected result: a result
+
+---
+Set variable:
+  result: something
 
 Assert equals:
 - actual: ${result}
   expected: something
 
 ---
+Test: a different result
+Set: var
+
+Assert equals:
+- actual: ${var}
+  expected: a different result
+
+---
+Test: some contents
+Result: var2
+
+Assert equals:
+- actual: ${var2}
+  expected: some contents
+
+---
+Set variable:
+  result: something
+
 For each:
   item:
   - one
@@ -13,4 +38,5 @@ For each:
   Do:
   - ${result}: ${result} ${item}
 
-Assert result equals: something three
+Expected result: something three
+
