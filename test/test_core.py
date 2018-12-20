@@ -4,10 +4,9 @@ from yay.test import *
 class TestCore():
 
     def test_process_task(self):
-        task = {'Test':'something'}
         mock = get_test_mock()
 
-        core.process_task(task)
+        core.process_block({'Test': 'something'})
 
         assert len(mock.invocations) == 1
         assert mock.invocations[0].data == 'something'
@@ -15,15 +14,13 @@ class TestCore():
 
 
     def test_process_tasks(self):
-        yaml = """
+        mock = get_test_mock()
+
+        run('''
         Test: something
         ---
         Test: something else
-        """
-        tasks = from_yaml(yaml)
-        mock = get_test_mock()
-
-        core.process_tasks(tasks)
+        ''')
 
         assert len(mock.invocations) == 2
         assert mock.invocations[0].data == 'something'
@@ -33,7 +30,9 @@ class TestCore():
 
 
     def test_for_each(self):
-        tasks = from_yaml("""
+        mock = get_test_mock()
+
+        run('''
         For each:
           item:
           - one
@@ -41,10 +40,7 @@ class TestCore():
           - three
           Do:
             Test: ${item}
-        """)
-        mock = get_test_mock()
-
-        core.process_tasks(tasks)
+        ''')
 
         assert len(mock.invocations) == 3
         assert mock.invocations[0].data == 'one'
@@ -55,124 +51,114 @@ class TestCore():
         assert mock.invocations[2].variables['item'] == 'three'
 
     def test_pipe_result(self):
-        tasks = from_yaml("""
+        mock = get_test_mock()
+
+        run('''
         Test: something
         ---
         Test: ${result}
-        """)
-        mock = get_test_mock()
-
-        core.process_tasks(tasks)
+        ''')
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
     def test_store_result(self):
-        tasks = from_yaml("""
+        mock = get_test_mock()
+
+        run('''
         Test: something
         Set: test_outcome
         ---
         Test: ${test_outcome}
-        """)
-        mock = get_test_mock()
-
-        core.process_tasks(tasks)
+        ''')
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
     def test_store_result_long_form(self):
-        tasks = from_yaml("""
+        mock = get_test_mock()
+
+        run('''
         Test: something
         Set:
           test_outcome: ${result}
         ---
         Test: ${test_outcome}
-        """)
-        mock = get_test_mock()
-
-        core.process_tasks(tasks)
+        ''')
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
     def test_store_result_with_path(self):
-        tasks = from_yaml("""
+        mock = get_test_mock()
+
+        run('''
         Test:
           something: nested
         Set:
           test_outcome: ${result.something}
         ---
         Test: ${test_outcome}
-        """)
-        mock = get_test_mock()
-
-        core.process_tasks(tasks, {})
+        ''')
 
         assert mock.invocations[1].data == 'nested'
 
     def test_change_result_part(self):
-        tasks = from_yaml("""
+        mock = get_test_mock()
+
+        run('''
         Test: 
           something: nested
         Set:
           result: ${result.something}
         ---
         Test: ${result}
-        """)
-        mock = get_test_mock()
-
-        core.process_tasks(tasks, {})
+        ''')
 
         assert mock.invocations[1].data == 'nested'
 
     def test_assert(self):
-        tasks = from_yaml("""
+        run('''
         Assert equals: 
           actual:   one
           expected: one
-        """)
-
-        core.process_tasks(tasks, {})
+        ''')
 
     def test_assertion_failure(self):
-        tasks = from_yaml("""
-        Assert equals: 
-          actual:   one
-          expected: two
-        """)
-
         with pytest.raises(AssertionError):
-            core.process_tasks(tasks, {})
+            core.process_script(from_yaml('''
+            Assert equals: 
+              actual:   one
+              expected: two
+            '''), {})
 
     def test_multiple_invocations_with_list(self):
-        tasks = from_yaml("""
-        Test: 
-        - something
-        - again
-        """)
         mock = get_test_mock()
 
         variables = {}
-        core.process_tasks(tasks, variables)
+        run('''
+        Test: 
+        - something
+        - again
+        ''', variables)
 
         assert len(mock.invocations) == 2
         assert variables['result'] == 'again'
 
     def test_do(self):
-        tasks = from_yaml("""
-        Do:
-        - Test: something 
-        - Test: again 
-        """)
         mock = get_test_mock()
 
         variables = {}
-        core.process_tasks(tasks, variables)
+        run('''
+        Do:
+        - Test: something 
+        - Test: again 
+        ''', variables)
 
         assert len(mock.invocations) == 2
         assert variables['result'] == 'again'
 
 
-
+def run(yay_script_in_yaml, variables = {}):
+    core.process_script(from_yaml(yay_script_in_yaml), variables)
 

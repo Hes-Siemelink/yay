@@ -33,7 +33,7 @@ def main():
         tasks = read_yaml_files(filename)
 
         # Process all
-        result = core.process_tasks(tasks, variables)
+        result = core.process_script(tasks, variables)
 
     except Exception as exception:
         # import traceback

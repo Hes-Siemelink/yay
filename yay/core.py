@@ -13,36 +13,35 @@ from yay.util import *
 RESULT_VARIABLE = 'result'
 FIRST_EXECUTION_IN_LIST = '_first_execution_of_list'
 
-def process_tasks(tasks, variables = {}):
-    # Execute all tasks
+def process_script(script, variables = {}):
     result = None
-    for task in tasks:
-        result = process_task(task, variables)
+    for block in script:
+        result = process_block(block, variables)
     return result
 
-def process_task(task, variables = {}):
+def process_block(block, variables = {}):
 
     # Execute all handlers in a task
     result = None
-    for action in task:
+    for task in block:
 
         # Variable assignement
-        variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, action)
+        variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, task)
         if variableMatch:
-            variables[variableMatch.group(1)] = task[action]
+            variables[variableMatch.group(1)] = block[task]
 
         # Execute handler
-        elif action in handlers:
-            result = invoke_handler(handlers[action], task[action], variables)
+        elif task in handlers:
+            result = execute_task(handlers[task], block[task], variables)
 
         # Unknown action
         else:
-            raise YayException("Unknown action: {}".format(action))
+            raise YayException("Unknown action: {}".format(task))
 
     return result
 
 
-def invoke_handler(handler, data, variables):
+def execute_task(handler, data, variables):
 
     first = True
 
@@ -57,7 +56,7 @@ def invoke_handler(handler, data, variables):
 
         # Execute the handler
         try:
-            result = invoke_single_handler(handler, taskData, variables)
+            result = execute_single_task(handler, taskData, variables)
 
         # Stop processing on a break statement
         except FlowBreak as f:
@@ -70,7 +69,7 @@ def invoke_handler(handler, data, variables):
 
     return result
 
-def invoke_single_handler(handler, rawData, variables):
+def execute_single_task(handler, rawData, variables):
 
     # Resolve variables
     # Don't resolve variables if handler is Do or For each -- they will be resolved just in time
@@ -99,13 +98,12 @@ class FlowBreak(Exception):
 def noop(data, variables):
     pass
 
-# Do task
+# Do
 def do(data, variables):
     data = vars.resolve_variables(data, variables)
-    process_task(data, variables)
+    process_block(data, variables)
 
 # For each
-
 def foreach(data, variables):
     actions = get_parameter(data, 'Do')
     if len(data) != 2:
@@ -121,7 +119,7 @@ def foreach(data, variables):
             stash = variables[loop_variable]
         variables[loop_variable] = item
 
-        invoke_handler(do, actions, variables)
+        execute_task(do, actions, variables)
 
         if (stash):
             variables[loop_variable] = stash
@@ -144,7 +142,7 @@ def if_statement(data, variables, break_on_success = False):
     term = parse_conditions(data)
 
     if term.is_true():
-        invoke_handler(process_task, actions, variables)
+        execute_task(process_block, actions, variables)
 
         if break_on_success:
             raise FlowBreak()
