@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="yay",
-    version="0.6",
+    version="0.7",
     author="Hes Siemelink",
     author_email="author@example.com",
     description="YAML script",

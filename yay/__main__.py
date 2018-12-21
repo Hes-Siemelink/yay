@@ -2,13 +2,17 @@
 import sys
 import os
 
-# Register handlers
+# Core handlers
 from yay import core
 from yay import http
 from yay import files
 from yay import script
 from yay import input
 from yay import xl_cli
+
+# Extension handlers
+import yay.arango
+import yay.xl_cli
 
 from yay.util import *
 

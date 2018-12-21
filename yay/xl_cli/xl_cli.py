@@ -15,5 +15,3 @@ def xl_apply(data, variables):
     finally:
         os.remove(path)
 
-# Register tasks
-core.register('XL apply', xl_apply)
