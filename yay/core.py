@@ -73,7 +73,7 @@ def execute_single_task(handler, rawData, variables):
 
     # Resolve variables
     # Don't resolve variables if handler is Do or For each -- they will be resolved just in time
-    if handler in [do, foreach]:
+    if handler in [do, foreach, if_statement, if_any_statement]:
         data = rawData
     else:
         data = vars.resolve_variables(rawData, variables)
@@ -139,6 +139,10 @@ def if_any_statement(data, variables):
 
 def if_statement(data, variables, break_on_success = False):
     actions = get_parameter(data, 'Do')
+
+    del data['Do']
+    data = vars.resolve_variables(data, variables)
+
     term = parse_conditions(data)
 
     if term.is_true():

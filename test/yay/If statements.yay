@@ -1,4 +1,5 @@
-# Simple if with equals
+Test case:  Simple if with equals
+
 If:
   item: a value
   equals: a value
@@ -9,7 +10,8 @@ Expected result: Match
 
 ---
 
-# Simple if with 'in'
+Test case:  Simple if with 'in'
+
 If:
   item: chocolate
   in:
@@ -25,7 +27,8 @@ Assert equals:
 
 ---
 
-# If with and / or
+Test case:  If with and / or
+
 If:
   all:
   - item: a value
@@ -42,7 +45,8 @@ Expected result: Any Match
 
 ---
 
-# If matching each item; no break
+Test case:  If matching each item; no break
+
 If:
 - item: one
   equals: one
@@ -63,7 +67,8 @@ Assert equals:
 
 ---
 
-# If then else; break after successful match
+Test case: If then else; break after successful match
+
 If any:
 - item: a value
   equals: a value
@@ -84,3 +89,20 @@ Assert equals:
   - First match
   - ${second}
   - ${default}
+
+---
+
+Test case:  Variable resolution in nested Do
+
+${result}: one
+
+If:
+- item: something
+  equals: something
+  Do:
+  - ${result}: two
+  - ${var}: ${result}
+
+Assert equals:
+- actual: ${var}
+  expected: two
