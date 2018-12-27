@@ -1,7 +1,7 @@
 Test case:  Simple if with equals
 
 If:
-  item: a value
+  object: a value
   equals: a value
   Do:
     ${result}: Match
@@ -13,7 +13,7 @@ Expected result: Match
 Test case:  Simple if with 'in'
 
 If:
-  item: chocolate
+  object: chocolate
   in:
   - milk
   - chocolate
@@ -31,12 +31,12 @@ Test case:  If with and / or
 
 If:
   all:
-  - item: a value
+  - object: a value
     equals: a value
   - any:
-    - item: selection
+    - object: selection
       equals: nothing
-    - item: selection
+    - object: selection
       equals: selection
   Do:
     ${result}: Any Match
@@ -48,11 +48,11 @@ Expected result: Any Match
 Test case:  If matching each item; no break
 
 If:
-- item: one
+- object: one
   equals: one
   Do:
     ${one}: 1
-- item: two
+- object: two
   equals: two
   Do:
     ${two}: 2
@@ -70,11 +70,11 @@ Assert equals:
 Test case: If then else; break after successful match
 
 If any:
-- item: a value
+- object: a value
   equals: a value
   Do:
     ${first}: First match
-- item: another value
+- object: another value
   in: another value
   Do:
     ${second}: Second match
@@ -97,7 +97,7 @@ Test case:  Variable resolution in nested Do
 ${result}: one
 
 If:
-- item: something
+- object: something
   equals: something
   Do:
   - ${result}: two

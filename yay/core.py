@@ -152,56 +152,56 @@ def if_statement(data, variables, break_on_success = False):
             raise FlowBreak()
 
 def parse_conditions(data):
-    if 'item' in data:
-        item = get_parameter(data, 'item')
+    if 'object' in data:
+        object = get_parameter(data, 'object')
 
         equals = data.get('equals')
         if (equals):
-            return Equals(item, equals)
+            return Equals(object, equals)
 
         list = data.get('in')
         if (list):
-            return Contains(item, list)
+            return Contains(object, list)
 
-        raise YayException("If with 'item' should have either 'equals' or 'in'.")
+        raise YayException("If with 'object' should have either 'equals' or 'in'.")
 
     elif 'all' in data:
         all = get_parameter(data, 'all')
-        list = [parse_conditions(item) for item in all]
+        list = [parse_conditions(condition) for condition in all]
         return All(list)
 
     elif 'any' in data:
         any = get_parameter(data, 'any')
-        list = [parse_conditions(item) for item in any]
+        list = [parse_conditions(condition) for condition in any]
         return Any(list)
 
     else:
-        raise YayException("If needs 'item', 'all' or 'any'.")
+        raise YayException("If needs 'object', 'all' or 'any'.")
 
 
 class Equals():
 
-    def __init__(self, item, equals):
-        self.item = item
+    def __init__(self, object, equals):
+        self.object = object
         self.equals = equals
 
     def is_true(self):
-        return self.item == self.equals
+        return self.object == self.equals
 
     def __repr__(self):
-        return f"{self.item} == {self.equals}"
+        return f"{self.object} == {self.equals}"
 
 class Contains():
 
-    def __init__(self, item, list):
-        self.item = item
+    def __init__(self, object, list):
+        self.object = object
         self.list = list
 
     def is_true(self):
-        return self.item in self.list
+        return self.object in self.list
 
     def __repr__(self):
-        return f"{self.item} in {self.list}"
+        return f"{self.object} in {self.list}"
 
 class All():
 
@@ -209,7 +209,7 @@ class All():
         self.list = list
 
     def is_true(self):
-        return all([item.is_true() for item in self.list])
+        return all([object.is_true() for object in self.list])
 
     def __repr__(self):
         return f"AND {self.list}"
@@ -220,7 +220,7 @@ class Any():
         self.list = list
 
     def is_true(self):
-        return any([item.is_true() for item in self.list])
+        return any([object.is_true() for object in self.list])
 
     def __repr__(self):
         return f"OR {self.list}"
