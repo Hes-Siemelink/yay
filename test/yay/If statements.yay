@@ -21,9 +21,9 @@ If:
   Do:
     ${chocolate}: Found
 
-Assert equals:
-- actual: ${chocolate}
-  expected: Found
+Assert that:
+- object: ${chocolate}
+  equals: Found
 
 ---
 

@@ -143,15 +143,15 @@ def if_statement(data, variables, break_on_success = False):
     del data['Do']
     data = vars.resolve_variables(data, variables)
 
-    term = parse_conditions(data)
+    condition = parse_condition(data)
 
-    if term.is_true():
+    if condition.is_true():
         execute_task(process_block, actions, variables)
 
         if break_on_success:
             raise FlowBreak()
 
-def parse_conditions(data):
+def parse_condition(data):
     if 'object' in data:
         object = get_parameter(data, 'object')
 
@@ -163,20 +163,20 @@ def parse_conditions(data):
         if (list):
             return Contains(object, list)
 
-        raise YayException("If with 'object' should have either 'equals' or 'in'.")
+        raise YayException("Condition with 'object' should have either 'equals' or 'in'.")
 
     elif 'all' in data:
         all = get_parameter(data, 'all')
-        list = [parse_conditions(condition) for condition in all]
+        list = [parse_condition(condition) for condition in all]
         return All(list)
 
     elif 'any' in data:
         any = get_parameter(data, 'any')
-        list = [parse_conditions(condition) for condition in any]
+        list = [parse_condition(condition) for condition in any]
         return Any(list)
 
     else:
-        raise YayException("If needs 'object', 'all' or 'any'.")
+        raise YayException("Condition needs 'object', 'all' or 'any'.")
 
 
 class Equals():
@@ -191,6 +191,12 @@ class Equals():
     def __repr__(self):
         return f"{self.object} == {self.equals}"
 
+    def as_dict(self):
+        dict = {'object': as_dict(self.object), 'equals' : as_dict(self.equals)}
+        if not self.is_true():
+            dict['RESULT'] = 'FALSE'
+        return dict
+
 class Contains():
 
     def __init__(self, object, list):
@@ -203,6 +209,12 @@ class Contains():
     def __repr__(self):
         return f"{self.object} in {self.list}"
 
+    def as_dict(self):
+        dict = {'object': as_dict(self.object), 'in' : as_dict(self.list)}
+        if not self.is_true():
+            dict['RESULT'] = 'FALSE'
+        return dict
+
 class All():
 
     def __init__(self, list):
@@ -212,7 +224,13 @@ class All():
         return all([object.is_true() for object in self.list])
 
     def __repr__(self):
-        return f"AND {self.list}"
+        return f"ALL {self.list}"
+
+    def as_dict(self):
+        dict = {'all': as_dict(self.list)}
+        if not self.is_true():
+            dict['RESULT'] = 'FALSE'
+        return dict
 
 class Any():
 
@@ -223,7 +241,25 @@ class Any():
         return any([object.is_true() for object in self.list])
 
     def __repr__(self):
-        return f"OR {self.list}"
+        return f"ANY {self.list}"
+
+    def as_dict(self):
+        dict = {'any': as_dict(self.list)}
+        if not self.is_true():
+            dict['RESULT'] = 'FALSE'
+        return dict
+
+def as_dict(object):
+    if hasattr(object, 'as_dict'):
+        return object.as_dict()
+
+    if is_list(object):
+        return [as_dict(item) for item in object]
+
+    if is_dict(object):
+        return { key: as_dict(value) for key, value in object.items() }
+
+    return object
 
 #
 # Assert
@@ -234,6 +270,18 @@ def assert_equals(data, variables):
     expected = get_parameter(data, 'expected')
 
     assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
+
+def assert_that(data, variables):
+
+    condition = parse_condition(data)
+
+    if condition.is_true():
+        return
+
+    message = "\n{}".format(format_yaml(condition.as_dict()))
+    if type(condition) is Equals:
+        message = f"\nExpected: {condition.equals}\nActual:   {condition.object}"
+    assert False, message
 
 def assert_result_equals(data, variables):
     actual = variables.get(RESULT_VARIABLE)
@@ -328,6 +376,7 @@ register('For each', foreach)
 register('If', if_statement)
 register('If any', if_any_statement)
 register('Assert equals', assert_equals)
+register('Assert that', assert_that)
 register('Expected result', assert_result_equals)
 
 register('Set', set_variable)
