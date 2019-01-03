@@ -31,5 +31,5 @@ Assert that:
     - object: one
       equals: one
   - object: three
-    equals: four
+    equals: three
 
