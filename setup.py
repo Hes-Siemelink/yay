@@ -23,7 +23,8 @@ setuptools.setup(
         'requests',
         'jsonpath_rw',
         'PyInquirer',
-        'flask'
+        'flask',
+        'python-arango'
     ],
     entry_points = {
         'console_scripts': [
