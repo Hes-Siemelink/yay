@@ -1,9 +1,16 @@
+Input:
+- jenkinsUrl: Jenkins server URL
+
+---
+
 Http GET:
   url: ${jenkinsUrl}
   path: /api/json
 Set:
   jobs: ${result.jobs}
+
 ---
+
 For each:
   job: ${jobs}
   Do:
@@ -12,6 +19,7 @@ For each:
     - ${job.url}
     - "   "
 ---
+
 Write file:
   name: jenkins-jobs.yaml
   contents: ${jobs}
