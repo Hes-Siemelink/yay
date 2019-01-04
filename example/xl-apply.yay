@@ -5,7 +5,7 @@ User Input:
 
 ---
 XL apply:
-  apiVersion: xl-release/v1beta1
+  apiVersion: xl-release/v1
   kind: Templates
   spec:
   - directory: XL Apply

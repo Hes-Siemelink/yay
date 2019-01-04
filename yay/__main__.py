@@ -46,16 +46,18 @@ def main():
 
 
 def get_file(filename):
+
+    # Add yay extension to filename if not given
+    filename = filename if filename.endswith('.yay') else filename + '.yay'
+
+    # Return file if exists
     if os.path.isfile(filename):
         return filename
 
-    yayFile = filename + ".yay"
-    if os.path.isfile(yayFile):
-        return yayFile
-
-    yamlFile = filename + ".yaml"
-    if os.path.isfile(yamlFile):
-        return yamlFile
+    # Return file from .yay home
+    filename_in_home_folder = os.path.join(os.path.expanduser('~'), '.yay', filename)
+    if os.path.isfile(filename_in_home_folder):
+        return filename_in_home_folder
 
     raise YayException(f"Could not find file: {filename}")
 
