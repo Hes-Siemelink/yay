@@ -97,7 +97,7 @@ Test case:  Variable resolution in nested Do
 ${result}: one
 
 If:
-- object: something
+  object: something
   equals: something
   Do:
   - ${result}: two
@@ -106,3 +106,15 @@ If:
 Assert equals:
 - actual: ${var}
   expected: two
+
+---
+
+Test case: Test against an empty list
+
+If:
+  object: []
+  equals: []
+  Do:
+    ${result}: Success
+
+Expected result: Success

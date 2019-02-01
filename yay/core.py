@@ -159,13 +159,11 @@ def parse_condition(data):
     if 'object' in data:
         object = get_parameter(data, 'object')
 
-        equals = data.get('equals')
-        if (equals):
-            return Equals(object, equals)
+        if 'equals' in data:
+            return Equals(object, data['equals'])
 
-        list = data.get('in')
-        if (list):
-            return Contains(object, list)
+        if 'in' in data:
+            return Contains(object, data['in'])
 
         raise YayException("Condition with 'object' should have either 'equals' or 'in'.")
 

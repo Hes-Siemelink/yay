@@ -74,7 +74,6 @@ Assert equals:
 ---
 
 Test case: variable in For each
-
 ${items}:
   - One
   - Two
