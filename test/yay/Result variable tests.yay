@@ -27,6 +27,13 @@ Assert equals:
   expected: some contents
 
 ---
+Test case: Result assignment
+${var}: something
+${result}: ${var}
+
+Expected result: something
+
+---
 Set variable:
   result: something
 
@@ -40,3 +47,26 @@ For each:
 
 Expected result: something one two three
 
+---
+Test case: Make sure variables are resolved at right time in Do task
+
+${result}: something else
+${test}: []
+
+For each:
+  recipe:
+    - Mango ice cream
+    - Ratatouille
+    - Meatballs
+  Do:
+    ${result}: ${recipe}
+    Join:
+      test:
+      - ${result}
+
+Assert equals:
+- actual: ${test}
+  expected:
+    - Mango ice cream
+    - Ratatouille
+    - Meatballs

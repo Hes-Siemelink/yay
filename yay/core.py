@@ -25,14 +25,17 @@ def process_block(block, variables = {}):
     result = None
     for task in block:
 
+        rawData = block[task]
+
         # Variable assignement
         variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, task)
         if variableMatch:
-            variables[variableMatch.group(1)] = block[task]
+            data = vars.resolve_variables(rawData, variables)
+            variables[variableMatch.group(1)] = data
 
         # Execute handler
         elif task in handlers:
-            result = execute_task(handlers[task], block[task], variables)
+            result = execute_task(handlers[task], rawData, variables)
 
         # Unknown action
         else:
@@ -100,7 +103,6 @@ def noop(data, variables):
 
 # Do
 def do(data, variables):
-    data = vars.resolve_variables(data, variables)
     process_block(data, variables)
 
 # For each
@@ -111,7 +113,7 @@ def foreach(data, variables):
 
     loop_variable = get_foreach_variable(data)
 
-    items = vars.resolve_variables(data[loop_variable], variables)
+    items = data[loop_variable]
 
     for item in items:
         stash = None
