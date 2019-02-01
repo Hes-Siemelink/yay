@@ -87,6 +87,7 @@ def execute_single_task(handler, rawData, variables):
     # Store result
     if not result == None:
         variables[RESULT_VARIABLE] = result
+
     return result
 
 class FlowBreak(Exception):
@@ -114,6 +115,7 @@ def foreach(data, variables):
     loop_variable = get_foreach_variable(data)
 
     items = data[loop_variable]
+    items = vars.resolve_variables(items, variables)
 
     for item in items:
         stash = None

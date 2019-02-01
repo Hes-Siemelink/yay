@@ -30,7 +30,7 @@ def resolve_variables_in_string(text, variables):
         variablesInText = set(re.findall(VariableMatcher.VARIABLE_REGEX, text))
         for variable in variablesInText:
             value = get_value_with_path(variable, variables)
-            if value:
+            if not value is None:
                 if is_dict(value) or is_list(value):
                     value = format_yaml(value).strip()
                 text = text.replace(in_var_syntax(variable), value)

@@ -70,3 +70,27 @@ Assert equals:
     - Mango ice cream
     - Ratatouille
     - Meatballs
+
+---
+
+Test case: variable in For each
+
+${items}:
+  - One
+  - Two
+  - Three
+${test_result}: []
+
+For each:
+  item: ${items}
+  Do:
+    Join:
+      test_result:
+      - (${item})
+
+Assert equals:
+  - actual: ${test_result}
+    expected:
+      - (One)
+      - (Two)
+      - (Three)
