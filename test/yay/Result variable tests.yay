@@ -1,8 +1,13 @@
+Test case: Expected result
+
 Test: a result
 
 Expected result: a result
 
+
 ---
+Test case: Set variable
+
 Set variable:
   result: something
 
@@ -10,7 +15,10 @@ Assert equals:
 - actual: ${result}
   expected: something
 
+
 ---
+Test case: Set variable with 'Set'
+
 Test: a different result
 Set: var
 
@@ -18,7 +26,10 @@ Assert equals:
 - actual: ${var}
   expected: a different result
 
+
 ---
+Test case: Set variable with 'Result'
+
 Test: some contents
 Result: var2
 
@@ -26,14 +37,30 @@ Assert equals:
 - actual: ${var2}
   expected: some contents
 
+
+---
+Test case: Set variable with 'As'
+
+Test: some more contents
+As: var3
+
+Assert equals:
+- actual: ${var3}
+  expected: some more contents
+
+
 ---
 Test case: Result assignment
+
 ${var}: something
 ${result}: ${var}
 
 Expected result: something
 
+
 ---
+Test case: Result from for each
+
 Set variable:
   result: something
 
@@ -46,6 +73,7 @@ For each:
   - ${result}: ${result} ${item}
 
 Expected result: something one two three
+
 
 ---
 Test case: Make sure variables are resolved at right time in Do task
@@ -71,9 +99,10 @@ Assert equals:
     - Ratatouille
     - Meatballs
 
----
 
+---
 Test case: variable in For each
+
 ${items}:
   - One
   - Two

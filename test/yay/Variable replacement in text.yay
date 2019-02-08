@@ -1,3 +1,5 @@
+Task: Set common variables
+
 ${text}: some text
 ${list}:
 - 1
@@ -8,6 +10,7 @@ ${map}:
   2: Two
   3: Three
 
+
 ---
 Test case: Text replacement
 ${text_replacement}: Here is ${text}
@@ -15,6 +18,7 @@ ${text_replacement}: Here is ${text}
 Assert equals:
   actual: ${text_replacement}
   expected: Here is some text
+
 
 ---
 Test case: Use list in text
@@ -30,6 +34,7 @@ Assert equals:
     - 1
     - 2
     - 3
+
 
 ---
 Test case: Use map in text

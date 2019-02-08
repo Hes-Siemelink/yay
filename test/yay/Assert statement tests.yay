@@ -1,4 +1,4 @@
-Test case: Assert equyals with nested objects
+Test case: Assert equals with nested objects
 
 Assert equals:
   actual:
@@ -11,16 +11,17 @@ Assert equals:
       id: !any
       path: /home
       token: 456
----
 
+
+---
 Test case: Use assert with simple 'if' syntax
 
 Assert that:
   object: one
   equals: one
 
----
 
+---
 Test case: Use assert with complicated 'if' syntax
 
 Assert that:

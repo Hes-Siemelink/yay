@@ -8,8 +8,8 @@ If:
 
 Expected result: Match
 
----
 
+---
 Test case:  Simple if with 'in'
 
 If:
@@ -25,8 +25,8 @@ Assert that:
 - object: ${chocolate}
   equals: Found
 
----
 
+---
 Test case:  If with and / or
 
 If:
@@ -43,8 +43,8 @@ If:
 
 Expected result: Any Match
 
----
 
+---
 Test case:  If matching each item; no break
 
 If:
@@ -65,8 +65,8 @@ Assert equals:
   - 1
   - 2
 
----
 
+---
 Test case: If then else; break after successful match
 
 If any:
@@ -90,8 +90,8 @@ Assert equals:
   - ${second}
   - ${default}
 
----
 
+---
 Test case:  Variable resolution in nested Do
 
 ${result}: one
@@ -107,8 +107,8 @@ Assert equals:
 - actual: ${var}
   expected: two
 
----
 
+---
 Test case: Test against an empty list
 
 If:

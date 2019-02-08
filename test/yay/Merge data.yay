@@ -13,6 +13,7 @@ Assert equals:
     header: accept
     content: body
 
+
 ---
 Test case: Merge with variable
 
@@ -32,6 +33,7 @@ Assert equals:
     header: accept
     content: body
     footer: end
+
 
 ---
 Test case: Merge two lists
@@ -58,6 +60,7 @@ Assert equals:
   - 4
   - 5
   - 6
+
 
 ---
 Test case: Join list with more items
