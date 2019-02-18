@@ -33,7 +33,11 @@ def read_file(filename):
     with open(filename, 'r') as file:
         return file.read()
 
-def read_yaml_file(fileArgument, data = []):
+def read_yaml_file(fileArgument, data = None):
+
+    if data == None:
+        data = []
+
     with open(fileArgument, 'r') as stream:
         for fileData in yaml.load_all(stream):
             data.append(fileData)
@@ -49,7 +53,10 @@ def add_from_yaml_file(fileArgument, data):
 
     return data
 
-def read_yaml_files(fileArgument, data = []):
+def read_yaml_files(fileArgument, data = None):
+
+    if data == None:
+        data = []
 
     if os.path.isdir(fileArgument):
         for root, subdirs, files in os.walk(fileArgument):
