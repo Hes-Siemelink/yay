@@ -1,7 +1,9 @@
+import os
 import pytest
 import time
 
 from yay.test import *
+from yay import core
 from yay import script
 from yay import http
 from yay import test_server
@@ -16,4 +18,7 @@ def setup_test_server():
 
 @pytest.mark.parametrize("file", yay_test_files)
 def test_yay(file):
+    basePath = os.path.dirname(os.path.realpath(file))
+    core.register_scripts(basePath)
+
     run_yay_test(file)

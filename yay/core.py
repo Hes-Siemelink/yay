@@ -1,6 +1,8 @@
 #
 # Core tasks
 #
+
+import copy
 import re
 
 from yay import vars
@@ -110,7 +112,7 @@ def do(data, variables):
 def foreach(data, variables):
     actions = get_parameter(data, 'Do')
     if len(data) != 2:
-        raise YayException("'For each' needs exactly two parameters: 'do' and the name of the variable.")
+        raise YayException("'For each' needs exactly two parameters: 'Do' and the name of the variable.")
 
     loop_variable = get_foreach_variable(data)
 
@@ -135,6 +137,25 @@ def get_foreach_variable(data):
         if variable == 'Do':
             continue
         return variable
+
+# Execute yay file
+
+def execute_yay_file(data, variables, file = None):
+    if file == None:
+        file = get_parameter(data, 'file')
+
+    # Read YAML script
+    tasks = read_yaml_files(file)
+
+    # Process all
+    vars = copy.deepcopy(variables)
+    if file in data:
+        del data['file']
+    vars.update(data)
+
+    process_script(tasks, vars)
+
+    return vars['result']
 
 # If and if any
 
@@ -373,8 +394,25 @@ handlers = {}
 def register(type, handler):
     handlers[type] = handler
 
+def register_scripts(path):
+    for filename in os.listdir(path):
+        if filename.endswith('.yay'):
+            handler_name = to_handler_name(filename)
+            filename = os.path.join(path, filename)
+            register(handler_name,
+                     lambda data, variables, file = filename:
+                        execute_yay_file(data, variables, file))
+
+def to_handler_name(filename):
+    filename = filename.replace('.yay', '')
+    filename = filename.replace('-', ' ')
+    return filename
+
 register('Do', do)
 register('For each', foreach)
+
+register('Execute yay file', execute_yay_file)
+
 register('If', if_statement)
 register('If any', if_any_statement)
 register('Assert equals', assert_equals)

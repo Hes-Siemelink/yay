@@ -36,6 +36,10 @@ def main():
         # Read YAML script
         tasks = read_yaml_files(filename)
 
+        # Register all files in same directory as handlers
+        path = os.path.dirname(os.path.abspath(filename))
+        core.register_scripts(path)
+
         # Process all
         result = core.process_script(tasks, variables)
 
