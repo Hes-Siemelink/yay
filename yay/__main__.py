@@ -18,30 +18,22 @@ from yay.util import *
 
 def main():
 
-    variables = {}
-
-    # Load default variables
-    defaultValuesFile = os.path.join(os.path.expanduser('~'), '.yay/default-variables.yaml')
-    add_from_yaml_file(defaultValuesFile, variables)
-
     try:
         # Make sure we can find the file
         filename = get_file(sys.argv[1])
 
-        # Parse arguments into values
-        for argument in sys.argv[2:]:
-            key, value = argument.split('=')
-            variables[key] = value
-
         # Read YAML script
-        tasks = read_yaml_files(filename)
+        script = read_yaml_files(filename)
 
         # Register all files in same directory as handlers
-        path = os.path.dirname(os.path.abspath(filename))
-        core.register_scripts(path)
+        script_dir = os.path.dirname(os.path.abspath(filename))
+        core.register_scripts(script_dir)
+
+        # Initialize variables
+        variables = get_variables(script_dir, sys.argv[2:])
 
         # Process all
-        result = core.process_script(tasks, variables)
+        result = core.process_script(script, variables)
 
     except Exception as exception:
         # import traceback
@@ -65,6 +57,44 @@ def get_file(filename):
 
     raise YayException(f"Could not find file: {filename}")
 
+
+def get_variables(script_dir, args):
+
+    variables = {}
+
+    # Load default variables from home dir
+    defaultValuesFile = os.path.join(os.path.expanduser('~'), '.yay/default-variables.yaml')
+    add_from_yaml_file(defaultValuesFile, variables)
+
+    # Read local context
+    context_file = os.path.join(script_dir, 'context.yay')
+    if os.path.isfile(context_file):
+        selection = get_parameter(args, '-c')
+        context = read_yaml_file(context_file)[0]
+        if selection in context:
+            variables.update(context[selection])
+        else:
+            print(f"Context {selection} not found in context.yay")
+            print_as_yaml(context)
+
+    # Parse arguments into values
+    for argument in args:
+        if '=' in argument:
+            key, value = argument.split('=')
+            variables[key] = value
+
+    return variables
+
+
+def get_parameter(args, parameter):
+    use_this_one = False
+    for argument in args:
+        if use_this_one:
+            return argument
+        if argument == parameter:
+            use_this_one = True
+
+    return 'default'
 
 # Execute script
 if __name__ == '__main__':

@@ -1,0 +1,5 @@
+default:
+  name: default
+
+test:
+  name: test

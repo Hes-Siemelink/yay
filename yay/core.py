@@ -145,7 +145,7 @@ def execute_yay_file(data, variables, file = None):
         file = get_parameter(data, 'file')
 
     # Read YAML script
-    tasks = read_yaml_files(file)
+    tasks = read_yaml_file(file)
 
     # Process all
     vars = copy.deepcopy(variables)
