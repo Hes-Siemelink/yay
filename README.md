@@ -14,6 +14,8 @@ _Note: Yay is a pre-alpha prototype. Anything can change at any moment._
  * Out-of-the-box user interaction to create wizards
  * Create DSLs on the fly 
  
+License: Apache 2.0
+
 ## Simple yay: reuse your request
 
 The starting point for Yay is to reuse HTTP requests that you would do off the command line but are too long to actually remember.
