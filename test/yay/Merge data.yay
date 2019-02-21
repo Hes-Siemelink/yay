@@ -6,12 +6,10 @@ Merge:
 - label: second
   content: body
 
-Assert equals:
-  actual: ${result}
-  expected:
-    label: second
-    header: accept
-    content: body
+Expected result:
+  label: second
+  header: accept
+  content: body
 
 
 ---
@@ -26,13 +24,11 @@ Merge:
 - ${package}
 - footer: end
 
-Assert equals:
-  actual: ${result}
-  expected:
-    label: second
-    header: accept
-    content: body
-    footer: end
+Expected result:
+  label: second
+  header: accept
+  content: body
+  footer: end
 
 
 ---
@@ -51,9 +47,7 @@ Merge:
 - ${list1}
 - ${list2}
 
-Assert equals:
-  actual: ${result}
-  expected:
+Expected result:
   - 1
   - 2
   - 3
@@ -63,7 +57,7 @@ Assert equals:
 
 
 ---
-Test case: Join list with more items
+Test case: Extend list with Merge
 
 ${list1}:
 - 1
@@ -76,12 +70,25 @@ Merge:
 - 5
 - 6
 
-Assert equals:
-  actual: ${result}
-  expected:
+Expected result:
   - 1
   - 2
   - 3
+  - 4
+  - 5
+  - 6
+
+---
+Test case: Create list with Merge
+
+Merge:
+  - 1
+  - 4
+  - 5
+  - 6
+
+Expected result:
+  - 1
   - 4
   - 5
   - 6

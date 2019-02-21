@@ -143,7 +143,7 @@ class TestCore():
         ''', variables)
 
         assert len(mock.invocations) == 2
-        assert variables['result'] == 'again'
+        assert variables['result'] == ['something', 'again']
 
     def test_do(self):
         mock = get_test_mock()
@@ -156,7 +156,7 @@ class TestCore():
         ''', variables)
 
         assert len(mock.invocations) == 2
-        assert variables['result'] == 'again'
+        assert variables['result'] == ['something', 'again']
 
 
 def run(yay_script_in_yaml, variables = {}):

@@ -1,4 +1,4 @@
-Test case: Expected result
+Test case: Output
 
 Output: a result
 
@@ -11,9 +11,7 @@ Test case: Set variable
 Set variable:
   result: something
 
-Assert equals:
-- actual: ${result}
-  expected: something
+Expected result: something
 
 
 ---
@@ -126,3 +124,12 @@ Assert equals:
 ---
 Test case: Result should be a list when invoking a handler with a list
 
+Output:
+  - one
+  - two
+  - three
+
+Expected result:
+  - one
+  - two
+  - three

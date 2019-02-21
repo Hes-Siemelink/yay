@@ -13,7 +13,6 @@ from yay.util import *
 #
 
 RESULT_VARIABLE = 'result'
-FIRST_EXECUTION_IN_LIST = '_first_execution_of_list'
 
 def process_script(script, variables = {}):
     result = None
@@ -49,28 +48,31 @@ def process_block(block, variables = {}):
 def execute_task(handler, data, variables):
 
     first = True
+    results = []
+
+    if handler in [merge, assert_result_equals]:
+        data = [data]
 
     # Process list as a sequence of actions
     for taskData in as_list(data):
 
-        # Indicates if this is the first execution of a list
-        # Hack to get 'Merge' working
-        if first and is_list(data):
-            variables[FIRST_EXECUTION_IN_LIST] = True
-            first = False
-
         # Execute the handler
         try:
             result = execute_single_task(handler, taskData, variables)
+            results.append(result)
 
         # Stop processing on a break statement
         except FlowBreak as f:
-            result = f.result
+            results.append(f.result)
             break
 
-        finally:
-            if FIRST_EXECUTION_IN_LIST in variables:
-                del variables[FIRST_EXECUTION_IN_LIST]
+    # Store result
+    result = results
+    if not is_list(data) or handler in [merge, assert_result_equals]:
+        result = results[0]
+
+    if not results == [None]:
+        variables[RESULT_VARIABLE] = result
 
     return result
 
@@ -85,10 +87,6 @@ def execute_single_task(handler, rawData, variables):
 
     # Execute action
     result = handler(data, variables)
-
-    # Store result
-    if not result == None:
-        variables[RESULT_VARIABLE] = result
 
     return result
 
@@ -106,7 +104,7 @@ def noop(data, variables):
 
 # Do
 def do(data, variables):
-    process_block(data, variables)
+    return process_block(data, variables)
 
 # For each
 def foreach(data, variables):
@@ -352,17 +350,26 @@ def join_single_variable(var, updates, variables):
     variables[var] = value
 
 def merge(data, variables):
-    if variables.get(FIRST_EXECUTION_IN_LIST):
-        variables[RESULT_VARIABLE] = data
-        return
 
-    value = variables[RESULT_VARIABLE]
-    if is_dict(value):
-        value.update(data)
-    elif is_list(value):
-        value.extend(as_list(data))
+    first = True
+    result = None
 
-    return value
+    for item in data:
+
+        if first:
+            if is_dict(item):
+                result = item
+            else:
+                result = as_list(item)
+            first = False
+            continue
+
+        if is_dict(item):
+            result.update(item)
+        else:
+            result.extend(as_list(item))
+
+    return result
 
 #
 # Replace
