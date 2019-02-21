@@ -50,7 +50,7 @@ def execute_task(handler, data, variables):
     first = True
     results = []
 
-    if handler in [merge, assert_result_equals]:
+    if handler in list_processors:
         data = [data]
 
     # Process list as a sequence of actions
@@ -68,7 +68,7 @@ def execute_task(handler, data, variables):
 
     # Store result
     result = results
-    if not is_list(data) or handler in [merge, assert_result_equals]:
+    if not is_list(data) or handler in list_processors:
         result = results[0]
 
     if not results == [None]:
@@ -79,8 +79,8 @@ def execute_task(handler, data, variables):
 def execute_single_task(handler, rawData, variables):
 
     # Resolve variables
-    # Don't resolve variables if handler is Do or For each -- they will be resolved just in time
-    if handler in [do, foreach, if_statement, if_any_statement]:
+    # Don't resolve variables yet for Do or For each, etc. -- they will be resolved just in time
+    if handler in delayed_variable_resolvers:
         data = rawData
     else:
         data = vars.resolve_variables(rawData, variables)
@@ -401,10 +401,21 @@ def print_yaml(data, variables):
 #
 
 handlers = {}
-def register(type, handler):
+delayed_variable_resolvers = []
+list_processors = []
+
+def register(type, handler, delayed_variable_resolver=False, list_processor=False):
     handlers[type] = handler
 
+    if delayed_variable_resolver:
+        delayed_variable_resolvers.append(handler)
+
+    if list_processor:
+        list_processors.append(handler)
+
 def register_scripts(path):
+    # Create a custom handler for each script in the directory by
+    # routing it to 'exectute_yay_file' using a lambda function. 
     for filename in os.listdir(path):
         if filename.endswith('.yay'):
             handler_name = to_handler_name(filename)
@@ -418,16 +429,17 @@ def to_handler_name(filename):
     filename = filename.replace('-', ' ')
     return filename
 
-register('Do', do)
-register('For each', foreach)
+
+register('Do', do, delayed_variable_resolver=True)
+register('For each', foreach, delayed_variable_resolver=True)
 
 register('Execute yay file', execute_yay_file)
 
-register('If', if_statement)
-register('If any', if_any_statement)
+register('If', if_statement, delayed_variable_resolver=True)
+register('If any', if_any_statement, delayed_variable_resolver=True)
 register('Assert equals', assert_equals)
 register('Assert that', assert_that)
-register('Expected result', assert_result_equals)
+register('Expected result', assert_result_equals, list_processor=True)
 
 register('Set', set_variable)
 register('Set variable', set_variable)
@@ -436,7 +448,7 @@ register('As', set_variable)
 register('Output', return_result)
 register('Join', join)
 register('Merge into variable', join)
-register('Merge', merge)
+register('Merge', merge, list_processor=True)
 
 register('Print JSON', print_json)
 register('Print as JSON', print_json)
