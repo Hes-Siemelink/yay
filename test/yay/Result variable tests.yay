@@ -1,6 +1,6 @@
 Test case: Expected result
 
-Test: a result
+Output: a result
 
 Expected result: a result
 
@@ -19,7 +19,7 @@ Assert equals:
 ---
 Test case: Set variable with 'Set'
 
-Test: a different result
+Output: a different result
 Set: var
 
 Assert equals:
@@ -30,7 +30,7 @@ Assert equals:
 ---
 Test case: Set variable with 'Result'
 
-Test: some contents
+Output: some contents
 Result: var2
 
 Assert equals:
@@ -41,7 +41,7 @@ Assert equals:
 ---
 Test case: Set variable with 'As'
 
-Test: some more contents
+Output: some more contents
 As: var3
 
 Assert equals:
@@ -122,3 +122,7 @@ Assert equals:
       - (One)
       - (Two)
       - (Three)
+
+---
+Test case: Result should be a list when invoking a handler with a list
+

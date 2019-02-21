@@ -331,6 +331,9 @@ def set_variable(data, variables):
     for var in data:
         variables[var] = data[var]
 
+def return_result(data, variables):
+    return data
+
 def join(data, variables):
     for var in data:
         join_single_variable(var, data[var], variables)
@@ -423,6 +426,7 @@ register('Set', set_variable)
 register('Set variable', set_variable)
 register('Result', set_variable)
 register('As', set_variable)
+register('Output', return_result)
 register('Join', join)
 register('Merge into variable', join)
 register('Merge', merge)

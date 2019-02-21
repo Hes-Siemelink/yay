@@ -1,6 +1,6 @@
 Test case: Multiple variables
 
-Test:
+Output:
   data:
     item1: one
     item2: two
@@ -24,7 +24,7 @@ Assert equals:
 ---
 Test case: Multiple variables with $-{ syntax
 
-Test:
+Output:
   data:
     item1: one
     item2: two
