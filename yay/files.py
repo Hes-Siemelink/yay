@@ -15,6 +15,6 @@ def read_file(data, variables):
         return contents[0]
     return contents
 
-# Register tasks
+# Register command handlers
 core.register('Write file', write_file)
 core.register('Read file', read_file)

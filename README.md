@@ -28,12 +28,12 @@ Invoke it using the `yay` command:
 
 What happens here:
 1. Yay appends `.yay` and finds the file `search.yay`. 
-2. `Http GET` is a Yay task that does a HTTP request. A task in Yay is a command name, in this case 'Http GET' followed by parameter data, `url` and `path`. By convention, commands in yay are spelled using a capital letter.
+2. `Http GET` is a Yay command that does a HTTP request. A command in Yay is defined by a name, in this case 'Http GET' followed by parameter data, `url` and `path`. By convention, commands in yay are spelled using a capital letter.
 3. The result is printed in JSON format using the `Print as JSON` command.
 
 ### _Try it out!_
 
-Yay is bundled with a test application. Start it with the followng command
+Yay is bundled with a test application. Start it with the following command
 
     $ python -m yay.test_server
 
@@ -53,9 +53,9 @@ $ yay list-recipes
 
 Note that we print something called `${result}`. `${...}` is the variable syntax in Yay. 
 
-`${result}` is a special variable that always contains the result of the last task.
+`${result}` is a special variable that always contains the result of the last command.
 
-You can use variables in any value field.  Variables are resolved at the moment the task is going to be executed.
+You can use variables in any value field.  Variables are resolved at the moment the command is going to be executed.
 
 For example, let's do a search using a variable:
 
@@ -67,7 +67,7 @@ Http GET:
 Print as YAML: ${result}
 ```
 
-We also change the output to be YAML using the `Print as YAML` task.
+We also change the output to be YAML using the `Print as YAML` command.
 
 You can pass variable values through the command line:
 
@@ -144,7 +144,7 @@ Print: |
   ${result}
 ```
 
-We use a task called **Print**, which does what you would expect: printing regular text. You can refer to variables in the text and they will be expanded to YAML.
+We use a command called **Print**, which does what you would expect: printing regular text. You can refer to variables in the text and they will be expanded to YAML.
  
 Here is the output:
 
@@ -160,7 +160,7 @@ Non-vegetarian options:
 
 ## Setting a default endpoint
 
-Usually if you make multiple requests you will use the same endpoint, so we should it define it only once. Do this with the **Http endpoint** task.
+Usually if you make multiple requests you will use the same endpoint, so we should it define it only once. Do this with the **Http endpoint** command.
 
 **File: list-options2.yay**
 ```

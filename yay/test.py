@@ -61,8 +61,8 @@ def from_file(file):
 
 
 def run_yay_test(file):
-    tasks = from_file(file)
+    script = from_file(file)
 
     variables = {}
-    core.process_script(tasks, variables)
+    core.process_script(script, variables)
 

@@ -24,6 +24,6 @@ def check_input(data, variables):
         variables.update(answers)
 
 
-# Register tasks
+# Register command handlers
 core.register('User Input', ask_user)
 core.register('Input', check_input)

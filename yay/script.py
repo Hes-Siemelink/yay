@@ -6,5 +6,5 @@ def execute_python_script(data, variables):
     exec(data, variables)
 
 
-# Register tasks
+# Register command handlers
 core.register('Python', execute_python_script)

@@ -74,7 +74,7 @@ Expected result: something one two three
 
 
 ---
-Test case: Make sure variables are resolved at right time in Do task
+Test case: Make sure variables are resolved at right time in Do command
 
 ${result}: something else
 ${test}: []

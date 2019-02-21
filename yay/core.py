@@ -1,5 +1,5 @@
 #
-# Core tasks
+# Core execution logic and command handlers
 #
 
 import copy
@@ -16,36 +16,36 @@ RESULT_VARIABLE = 'result'
 
 def process_script(script, variables = {}):
     result = None
-    for block in script:
-        result = process_block(block, variables)
+    for task_block in script:
+        result = process_task(task_block, variables)
     return result
 
-def process_block(block, variables = {}):
+def process_task(task_block, variables = {}):
 
-    # Execute all handlers in a task
+    # Execute all commands in a task
     result = None
-    for task in block:
+    for command in task_block:
 
-        rawData = block[task]
+        rawData = task_block[command]
 
         # Variable assignement
-        variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, task)
+        variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
         if variableMatch:
             data = vars.resolve_variables(rawData, variables)
             variables[variableMatch.group(1)] = data
 
         # Execute handler
-        elif task in handlers:
-            result = execute_task(handlers[task], rawData, variables)
+        elif command in handlers:
+            result = execute_command(handlers[command], rawData, variables)
 
         # Unknown action
         else:
-            raise YayException("Unknown action: {}".format(task))
+            raise YayException("Unknown action: {}".format(command))
 
     return result
 
 
-def execute_task(handler, data, variables):
+def execute_command(handler, data, variables):
 
     first = True
     results = []
@@ -54,11 +54,11 @@ def execute_task(handler, data, variables):
         data = [data]
 
     # Process list as a sequence of actions
-    for taskData in as_list(data):
+    for commandData in as_list(data):
 
         # Execute the handler
         try:
-            result = execute_single_task(handler, taskData, variables)
+            result = execute_single_command(handler, commandData, variables)
             results.append(result)
 
         # Stop processing on a break statement
@@ -76,7 +76,7 @@ def execute_task(handler, data, variables):
 
     return result
 
-def execute_single_task(handler, rawData, variables):
+def execute_single_command(handler, rawData, variables):
 
     # Resolve variables
     # Don't resolve variables yet for Do or For each, etc. -- they will be resolved just in time
@@ -104,7 +104,7 @@ def noop(data, variables):
 
 # Do
 def do(data, variables):
-    return process_block(data, variables)
+    return process_task(data, variables)
 
 # For each
 def foreach(data, variables):
@@ -123,7 +123,7 @@ def foreach(data, variables):
             stash = variables[loop_variable]
         variables[loop_variable] = item
 
-        execute_task(do, actions, variables)
+        execute_command(do, actions, variables)
 
         if (stash):
             variables[loop_variable] = stash
@@ -143,7 +143,7 @@ def execute_yay_file(data, variables, file = None):
         file = get_parameter(data, 'file')
 
     # Read YAML script
-    tasks = read_yaml_file(file)
+    script = read_yaml_file(file)
 
     # Process all
     vars = copy.deepcopy(variables)
@@ -151,7 +151,7 @@ def execute_yay_file(data, variables, file = None):
         del data['file']
     vars.update(data)
 
-    process_script(tasks, vars)
+    process_script(script, vars)
 
     return vars['result']
 
@@ -169,7 +169,7 @@ def if_statement(data, variables, break_on_success = False):
     condition = parse_condition(data)
 
     if condition.is_true():
-        execute_task(process_block, actions, variables)
+        execute_command(process_task, actions, variables)
 
         if break_on_success:
             raise FlowBreak()
@@ -415,7 +415,7 @@ def register(type, handler, delayed_variable_resolver=False, list_processor=Fals
 
 def register_scripts(path):
     # Create a custom handler for each script in the directory by
-    # routing it to 'exectute_yay_file' using a lambda function. 
+    # routing it to 'exectute_yay_file' using a lambda function.
     for filename in os.listdir(path):
         if filename.endswith('.yay'):
             handler_name = to_handler_name(filename)

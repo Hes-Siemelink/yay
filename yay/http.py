@@ -1,5 +1,5 @@
 #
-# HTTP Request task
+# HTTP commands
 #
 import requests
 import json
@@ -76,7 +76,7 @@ def send_request(data, variables):
 
     return result
 
-# Register tasks
+# Register command handlers
 core.register('Http GET', http_get)
 core.register('Http POST', http_post)
 core.register('Http PUT', http_put)

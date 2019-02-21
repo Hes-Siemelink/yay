@@ -6,7 +6,7 @@ class TestCore():
     def test_process_task(self):
         mock = get_test_mock()
 
-        core.process_block({'Test': 'something'})
+        core.process_task({'Test': 'something'})
 
         assert len(mock.invocations) == 1
         assert mock.invocations[0].data == 'something'
