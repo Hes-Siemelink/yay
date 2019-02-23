@@ -2,8 +2,6 @@
 
 Yay is a scripting language in YAML. It is readable and light and meant to automate simple tasks. You can use it to glue API requests, user input and file manipulation together.
 
-_Note: Yay is a pre-alpha prototype. Anything can change at any moment._
-
 **Main features**
 
  * Simple and readable scripting in YAML syntax
@@ -15,6 +13,8 @@ _Note: Yay is a pre-alpha prototype. Anything can change at any moment._
  * Create DSLs on the fly 
  
 License: Apache 2.0
+
+_Note: Yay is a pre-alpha prototype. Anything can change at any moment._
 
 ## Simple yay: reuse your request
 
