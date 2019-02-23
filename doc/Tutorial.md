@@ -18,7 +18,7 @@ You can save it in a YAML file and reuse it using Yay.
 Http GET:
   url:  http://localhost:5000
   path: /recipes
-Print as JSON: ${result}
+Print as JSON: ${output}
 ```
   
 Invoke it using the `yay` command:
@@ -28,7 +28,7 @@ Invoke it using the `yay` command:
 What happens here:
 1. Yay appends `.yay` and finds the file `search.yay`. 
 2. `Http GET` is a Yay command that does a HTTP request. A command in Yay is defined by a name, in this case 'Http GET' followed by parameter data, `url` and `path`. By convention, commands in yay are spelled using a capital letter.
-3. The result is printed in JSON format using the `Print as JSON` command.
+3. The output of the server is printed in JSON format using the `Print as JSON` command.
 
 ### _Try it out!_
 
@@ -50,9 +50,9 @@ $ yay list-recipes
 
 ## Variables and parameters
 
-Note that we print something called `${result}`. `${...}` is the variable syntax in Yay. 
+Note that we print something called `${output}`. `${...}` is the variable syntax in Yay. 
 
-`${result}` is a special variable that always contains the result of the last command.
+`${output}` is a special variable that always contains the output of the last command.
 
 You can use variables in any value field.  Variables are resolved at the moment the command is going to be executed.
 
@@ -63,7 +63,7 @@ For example, let's do a search using a variable:
 Http GET:
   url:  http://localhost:5000
   path: /recipes/search?keyword=${keyword}
-Print as YAML: ${result}
+Print as YAML: ${output}
 ```
 
 We also change the output to be YAML using the `Print as YAML` command.
@@ -89,7 +89,7 @@ exampleUrl: http://user:pass@localhost:5000
 Http GET:
   url:  ${exampleUrl}
   path: /recipes/search?keyword=${keyword}
-Print as YAML: ${result}
+Print as YAML: ${output}
 ```
 
 This gives the same output as before:
@@ -110,8 +110,8 @@ User Input:
   message: "Search recipes with keyword:"
 Http GET:
   url:  ${exampleUrl}
-  path: /recipes/search?keyword=${result}
-Print as YAML: ${result}
+  path: /recipes/search?keyword=${output}
+Print as YAML: ${output}
 ```
 
 You will now get a question on the command line. Very useful if you don't want to remember the command line options.
@@ -133,14 +133,14 @@ Http GET:
   path: /recipes/options?vegetarian=true
 Print: |
   Vegetarian options:
-  ${result}
+  ${output}
 ---
 Http GET:
   url:  ${exampleUrl}
   path: /recipes/options?vegetarian=false
 Print: |
   Non-vegetarian options:
-  ${result}
+  ${output}
 ```
 
 We use a command called **Print**, which does what you would expect: printing regular text. You can refer to variables in the text and they will be expanded to YAML.
@@ -168,17 +168,17 @@ Http endpoint: ${exampleUrl}
 Http GET: /recipes/options?vegetarian=true
 Print: |
   Vegetarian options:
-  ${result}
+  ${output}
 ---
 Http GET: /recipes/options?vegetarian=false
 Print: |
   Non-vegetarian options:
-  ${result}
+  ${output}
 ```
 
 This will give the same output as above.
 
-## Inspect results using JSON path
+## Inspect variables using JSON path
 
 Suppose you get a structured response and you want need only part of the data.
 
@@ -191,7 +191,7 @@ First, we will get the entire recipe.
 Http endpoint: ${exampleUrl}
 ---
 Http GET: /recipe/${recipe}
-Print as YAML: ${result}
+Print as YAML: ${output}
 ```
 
 The result is:
@@ -223,14 +223,14 @@ steps:
 vegetarian: true
 ```
 
-We see that the ingredients are listed in the key `ingredients`. We can extract the ingredients by simply adding the key to the result variable using JSON path syntax.
+We see that the ingredients are listed in the key `ingredients`. We can extract the ingredients by simply adding the key to the output variable using JSON path syntax.
 
 **File: show-ingredients-only.yay**
 ```
 Http endpoint: ${exampleUrl}
 ---
 Http GET: /recipe/${recipe}
-Print as YAML: ${result.ingredients}
+Print as YAML: ${output.ingredients}
 ```
 
 The result is:
@@ -269,13 +269,13 @@ Http GET: /recipes
 User Input:
   type: list
   message: Select recipe
-  choices: ${result}
+  choices: ${output}
 Set: recipe
 ---
 Http GET: /recipe/${recipe}
 Print: |
-  Ingredients for ${result.name}:
-  ${result.ingredients}
+  Ingredients for ${output.name}:
+  ${output.ingredients}
 ```
 
 This will result in the following interaction:

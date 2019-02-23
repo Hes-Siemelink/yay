@@ -6,7 +6,7 @@ Merge:
 - label: second
   content: body
 
-Expected result:
+Expected output:
   label: second
   header: accept
   content: body
@@ -24,7 +24,7 @@ Merge:
 - ${package}
 - footer: end
 
-Expected result:
+Expected output:
   label: second
   header: accept
   content: body
@@ -47,7 +47,7 @@ Merge:
 - ${list1}
 - ${list2}
 
-Expected result:
+Expected output:
   - 1
   - 2
   - 3
@@ -70,7 +70,7 @@ Merge:
 - 5
 - 6
 
-Expected result:
+Expected output:
   - 1
   - 2
   - 3
@@ -87,7 +87,7 @@ Merge:
   - 5
   - 6
 
-Expected result:
+Expected output:
   - 1
   - 4
   - 5

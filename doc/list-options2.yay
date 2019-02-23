@@ -3,9 +3,9 @@ Http endpoint: ${exampleUrl}
 Http GET: /recipes/options?vegetarian=true
 Print: |
   Vegetarian options:
-  ${result}
+  ${output}
 ---
 Http GET: /recipes/options?vegetarian=false
 Print: |
   Non-vegetarian options:
-  ${result}
+  ${output}

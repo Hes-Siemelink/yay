@@ -3,4 +3,4 @@ Replace:
   in: Hello me
   with: World
 
-Expected result: Hello World
+Expected output: Hello World

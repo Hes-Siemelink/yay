@@ -2,16 +2,16 @@ Test case: Output
 
 Output: a result
 
-Expected result: a result
+Expected output: a result
 
 
 ---
 Test case: Set variable
 
 Set variable:
-  result: something
+  output: something
 
-Expected result: something
+Expected output: something
 
 
 ---
@@ -26,17 +26,6 @@ Assert equals:
 
 
 ---
-Test case: Set variable with 'Result'
-
-Output: some contents
-Result: var2
-
-Assert equals:
-- actual: ${var2}
-  expected: some contents
-
-
----
 Test case: Set variable with 'As'
 
 Output: some more contents
@@ -48,19 +37,18 @@ Assert equals:
 
 
 ---
-Test case: Result assignment
+Test case: Output variable assignment
 
 ${var}: something
-${result}: ${var}
+${output}: ${var}
 
-Expected result: something
+Expected output: something
 
 
 ---
-Test case: Result from for each
+Test case: Output from for each
 
-Set variable:
-  result: something
+Output: something
 
 For each:
   item:
@@ -68,15 +56,15 @@ For each:
   - two
   - three
   Do:
-  - ${result}: ${result} ${item}
+  - ${output}: ${output} ${item}
 
-Expected result: something one two three
+Expected output: something one two three
 
 
 ---
 Test case: Make sure variables are resolved at right time in Do command
 
-${result}: something else
+${output}: something else
 ${test}: []
 
 For each:
@@ -85,10 +73,10 @@ For each:
     - Ratatouille
     - Meatballs
   Do:
-    ${result}: ${recipe}
+    ${output}: ${recipe}
     Join:
       test:
-      - ${result}
+      - ${output}
 
 Assert equals:
 - actual: ${test}
@@ -122,14 +110,14 @@ Assert equals:
       - (Three)
 
 ---
-Test case: Result should be a list when invoking a handler with a list
+Test case: Output should be a list when invoking a handler with a list
 
 Output:
   - one
   - two
   - three
 
-Expected result:
+Expected output:
   - one
   - two
   - three

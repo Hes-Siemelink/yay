@@ -3,11 +3,11 @@ Http GET:
   path: /recipes/options?vegetarian=true
 Print: |
   Vegetarian options:
-  ${result}
+  ${output}
 ---
 Http GET:
   url:  ${exampleUrl}
   path: /recipes/options?vegetarian=false
 Print: |
   Non-vegetarian options:
-  ${result}
+  ${output}

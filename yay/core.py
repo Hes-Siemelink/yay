@@ -13,18 +13,19 @@ from yay.conditions import parse_condition
 # Execution logic
 #
 
-RESULT_VARIABLE = 'result'
+OUTPUT_VARIABLE = 'output'
+DEPRECATED_RESULT_VARIABLE = 'result'
 
 def process_script(script, variables = {}):
-    result = None
+    output = None
     for task_block in script:
-        result = process_task(task_block, variables)
-    return result
+        output = process_task(task_block, variables)
+    return output
 
 def process_task(task_block, variables = {}):
 
     # Execute all commands in a task
-    result = None
+    output = None
     for command in task_block:
 
         rawData = task_block[command]
@@ -37,19 +38,19 @@ def process_task(task_block, variables = {}):
 
         # Execute handler
         elif command in handlers:
-            result = execute_command(handlers[command], rawData, variables)
+            output = execute_command(handlers[command], rawData, variables)
 
         # Unknown action
         else:
             raise YayException("Unknown action: {}".format(command))
 
-    return result
+    return output
 
 
 def execute_command(handler, data, variables):
 
     first = True
-    results = []
+    output_list = []
 
     if handler in list_processors:
         data = [data]
@@ -59,23 +60,24 @@ def execute_command(handler, data, variables):
 
         # Execute the handler
         try:
-            result = execute_single_command(handler, commandData, variables)
-            results.append(result)
+            output = execute_single_command(handler, commandData, variables)
+            output_list.append(output)
 
         # Stop processing on a break statement
         except FlowBreak as f:
-            results.append(f.result)
+            output_list.append(f.output)
             break
 
     # Store result
-    result = results
+    output = output_list
     if not is_list(data) or handler in list_processors:
-        result = results[0]
+        output = output_list[0]
 
-    if not results == [None]:
-        variables[RESULT_VARIABLE] = result
+    if not output_list == [None]:
+        variables[OUTPUT_VARIABLE] = output
+        variables[DEPRECATED_RESULT_VARIABLE] = output
 
-    return result
+    return output
 
 def execute_single_command(handler, rawData, variables):
 
@@ -87,13 +89,12 @@ def execute_single_command(handler, rawData, variables):
         data = vars.resolve_variables(rawData, variables)
 
     # Execute action
-    result = handler(data, variables)
+    return handler(data, variables)
 
-    return result
 
 class FlowBreak(Exception):
-    def __init__(self, result = None):
-        self.result = result
+    def __init__(self, output = None):
+        self.output = output
 
 
 #
@@ -154,7 +155,7 @@ def execute_yay_file(data, variables, file = None):
 
     process_script(script, vars)
 
-    return vars['result']
+    return vars[OUTPUT_VARIABLE]
 
 # If and if any
 
@@ -198,8 +199,8 @@ def assert_that(data, variables):
         message = f"\nExpected: {condition.equals}\nActual:   {condition.object}"
     assert False, message
 
-def assert_result_equals(data, variables):
-    actual = variables.get(RESULT_VARIABLE)
+def expect_output(data, variables):
+    actual = variables.get(OUTPUT_VARIABLE)
     expected = data
 
     assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
@@ -211,19 +212,19 @@ def assert_result_equals(data, variables):
 def set_variable(data, variables):
 
     # set: varname
-    # => will set the result into 'varname'
+    # => will set the output into 'varname'
     if is_scalar(data):
-        variables[data] = variables[RESULT_VARIABLE]
+        variables[data] = variables[OUTPUT_VARIABLE]
         return
 
     # set:
-    #   var1: ${result}
+    #   var1: ${output}
     #   var2: Something else
-    # => will set the result into 'varname'. You can also use literal values or variables with paths.
+    # => will set the output into 'varname'. You can also use literal values or variables with paths.
     for var in data:
         variables[var] = data[var]
 
-def return_result(data, variables):
+def return_input(data, variables):
     return data
 
 def join(data, variables):
@@ -246,24 +247,24 @@ def join_single_variable(var, updates, variables):
 def merge(data, variables):
 
     first = True
-    result = None
+    output = None
 
     for item in data:
 
         if first:
             if is_dict(item):
-                result = item
+                output = item
             else:
-                result = as_list(item)
+                output = as_list(item)
             first = False
             continue
 
         if is_dict(item):
-            result.update(item)
+            output.update(item)
         else:
-            result.extend(as_list(item))
+            output.extend(as_list(item))
 
-    return result
+    return output
 
 #
 # Replace
@@ -333,13 +334,12 @@ register('If', if_statement, delayed_variable_resolver=True)
 register('If any', if_any_statement, delayed_variable_resolver=True)
 register('Assert equals', assert_equals)
 register('Assert that', assert_that)
-register('Expected result', assert_result_equals, list_processor=True)
+register('Expected output', expect_output, list_processor=True)
 
 register('Set', set_variable)
 register('Set variable', set_variable)
-register('Result', set_variable)
 register('As', set_variable)
-register('Output', return_result)
+register('Output', return_input)
 register('Join', join)
 register('Merge into variable', join)
 register('Merge', merge, list_processor=True)

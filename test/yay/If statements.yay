@@ -4,9 +4,9 @@ If:
   object: a value
   equals: a value
   Do:
-    ${result}: Match
+    Output: Match
 
-Expected result: Match
+Expected output: Match
 
 
 ---
@@ -39,9 +39,9 @@ If:
     - object: selection
       equals: selection
   Do:
-    ${result}: Any Match
+    Output: Any Match
 
-Expected result: Any Match
+Expected output: Any Match
 
 
 ---
@@ -115,6 +115,6 @@ If:
   object: []
   equals: []
   Do:
-    ${result}: Success
+    Output: Success
 
-Expected result: Success
+Expected output: Success

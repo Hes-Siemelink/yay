@@ -2,10 +2,10 @@ Execute yay file:
   file: test/yay/Do-test-routine.yay
   name: Jay
 
-Expected result: Hello Jay!
+Expected output: Hello Jay!
 
 ---
 Do test routine:
   name: Kay
 
-Expected result: Hello Kay!
+Expected output: Hello Kay!

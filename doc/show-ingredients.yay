@@ -5,10 +5,10 @@ Http GET: /recipes
 User Input:
   type: list
   message: Select recipe
-  choices: ${result}
+  choices: ${output}
 Set: recipe
 ---
 Http GET: /recipe/${recipe}
 Print: |
-  Ingredients for ${result.name}:
-  ${result.ingredients}
+  Ingredients for ${output.name}:
+  ${output.ingredients}

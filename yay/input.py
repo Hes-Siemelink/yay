@@ -4,7 +4,7 @@ from PyInquirer import prompt
 
 def ask_user(data, variables):
     if 'name' not in data:
-        data['name'] = core.RESULT_VARIABLE
+        data['name'] = core.OUTPUT_VARIABLE
 
     answers = prompt([data])
     variables.update(answers)

@@ -1,4 +1,4 @@
 Http GET:
   url:  ${exampleUrl}
   path: /recipes/search?keyword=${keyword}
-Print as YAML: ${result}
+Print as YAML: ${output}

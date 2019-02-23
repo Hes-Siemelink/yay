@@ -1,5 +1,5 @@
 ${greeting}: Hello
 Python: |
-  result = greeting + ' World!'
+  output = greeting + ' World!'
 
-Expected result: Hello World!
+Expected output: Hello World!
