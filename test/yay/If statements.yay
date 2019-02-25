@@ -73,23 +73,14 @@ If any:
 - object: a value
   equals: a value
   Do:
-    ${first}: First match
+    Output: First match
 - object: another value
   in: another value
   Do:
-    ${second}: Second match
-- ${default}: Deafult match
+    Output: Second match
+- Output: Deafult match
 
-Assert equals:
-- actual:
-  - ${first}
-  - ${second}
-  - ${default}
-  expected:
-  - First match
-  - ${second}
-  - ${default}
-
+Expected output: First match
 
 ---
 Test case:  Variable resolution in nested Do

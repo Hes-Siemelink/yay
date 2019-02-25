@@ -224,6 +224,15 @@ def set_variable(data, variables):
     for var in data:
         variables[var] = data[var]
 
+def check_input(data, variables):
+    for input_parameter in data:
+        if not input_parameter in variables:
+            input_description = data[input_parameter]
+            if 'default' in input_description:
+                variables[input_parameter] = input_description['default']
+            else:
+                raise YayException("Variable not provided: " + input_parameter)
+
 def return_input(data, variables):
     return data
 
@@ -339,6 +348,7 @@ register('Expected output', expect_output, list_processor=True)
 register('Set', set_variable)
 register('Set variable', set_variable)
 register('As', set_variable)
+register('Input', check_input)
 register('Output', return_input)
 register('Join', join)
 register('Merge into variable', join)
