@@ -1,0 +1,20 @@
+#---
+#Test case:  Repeat a couple of times
+#
+#Output: ''
+#
+#Repeat:
+#  Do:
+#    Output: ${output} one
+#  Until: one one one
+---
+Test case:  Repeat with conditions
+
+Output: one
+
+Repeat:
+  Do:
+    Output: ${output} one
+  Until:
+    object: ${output}
+    equals: one one one

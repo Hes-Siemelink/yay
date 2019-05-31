@@ -138,6 +138,21 @@ def get_foreach_variable(data):
             continue
         return variable
 
+# Repeat
+def repeat(data, variables):
+    actions = get_parameter(data, 'Do')
+    until = get_parameter(data, 'Until')
+
+    finished = False
+    while not finished:
+        execute_command(do, actions, variables)
+
+        until_copy = copy.deepcopy(until)
+        until_copy = vars.resolve_variables(until_copy, variables)
+
+        condition = parse_condition(until_copy)
+        finished = condition.is_true()
+
 # Execute yay file
 
 def execute_yay_file(data, variables, file = None):
@@ -336,6 +351,7 @@ def to_handler_name(filename):
 
 register('Do', do, delayed_variable_resolver=True)
 register('For each', foreach, delayed_variable_resolver=True)
+register('Repeat', repeat, delayed_variable_resolver=True)
 
 register('Execute yay file', execute_yay_file)
 
