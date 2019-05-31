@@ -31,10 +31,14 @@ def resolve_variables_in_string(text, variables):
         for variable in variablesInText:
             value = get_value_with_path(variable, variables)
             if not value is None:
-                if is_dict(value) or is_list(value):
-                    value = format_yaml(value).strip()
-                text = text.replace(in_var_syntax(variable), value)
+                text = text.replace(in_var_syntax(variable), to_string(value))
         return text
+
+def to_string(value):
+    if is_dict(value) or is_list(value):
+        return format_yaml(value).strip()
+
+    return str(value)
 
 def resolve_variables_in_dict(dict, variables):
     copy = {}

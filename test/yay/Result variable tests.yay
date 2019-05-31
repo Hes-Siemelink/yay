@@ -121,3 +121,11 @@ Expected output:
   - one
   - two
   - three
+
+---
+Test case: Use numbers in interpolation
+
+${number}: 2
+Output: Number ${number}
+
+Expected output: Number 2
