@@ -17,7 +17,7 @@ def check_input(data, variables):
 
         query = {
             'type': 'input',
-            'message': data[variable] + f' ({variable}):',
+            'message': data[variable] + f' (${{{variable}}}):',
             'name': variable
         }
         answers = prompt([query])
@@ -26,4 +26,4 @@ def check_input(data, variables):
 
 # Register command handlers
 core.register('User Input', ask_user)
-core.register('Input', check_input)
+core.register('Check Input', check_input)

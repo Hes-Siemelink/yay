@@ -55,8 +55,7 @@ def get_value_with_path(variable, variables):
 
     # Do not resolve or warn about unknown variables so foreach can do late binding.
     if not var in variables:
-        raise YayException(f"Unknown variable reference: {in_var_syntax(variable)}")
-        # return in_var_syntax(variable)
+        raise YayException(f"Unknown variable: {in_var_syntax(variable)}")
 
     value = variables[var]
 
