@@ -1,8 +1,8 @@
 #
 # HTTP commands
 #
+import os
 import requests
-import json
 
 from yay import core
 
@@ -51,6 +51,7 @@ def send_request(data, variables):
     path = data['path'] if 'path' in data else ''
     body = data['body'] if 'body' in data else None
     method = data['method'] if 'method' in data else 'GET'
+    file = data['save as'] if 'save as' in data else None
 
     if method == 'GET':
         r = requests.get(url + path, headers = jsonHeaders)
@@ -70,11 +71,26 @@ def send_request(data, variables):
         return
 
     try:
-        result = json.loads(r.text)
+        if file:
+            # TODO: stream contents
+            with open(file, 'wb') as f:
+                f.write(r.content)
+            result = {'file': os.path.abspath(file)}
+        else:
+            result = json.loads(r.text)
     except ValueError:
         result = r.text
 
     return result
+
+def download(data, variables):
+    if is_scalar(data):
+        data = {
+            'path': data
+        }
+    data['method'] = 'GET'
+    return process_request(data, variables)
+
 
 # Register command handlers
 core.register('Http GET', http_get)
