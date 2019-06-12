@@ -4,6 +4,7 @@
 
 import copy
 import re
+import time
 
 from yay import vars
 from yay.util import *
@@ -301,7 +302,12 @@ def replace_text(data, variables):
 
     return text.replace(part, replacement)
 
+#
+# Wait
+#
 
+def wait(data, variables):
+    time.sleep(data)
 #
 # Printing
 #
@@ -379,3 +385,4 @@ register('Task',  noop)
 register('Test case',  noop)
 register('Print',  print_text)
 register('Replace',  replace_text)
+register('Wait',  wait)
