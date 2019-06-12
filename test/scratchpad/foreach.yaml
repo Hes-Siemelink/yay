@@ -1,0 +1,52 @@
+# Current for each
+---
+For each:
+  item:
+    - one
+    - two
+    - three
+  Do:
+    Print: ${item}
+
+#
+# Alternatives
+#
+
+---
+# Explicit variable syntax for loop variable
+# Allow other commands than just 'Do'
+For each:
+  ${item}:
+    - one
+    - two
+    - three
+  Print: ${item}
+
+---
+# Allow other commands than just 'Do'
+For each:
+  item:
+    - one
+    - two
+    - three
+  Print: ${item}
+
+---
+# Nested for each to have all looping inside 'Do'
+# To have a fancy way to also support repeat until - do while
+Do:
+  For each:
+    - one
+    - two
+    - three
+  Print: ${output}
+
+---
+# Nested one with loop variable
+Do:
+  For each:
+    item:
+      - one
+      - two
+      - three
+  Print: ${item}
