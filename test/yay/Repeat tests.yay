@@ -20,7 +20,7 @@ Repeat:
   Until: done
 
 ---
-Test case: Repeat that checks a list result in until 
+Test case: Repeat that checks a list result in until
 
 Output: one
 
