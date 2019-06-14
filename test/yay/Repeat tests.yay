@@ -1,13 +1,3 @@
-#---
-#Test case:  Repeat a couple of times
-#
-#Output: ''
-#
-#Repeat:
-#  Do:
-#    Output: ${output} one
-#  Until: one one one
----
 Test case:  Repeat with conditions
 
 Output: one
@@ -18,3 +8,45 @@ Repeat:
   Until:
     object: ${output}
     equals: one one one
+
+---
+Test case:  Repeat with conditions
+
+Output: one
+
+Repeat:
+  Do:
+    Output: done
+  Until: done
+
+---
+Test case: Repeat that checks a list result in until 
+
+Output: one
+
+Repeat:
+  Do:
+  - Output: one
+  - Output: two
+  Until: [one, two]
+
+#
+# Do
+#
+
+---
+Test case:  Return output from single do
+
+Do:
+  Output: not in a list
+Expected output:  not in a list
+
+---
+Test case:  Return output from do with list
+
+Do:
+- Output: one
+- Output: two
+Expected output:
+  - one
+  - two

@@ -13,6 +13,15 @@ For each:
 #
 
 ---
+# Allow other commands than just 'Do'
+For each:
+  item:
+    - one
+    - two
+    - three
+  Print: ${item}
+
+---
 # Explicit variable syntax for loop variable
 # Allow other commands than just 'Do'
 For each:
@@ -22,14 +31,6 @@ For each:
     - three
   Print: ${item}
 
----
-# Allow other commands than just 'Do'
-For each:
-  item:
-    - one
-    - two
-    - three
-  Print: ${item}
 
 ---
 # Nested for each to have all looping inside 'Do'
@@ -49,4 +50,32 @@ Do:
       - one
       - two
       - three
+  Print: ${item}
+
+---
+# Explicit 'Repeat' construct
+Repeat:
+  For each:
+    - one
+    - two
+    - three
+  As: item
+  Print: ${item}
+
+---
+# For each just produces values and makes outer 'do' sequence repeat
+For each:
+- one
+- two
+- three
+As: item
+Print: ${item}
+
+---
+# For each with explicit generator thingy
+For each:
+  Item in:
+  - one
+  - two
+  - three
   Print: ${item}

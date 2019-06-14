@@ -146,13 +146,16 @@ def repeat(data, variables):
 
     finished = False
     while not finished:
-        execute_command(do, actions, variables)
+        result = execute_command(do, actions, variables)
 
-        until_copy = copy.deepcopy(until)
-        until_copy = vars.resolve_variables(until_copy, variables)
+        if is_dict(until):
+            until_copy = copy.deepcopy(until)
+            until_copy = vars.resolve_variables(until_copy, variables)
 
-        condition = parse_condition(until_copy)
-        finished = condition.is_true()
+            condition = parse_condition(until_copy)
+            finished = condition.is_true()
+        else:
+            finished = (result == until)
 
 # Execute yay file
 
