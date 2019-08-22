@@ -26,8 +26,10 @@ def get_test_mock():
 def from_yaml(text):
     return list(yaml.load_all(textwrap.dedent(text), Loader=yaml.Loader))
 
-def get_files(testDir):
-    basePath = os.path.dirname(os.path.realpath(__file__))
+def get_files(testDir, base=None):
+    if not base:
+        base = __file__
+    basePath = os.path.dirname(os.path.realpath(base))
     path = os.path.join(basePath, testDir)
     path = os.path.relpath(path)
 

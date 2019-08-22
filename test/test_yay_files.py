@@ -1,23 +1,21 @@
-import os
 import pytest
-import time
 
 from yay.test import *
-from yay import core
-from yay import core_lib
-from yay import script
-from yay import http
-from yay import test_server
-
-yay_test_files = get_files('../test/yay')
+from yay import __main__
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_server():
+
+    # Start server
+    from yay import test_server
     test_server.start()
+
     # Wait for HTTP server startup
+    import time
     time.sleep(0.1)
 
-@pytest.mark.parametrize("file", yay_test_files)
+
+@pytest.mark.parametrize("file", get_files('yay', __file__))
 def test_yay(file):
     basePath = os.path.dirname(os.path.realpath(file))
     core.register_scripts(basePath)
