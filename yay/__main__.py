@@ -4,6 +4,7 @@ import os
 
 # Core handlers
 from yay import core
+from yay import core_lib
 from yay import http
 from yay import files
 from yay import script

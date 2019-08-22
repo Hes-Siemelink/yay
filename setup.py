@@ -19,6 +19,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
+        'pytest',
         'pyyaml',
         'requests',
         'jsonpath_rw',

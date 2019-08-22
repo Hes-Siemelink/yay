@@ -39,7 +39,7 @@ def read_yaml_file(fileArgument, data = None):
         data = []
 
     with open(fileArgument, 'r') as stream:
-        for fileData in yaml.load_all(stream):
+        for fileData in yaml.load_all(stream, Loader=yaml.Loader):
             data.append(fileData)
     return data
 
@@ -48,7 +48,7 @@ def add_from_yaml_file(fileArgument, data):
         return
 
     with open(fileArgument, 'r') as stream:
-        for fileData in yaml.load_all(stream):
+        for fileData in yaml.load_all(stream, Loader=yaml.Loader):
             data.update(fileData)
 
     return data
