@@ -1,12 +1,37 @@
 # Yay Release Notes
 
+## Yay 0.8 - August 22nd, 2019
+
+**New commands**:
+
+* **Repeat** -- Introduces Repeat / until control structure
+* **Wait** -- Wait for a number of seconds.
+
+**Features:**
+
+* Adds 'save as' property to Http commands that saves the result to a file.
+
+* Removes Yaml warnings
+
 ## Yay 0.7 - May 31st, 2019
 
-* BREAKING CHANGE: Renamed output variable from `${result}` to `${output}`. For backwards compatibility, ${result} is still stored but usage of it is deprecated. No longer supported:
+**BREAKING CHANGES:**
+
+* Renamed output variable from `${result}` to `${output}`. For backwards compatibility, ${result} is still stored but usage of it is deprecated. No longer supported:
  ** Setting ${result} explicitly / 'Result' command. Use 'Output' command that sets the `${output}` var directly.
  ** 'Expected result' is renamed to 'Expected output'
 
-* BREAKING CHANGE: Renames 'item' in 'If' to 'object' so it aligns with 'equals'.
+* Renames 'item' in 'If' to 'object' so it aligns with 'equals'.
+
+**New commands:**
+* **Input** -- defines parameters and provides default values.
+* **Output** -- simply sets the result.
+* **Execute yay file** -- executes a file in the same directory
+* **As** -- an alternative to 'Set variable' 
+* **Assert that** -- assert with 'if' syntax
+* **Merge** -- 
+
+**Features:**
 
 * Original recipes in the examples!
 
@@ -26,10 +51,3 @@
 
 * List or dict variables in text are now rendered as YAML.
 
-New commands:
-* **Input** -- defines parameters and provides default values.
-* **Output** -- simply sets the result.
-* **Execute yay file** -- executes a file in the same directory
-* **As** -- an alternative to 'Set variable' 
-* **Assert that** -- assert with 'if' syntax
-* **Merge** -- 
