@@ -62,9 +62,8 @@ def from_file(file):
     return from_yaml(data)
 
 
-def run_yay_test(file):
+def run_yay_test(file, variables):
     script = from_file(file)
 
-    variables = {}
     core.process_script(script, variables)
 

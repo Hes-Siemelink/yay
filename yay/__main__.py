@@ -22,16 +22,20 @@ def main():
     try:
         # Make sure we can find the file
         filename = get_file(sys.argv[1])
+        script_dir = os.path.dirname(os.path.abspath(filename))
 
         # Read YAML script
         script = read_yaml_files(filename)
 
+        # Read context
+        selected_context = get_command_line_parameter(sys.argv, '-c', default='default')
+        context = core.get_context(script_dir, selected_context)
+
         # Register all files in same directory as handlers
-        script_dir = os.path.dirname(os.path.abspath(filename))
         core.register_scripts(script_dir)
 
         # Initialize variables
-        variables = get_variables(script_dir, sys.argv[2:])
+        variables = get_variables(sys.argv[2:], context)
 
         # Process all
         result = core.process_script(script, variables)
@@ -59,7 +63,7 @@ def get_file(filename):
     raise YayException(f"Could not find file: {filename}")
 
 
-def get_variables(script_dir, args):
+def get_variables(args, context_variables):
 
     variables = {}
 
@@ -67,16 +71,8 @@ def get_variables(script_dir, args):
     defaultValuesFile = os.path.join(os.path.expanduser('~'), '.yay/default-variables.yaml')
     add_from_yaml_file(defaultValuesFile, variables)
 
-    # Read local context
-    context_file = os.path.join(script_dir, 'context.yay')
-    if os.path.isfile(context_file):
-        selection = get_parameter(args, '-c')
-        context = read_yaml_file(context_file)[0]
-        if selection in context:
-            variables.update(context[selection])
-        else:
-            print(f"Context {selection} not found in context.yay")
-            print_as_yaml(context)
+    # Use local context
+    variables.update(context_variables)
 
     # Parse arguments into values
     for argument in args:
@@ -87,7 +83,7 @@ def get_variables(script_dir, args):
     return variables
 
 
-def get_parameter(args, parameter):
+def get_command_line_parameter(args, parameter, default=''):
     use_this_one = False
     for argument in args:
         if use_this_one:
@@ -95,7 +91,7 @@ def get_parameter(args, parameter):
         if argument == parameter:
             use_this_one = True
 
-    return 'default'
+    return default
 
 # Execute script
 if __name__ == '__main__':

@@ -1,5 +1,10 @@
 # Yay Release Notes
 
+## Yay 0.9 - August 22nd, 2019
+
+**BREAKING CHANGES:**
+
+* Renamed `context.yay` to `yay-context.yaml` since it is not a Yay script nut YAML configuration.
 ## Yay 0.8 - August 22nd, 2019
 
 **New commands**:

@@ -255,6 +255,22 @@ def return_input(data, variables):
     return data
 
 #
+# Yay-context.yaml
+#
+
+def get_context(script_dir, selected_context):
+    context_file = os.path.join(script_dir, 'yay-context.yaml')
+    if os.path.isfile(context_file):
+        all_contexts = read_yaml_file(context_file)[0]
+        if selected_context in all_contexts:
+            return all_contexts[selected_context]
+        else:
+            raise YayException(f"Context '{selected_context}' not found in yay-context.yaml")
+
+    return {}
+
+
+#
 # Handlers
 #
 
