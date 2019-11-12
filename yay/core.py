@@ -52,7 +52,7 @@ def execute_command(handler, data, variables):
     first = True
     output_list = []
 
-    if handler in list_processors:
+    if handler.list_processor:
         data = [data]
 
     # Process list as a sequence of actions
@@ -70,7 +70,7 @@ def execute_command(handler, data, variables):
 
     # Store result
     output = output_list
-    if not is_list(data) or handler in list_processors:
+    if not is_list(data) or handler.list_processor:
         output = output_list[0]
 
     if not output_list == [None]:
@@ -83,13 +83,13 @@ def execute_single_command(handler, rawData, variables):
 
     # Resolve variables
     # Don't resolve variables yet for Do or For each, etc. -- they will be resolved just in time
-    if handler in delayed_variable_resolvers:
+    if handler.delayed_variable_resolver:
         data = rawData
     else:
         data = vars.resolve_variables(rawData, variables)
 
     # Execute action
-    return handler(data, variables)
+    return handler.handler_method(data, variables)
 
 
 class FlowBreak(Exception):
@@ -125,7 +125,7 @@ def foreach(data, variables):
             stash = variables[loop_variable]
         variables[loop_variable] = item
 
-        execute_command(do, actions, variables)
+        execute_command(handlers['Do'], actions, variables)
 
         if (stash):
             variables[loop_variable] = stash
@@ -145,7 +145,7 @@ def repeat(data, variables):
 
     finished = False
     while not finished:
-        result = execute_command(do, actions, variables)
+        result = execute_command(handlers['Do'], actions, variables)
 
         if is_dict(until):
             until_copy = copy.deepcopy(until)
@@ -189,7 +189,7 @@ def if_statement(data, variables, break_on_success = False):
     condition = parse_condition(data)
 
     if condition.is_true():
-        execute_command(process_task, actions, variables)
+        execute_command(Handler(process_task), actions, variables)
 
         if break_on_success:
             raise FlowBreak()
@@ -275,17 +275,17 @@ def get_context(script_dir, selected_context):
 #
 
 handlers = {}
-delayed_variable_resolvers = []
-list_processors = []
 
-def register(type, handler, delayed_variable_resolver=False, list_processor=False):
-    handlers[type] = handler
+class Handler():
 
-    if delayed_variable_resolver:
-        delayed_variable_resolvers.append(handler)
+    def __init__(self, handler_method, delayed_variable_resolver=False, list_processor=False):
+        self.handler_method = handler_method
+        self.delayed_variable_resolver = delayed_variable_resolver
+        self.list_processor = list_processor
 
-    if list_processor:
-        list_processors.append(handler)
+def register(command, handler_method, delayed_variable_resolver=False, list_processor=False):
+    handlers[command] = Handler(handler_method, delayed_variable_resolver, list_processor)
+
 
 def register_scripts(path):
     # Create a custom handler for each script in the directory by
