@@ -1,2 +1,6 @@
-test:
-  contextVariable: set
+variables:
+  contextVariable: unknown
+
+profiles:
+  test:
+    contextVariable: set

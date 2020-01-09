@@ -2,6 +2,7 @@
 # Core execution logic and command handlers
 #
 
+import collections
 import copy
 import re
 
@@ -30,7 +31,7 @@ def process_task(task_block, variables = {}):
 
         rawData = task_block[command]
 
-        # Variable assignement
+        # Variable assignment
         variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
         if variableMatch:
             data = vars.resolve_variables(rawData, variables)
@@ -49,7 +50,6 @@ def process_task(task_block, variables = {}):
 
 def execute_command(handler, data, variables):
 
-    first = True
     output_list = []
 
     if handler.list_processor:
@@ -258,17 +258,32 @@ def return_input(data, variables):
 # Yay-context.yaml
 #
 
-def get_context(script_dir, selected_context):
+def get_context(script_dir, profile_name):
     context_file = os.path.join(script_dir, 'yay-context.yaml')
-    if os.path.isfile(context_file):
-        all_contexts = read_yaml_file(context_file)[0]
-        if selected_context in all_contexts:
-            return all_contexts[selected_context]
+    if not os.path.isfile(context_file):
+        return {}
+
+    context = read_yaml_file(context_file)[0]
+    apply_profile(context, profile_name)
+
+    return context
+
+
+def apply_profile(context, profile_name):
+    profiles = context.pop('profiles', None)
+    if profile_name:
+        if profiles and profile_name in profiles:
+            dict_merge(context, profiles[profile_name])
         else:
-            raise YayException(f"Context '{selected_context}' not found in yay-context.yaml")
+            raise YayException(f"Profile '{profile_name}' not found in yay-context.yaml")
 
-    return {}
 
+def dict_merge(context, profile):
+    for key in profile:
+        if key in context:
+            context[key].update(profile[key])
+        else:
+            context[key] = profile[key]
 
 #
 # Handlers

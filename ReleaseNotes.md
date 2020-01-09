@@ -3,8 +3,30 @@
 ## Yay 0.9 - August 22nd, 2019
 
 **BREAKING CHANGES:**
+* Renamed `context.yay` to `yay-context.yaml` since it is not a Yay script but YAML configuration.
+* Renamed command line option to select a different context profile from `-c` to `-p`.
+* Changed structure of `yay-context.yaml`. Introduced 'variables' and 'profiles' as top level entries.
 
-* Renamed `context.yay` to `yay-context.yaml` since it is not a Yay script nut YAML configuration.
+Old format:
+
+    default:
+      myvar: some value
+    production:
+      myvar: important
+      
+New format:
+
+    variables:
+      myVar: some value
+      
+    profiles:
+      production:
+        variables:
+           myVar: important
+
+
+
+
 ## Yay 0.8 - August 22nd, 2019
 
 **New commands**:
@@ -15,7 +37,6 @@
 **Features:**
 
 * Adds 'save as' property to Http commands that saves the result to a file.
-
 * Removes Yaml warnings
 
 ## Yay 0.7 - May 31st, 2019

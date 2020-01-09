@@ -28,8 +28,8 @@ def main():
         script = read_yaml_files(filename)
 
         # Read context
-        selected_context = get_command_line_parameter(sys.argv, '-c', default='default')
-        context = core.get_context(script_dir, selected_context)
+        profile = get_command_line_parameter(sys.argv, '-p')
+        context = core.get_context(script_dir, profile)
 
         # Register all files in same directory as handlers
         core.register_scripts(script_dir)
@@ -63,7 +63,7 @@ def get_file(filename):
     raise YayException(f"Could not find file: {filename}")
 
 
-def get_variables(args, context_variables):
+def get_variables(args, context):
 
     variables = {}
 
@@ -72,7 +72,8 @@ def get_variables(args, context_variables):
     add_from_yaml_file(defaultValuesFile, variables)
 
     # Use local context
-    variables.update(context_variables)
+    if 'variables' in context:
+        variables.update(context['variables'])
 
     # Parse arguments into values
     for argument in args:
