@@ -4,7 +4,6 @@
 
 **BREAKING CHANGES:**
 * Replaced `context.yay` with `yay-context.yaml` that has a different structure. 
-Introduced 'variables' and 'profiles' as top level entries.
 
 Old `context.yay`:
 
@@ -20,6 +19,9 @@ New `yay-context.yaml`:
     
     path:
     - ~/yay-snippets
+    
+    dependencies:
+      XL Release: 1.0
       
     profiles:
       production:
@@ -30,7 +32,8 @@ New `yay-context.yaml`:
 
 **Features:**
 
-* You can now import all scripts from a different directory by specifying them in the `path` section of the `yay-context.yaml` file.
+* Support for scripts from a different directory by specifying them in the `path` section of the `yay-context.yaml` file.
+* Support for scripts installed in the `~/.yay` directory by specifying them in the `dependencies` section of the `yay-context.yaml` file.
 
 
 ## Yay 0.8 - August 22nd, 2019

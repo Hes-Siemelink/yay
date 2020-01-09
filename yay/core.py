@@ -303,6 +303,10 @@ def register(command, handler_method, delayed_variable_resolver=False, list_proc
 
 
 def register_scripts(path):
+
+    # Resolve ~ for home dir
+    path = os.path.expanduser(path)
+
     # Create a custom handler for each script in the directory by
     # routing it to 'exectute_yay_file' using a lambda function.
     for filename in os.listdir(path):

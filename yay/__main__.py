@@ -31,7 +31,7 @@ def main():
         profile = get_command_line_parameter(sys.argv, '-p')
         context = core.get_context(script_dir, profile)
 
-        # Register all files in same directory as handlers
+        # Register external commands
         register_scripts(context, script_dir)
 
         # Initialize variables
@@ -56,17 +56,25 @@ def get_file(filename):
         return filename
 
     # Return file from .yay home
-    filename_in_home_folder = os.path.join(os.path.expanduser('~'), '.yay', filename)
+    filename_in_home_folder = os.path.join(yay_home(), filename)
     if os.path.isfile(filename_in_home_folder):
         return filename_in_home_folder
 
     raise YayException(f"Could not find file: {filename}")
 
+def yay_home():
+    return os.path.join(os.path.expanduser('~'), '.yay')
 
 def register_scripts(context, script_dir):
+
+    if 'dependencies' in context:
+        for package in context['dependencies']:
+            version = str(context['dependencies'][package])
+            dir = os.path.join(yay_home(), 'packages', package, version)
+            core.register_scripts(dir)
+
     if 'path' in context:
         for dir in context['path']:
-            dir = os.path.expanduser(dir)
             core.register_scripts(dir)
 
     core.register_scripts(script_dir)

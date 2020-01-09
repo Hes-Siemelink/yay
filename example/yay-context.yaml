@@ -1,8 +1,11 @@
 variables:
   name: default
 
-path:
-  - ~/Code/xl-release-yay
+#path:
+#  - ~/Code/xl-release-yay
+
+dependencies:
+  XL Release: 1.0
 
 profiles:
   test:
