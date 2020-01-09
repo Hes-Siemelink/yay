@@ -1,30 +1,36 @@
 # Yay Release Notes
 
-## Yay 0.9 - August 22nd, 2019
+## Yay 0.9 - unreleased
 
 **BREAKING CHANGES:**
-* Renamed `context.yay` to `yay-context.yaml` since it is not a Yay script but YAML configuration.
-* Renamed command line option to select a different context profile from `-c` to `-p`.
-* Changed structure of `yay-context.yaml`. Introduced 'variables' and 'profiles' as top level entries.
+* Replaced `context.yay` with `yay-context.yaml` that has a different structure. 
+Introduced 'variables' and 'profiles' as top level entries.
 
-Old format:
+Old `context.yay`:
 
     default:
       myvar: some value
     production:
       myvar: important
       
-New format:
+New `yay-context.yaml`:
 
     variables:
       myVar: some value
+    
+    path:
+    - ~/yay-snippets
       
     profiles:
       production:
         variables:
            myVar: important
 
+* Renamed command line option to select a different context profile from `-c` to `-p`.
 
+**Features:**
+
+* You can now import all scripts from a different directory by specifying them in the `path` section of the `yay-context.yaml` file.
 
 
 ## Yay 0.8 - August 22nd, 2019
@@ -38,6 +44,7 @@ New format:
 
 * Adds 'save as' property to Http commands that saves the result to a file.
 * Removes Yaml warnings
+
 
 ## Yay 0.7 - May 31st, 2019
 

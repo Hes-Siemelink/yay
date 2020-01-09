@@ -1,5 +1,10 @@
-default:
+variables:
   name: default
 
-test:
-  name: test
+path:
+  - ~/Code/xl-release-yay
+
+profiles:
+  test:
+    name: test
+

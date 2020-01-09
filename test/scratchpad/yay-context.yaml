@@ -1,0 +1,21 @@
+package: My test package
+group: Hes test
+version: 1.0-SNAPSHOT
+
+path:
+- ../my-packages
+
+dependencies:
+  Arango DB: 1.0
+
+variables:
+  testServer: http://localhost:8080
+
+#
+# Profiles
+#
+
+profiles:
+  test:
+    variables:
+      testServer: http://test:8080

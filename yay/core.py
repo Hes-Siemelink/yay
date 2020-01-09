@@ -173,7 +173,7 @@ def execute_yay_file(data, variables, file = None):
 
     process_script(script, vars)
 
-    return vars[OUTPUT_VARIABLE]
+    return vars.get(OUTPUT_VARIABLE)
 
 # If and if any
 

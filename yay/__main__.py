@@ -32,7 +32,7 @@ def main():
         context = core.get_context(script_dir, profile)
 
         # Register all files in same directory as handlers
-        core.register_scripts(script_dir)
+        register_scripts(context, script_dir)
 
         # Initialize variables
         variables = get_variables(sys.argv[2:], context)
@@ -41,8 +41,8 @@ def main():
         result = core.process_script(script, variables)
 
     except Exception as exception:
-        # import traceback
-        # traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         print(exception)
 
 
@@ -61,6 +61,15 @@ def get_file(filename):
         return filename_in_home_folder
 
     raise YayException(f"Could not find file: {filename}")
+
+
+def register_scripts(context, script_dir):
+    if 'path' in context:
+        for dir in context['path']:
+            dir = os.path.expanduser(dir)
+            core.register_scripts(dir)
+
+    core.register_scripts(script_dir)
 
 
 def get_variables(args, context):
