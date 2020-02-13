@@ -1,0 +1,30 @@
+Test case: Read file from disk
+
+Read file: test/yay/Read file test sample.yaml
+
+Expected output:
+  test: true
+  something: else
+
+---
+Test case: Read file with variable syntax
+
+Read file: test/yay/Read file test sample with variable syntax.yaml
+${raw}: ${output}  # triggers variable substitution
+
+Expected output:
+  test: true
+  something: else
+  variable: !any
+
+---
+Test case: Read file with variable syntax and multiple documents
+
+Read file: test/yay/Read file test sample with variable syntax in multiple documents.yaml
+${raw}: ${output}
+
+Expected output:
+- test: true
+  something: else
+- variable: !any
+

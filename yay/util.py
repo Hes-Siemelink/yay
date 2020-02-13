@@ -69,14 +69,26 @@ def read_yaml_files(fileArgument, data = None):
 
     return data
 
+
+class RawDict(dict):
+    def __init__(self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+
+class RawList(list):
+    def __init__(self, *args, **kwargs):
+        list.__init__(self, *args, **kwargs)
+
 def is_dict(item):
-    return type(item) is dict
+    return isinstance(item, dict)
+
+def is_raw(item):
+    return isinstance(item, RawDict) or isinstance(item, RawList)
 
 def is_list(item):
     return isinstance(item, list)
 
 def is_scalar(item):
-    return type(item) is str
+    return isinstance(item, str)
 
 def is_empty(item):
     if item is None: return True

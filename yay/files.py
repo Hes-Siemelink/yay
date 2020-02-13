@@ -12,8 +12,8 @@ def write_file(data, variables):
 def read_file(data, variables):
     contents = read_yaml_file(data)
     if len(contents) == 1:
-        return contents[0]
-    return contents
+        return RawDict(contents[0])
+    return RawList(contents)
 
 # Register command handlers
 core.register('Write file', write_file)

@@ -13,6 +13,8 @@ class VariableMatcher:
 def resolve_variables(item, variables):
     if not item:
         return item
+    if is_raw(item):
+        return item
     if is_scalar(item):
         return resolve_variables_in_string(item, variables)
     if is_dict(item):

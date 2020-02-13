@@ -29,11 +29,13 @@ New `yay-context.yaml`:
            myVar: important
 
 * Renamed command line option to select a different context profile from `-c` to `-p`.
+* Data loaded with `Read file` no longer interprets `${...}` variable syntax in the file. 
 
 **Features:**
 
 * Support for scripts from a different directory by specifying them in the `path` section of the `yay-context.yaml` file.
 * Support for scripts installed in the `~/.yay` directory by specifying them in the `dependencies` section of the `yay-context.yaml` file.
+* Load files that contain `${...}` syntax unrelated to yay variables
 
 
 ## Yay 0.8 - August 22nd, 2019
