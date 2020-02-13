@@ -125,3 +125,17 @@ class TestVariableResolution():
     #     result = vars.resolve_variables(input, self.variables)
     #
     #     assert result == 'Would like to be ${b}'
+
+    def test_split_path(self):
+        (var, path) = vars.split_jsonpath('a.b')
+        assert var == 'a'
+        assert path == '$.b'
+
+        (var, path) = vars.split_jsonpath('a[0]')
+        assert var == 'a'
+        assert path == '$[0]'
+
+        (var, path) = vars.split_jsonpath('a[*]..b')
+        assert var == 'a'
+        assert path == '$[*]..b'
+

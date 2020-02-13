@@ -76,11 +76,10 @@ def get_value_with_path(variable, variables):
         return resolve_variables(value, variables)
 
 def split_jsonpath(var):
-    PATH_SYNTAX  = r"^(.*?)\.(.*)$"
-    INDEX_SYNTAX = r"^(.*?)(\[.*)$"
+    PATH_SYNTAX  = r"^(.*?)([\.\[].*)$"
     (var, path) = match_two_groups(var, PATH_SYNTAX)
-    if not path:
-        (var, path) = match_two_groups(var, INDEX_SYNTAX)
+    if path:
+        path = '$' + path
 
     return (var, path)
 
