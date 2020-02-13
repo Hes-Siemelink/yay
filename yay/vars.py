@@ -70,6 +70,8 @@ def get_value_with_path(variable, variables):
         if part == None:
             # unknown JSON path
             return in_var_syntax(variable)
+        elif is_raw(value):
+            return part
         else:
             return resolve_variables(part, var)
     else:
