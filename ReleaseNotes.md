@@ -33,9 +33,10 @@ New `yay-context.yaml`:
 
 **Features:**
 
-* Support for scripts from a different directory by specifying them in the `path` section of the `yay-context.yaml` file.
-* Support for scripts installed in the `~/.yay` directory by specifying them in the `dependencies` section of the `yay-context.yaml` file.
-* Load files that contain `${...}` syntax unrelated to yay variables
+* Composability -- refer to scripts from a different directory by specifying them in the `path` section of the `yay-context.yaml` file.
+* Basic package support -- decalre packages in the `dependencies` section of the `yay-context.yaml` file and Yay wil look for them in the  `~/.yay/packages` directory by specifying them in the 
+* Properly supports JSONPath in `${...}` variable syntax 
+* Supports loading files that contain `${...}` syntax unrelated to Yay variables
 
 
 ## Yay 0.8 - August 22nd, 2019

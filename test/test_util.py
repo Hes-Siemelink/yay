@@ -11,10 +11,6 @@ class TestJsonpath():
         'list': [1, 2, 3]
     }
 
-    def test_json_path(self):
-        result = util.get_json_path(self.data, 'one')
-        assert result == '1'
-
     def test_json_path_with_dollar(self):
         result = util.get_json_path(self.data, '$.one')
         assert result == '1'
