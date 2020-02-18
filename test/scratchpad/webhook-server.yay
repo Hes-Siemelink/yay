@@ -1,0 +1,5 @@
+Webhook:
+  path: /hello
+  Do:
+    Print: Got request
+    Output: Hello from Server!

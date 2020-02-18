@@ -1,0 +1,9 @@
+Webhook:
+  path: /github/<something>
+  Do:
+    Print: ${output}
+---
+Webhook:
+  path: shutdown
+  Do:
+    Stop webhook: *
