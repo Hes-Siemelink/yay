@@ -2,6 +2,7 @@ import time
 
 from yay.core import register, noop
 from yay.util import *
+from yay import vars
 
 #
 # Join and merge
@@ -46,6 +47,9 @@ def merge(data, variables):
 
     return output
 
+def apply_variables(data, variables):
+    return raw(vars.resolve_variables(live(data), variables))
+
 #
 # Replace
 #
@@ -63,6 +67,7 @@ def replace_text(data, variables):
 
 def wait(data, variables):
     time.sleep(data)
+
 #
 # Printing
 #
@@ -79,6 +84,7 @@ def print_yaml(data, variables):
 register('Join', join)
 register('Merge into variable', join)
 register('Merge', merge, list_processor=True)
+register('Apply variables', apply_variables)
 
 register('Print JSON', print_json)
 register('Print as JSON', print_json)

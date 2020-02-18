@@ -18,6 +18,19 @@ Expected output:
   variable: !any
 
 ---
+Test case: Fill variables in file
+
+Read file: test/yay/Read file test sample with variable syntax.yaml
+As: raw
+${unknown}: known
+Apply variables: ${raw}
+
+Expected output:
+  test: true
+  something: else
+  variable: known
+
+---
 Test case: Read file with variable syntax and multiple documents
 
 Read file: test/yay/Read file test sample with variable syntax in multiple documents.yaml
@@ -27,4 +40,5 @@ Expected output:
 - test: true
   something: else
 - variable: !any
+
 

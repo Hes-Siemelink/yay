@@ -70,6 +70,15 @@ def read_yaml_files(fileArgument, data = None):
     return data
 
 
+def is_dict(item):
+    return isinstance(item, dict)
+
+def is_list(item):
+    return isinstance(item, list)
+
+def is_scalar(item):
+    return isinstance(item, str)
+
 class RawDict(dict):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
@@ -78,17 +87,24 @@ class RawList(list):
     def __init__(self, *args, **kwargs):
         list.__init__(self, *args, **kwargs)
 
-def is_dict(item):
-    return isinstance(item, dict)
-
 def is_raw(item):
     return isinstance(item, RawDict) or isinstance(item, RawList)
 
-def is_list(item):
-    return isinstance(item, list)
+def raw(item):
+    if is_list(item):
+        return RawList(item)
+    if is_dict(item):
+        return RawDict(item)
 
-def is_scalar(item):
-    return isinstance(item, str)
+    return item # TODO handle strings
+
+def live(item):
+    if is_list(item):
+        return list(item)
+    if is_dict(item):
+        return dict(item)
+
+    return item # TODO handle strings
 
 def is_empty(item):
     if item is None: return True
