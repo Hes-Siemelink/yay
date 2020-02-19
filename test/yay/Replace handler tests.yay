@@ -1,6 +1,6 @@
 Replace:
-  part: me
   in: Hello me
+  part: me
   with: World
 
 Expected output: Hello World

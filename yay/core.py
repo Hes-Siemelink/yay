@@ -169,6 +169,8 @@ def execute_yay_file(data, variables, file = None):
     vars = copy.deepcopy(variables)
     if file in data:
         del data['file']
+
+    # FIXME handle case if data is str or list
     vars.update(data)
 
     process_script(script, vars)
