@@ -8,14 +8,17 @@ from yay import core
 
 from yay.util import *
 
-# jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
-jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Token Demo1234'}
+jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
-DEFAULT_URL = 'http.url'
+HTTP_DEFAULTS = '_http.defaults'
 
-def http_set_url(data, variables):
-    variables[DEFAULT_URL] = data
-    return data
+def set_http_defaults(data, variables):
+
+    if is_scalar(data):
+        data = {'url': data}
+    variables[HTTP_DEFAULTS] = data
+
+    return None
 
 def http_get(data, variables):
     if is_scalar(data):
@@ -49,20 +52,27 @@ def send_request(data, variables):
 
     if not data: return
 
-    url = get_parameter(data, 'url', variables.get(DEFAULT_URL))
-    path = data['path'] if 'path' in data else ''
-    body = data['body'] if 'body' in data else None
-    method = data['method'] if 'method' in data else 'GET'
-    file = data['save as'] if 'save as' in data else None
+    defaults = variables.get(HTTP_DEFAULTS)
+    context = {**defaults, **data}
+
+    url = get_parameter(context, 'url')
+    path = context['path'] if 'path' in context else ''
+    body = context['body'] if 'body' in context else None
+    method = context['method'] if 'method' in context else 'GET'
+    file = context['save as'] if 'save as' in context else None
+
+    headers = dict(jsonHeaders)
+    if 'headers' in context:
+        headers.update(context['headers'])
 
     if method == 'GET':
-        r = requests.get(url + path, headers = jsonHeaders)
+        r = requests.get(url + path, headers = headers)
     if method == 'POST':
-        r = requests.post(url + path, data = json.dumps(body), headers = jsonHeaders)
+        r = requests.post(url + path, data = json.dumps(body), headers = headers)
     if method == 'PUT':
-        r = requests.put(url + path, data = json.dumps(body), headers = jsonHeaders)
+        r = requests.put(url + path, data = json.dumps(body), headers = headers)
     if method == 'DELETE':
-        r = requests.delete(url + path, headers = jsonHeaders)
+        r = requests.delete(url + path, headers = headers)
 
     if r.status_code >= 300:
         print(r.status_code)
@@ -100,4 +110,4 @@ core.register('Http POST', http_post)
 core.register('Http PUT', http_put)
 core.register('Http DELETE', http_delete)
 core.register('Http', process_request)
-core.register('Http endpoint', http_set_url)
+core.register('Http endpoint', set_http_defaults)

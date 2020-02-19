@@ -80,6 +80,12 @@ def get_options():
 
     return flask.jsonify(recipes)
 
+@app.route('/echo/header/<name>', methods=['GET'])
+def echo_header(name):
+    header = request.headers[name]
+
+    return flask.jsonify({name: header})
+
 #
 # Server start
 #
