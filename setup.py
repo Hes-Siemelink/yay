@@ -22,7 +22,7 @@ setuptools.setup(
         'pytest',
         'pyyaml',
         'requests',
-        'jsonpath2',
+        'jsonpath-ng',
         'PyInquirer',
         'flask',
         'python-arango'

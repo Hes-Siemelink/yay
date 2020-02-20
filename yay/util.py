@@ -2,15 +2,15 @@ import json
 import yaml
 import os
 
-from jsonpath2.path import Path
+from jsonpath_ng import jsonpath, parse
 from yay import YayException
 
 def get_json_path(data, path):
     if not path:
         return data
 
-    jsonpath = Path.parse_str(path)
-    part = [match.current_value for match in jsonpath.match(data)]
+    jsonpath = parse(path)
+    part = [match.value for match in jsonpath.find(data)]
     if len(part) == 0:
         return None
     if len(part) == 1:
