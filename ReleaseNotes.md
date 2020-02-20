@@ -37,8 +37,9 @@ New `yay-context.yaml`:
 * Basic package support -- decalre packages in the `dependencies` section of the `yay-context.yaml` file and Yay wil look for them in the  `~/.yay/packages` directory by specifying them in the 
 * Properly supports JSONPath in `${...}` variable syntax 
 * Supports loading files that contain `${...}` syntax unrelated to Yay variables and keeps them as 'raw' YAML
-* **Http endpoint** command now also takes nested arguments that serve as defaults for any HTTP command
 * Support for headers in HTTP commands
+* Support for Basic Authentication in HTTP commands
+* **Http endpoint** command now also takes nested arguments that serve as defaults for any HTTP command
 
 **New commands**
 

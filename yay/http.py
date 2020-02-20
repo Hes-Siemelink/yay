@@ -55,25 +55,49 @@ def send_request(data, variables):
     defaults = variables.get(HTTP_DEFAULTS)
     context = {**defaults, **data}
 
+    # Parameters
     url = get_parameter(context, 'url')
     path = context['path'] if 'path' in context else ''
     body = context['body'] if 'body' in context else None
     method = context['method'] if 'method' in context else 'GET'
     file = context['save as'] if 'save as' in context else None
 
+    # Headers
     headers = dict(jsonHeaders)
     if 'headers' in context:
         headers.update(context['headers'])
 
-    if method == 'GET':
-        r = requests.get(url + path, headers = headers)
-    if method == 'POST':
-        r = requests.post(url + path, data = json.dumps(body), headers = headers)
-    if method == 'PUT':
-        r = requests.put(url + path, data = json.dumps(body), headers = headers)
-    if method == 'DELETE':
-        r = requests.delete(url + path, headers = headers)
+    # Authorization
+    auth = get_authorization(context)
 
+    # Do request
+    if method == 'GET':
+        r = requests.get(
+            url + path,
+            headers = headers,
+            auth = auth)
+
+    if method == 'POST':
+        r = requests.post(
+            url + path,
+            data = json.dumps(body),
+            headers = headers,
+            auth = auth)
+
+    if method == 'PUT':
+        r = requests.put(
+            url + path,
+            data = json.dumps(body),
+            headers = headers,
+            auth = auth)
+
+    if method == 'DELETE':
+        r = requests.delete(
+            url + path,
+            headers = headers,
+            auth = auth)
+
+    # Check result
     if r.status_code >= 300:
         print(r.status_code)
         print(r.text)
@@ -82,6 +106,7 @@ def send_request(data, variables):
     if r.status_code > 200:
         return
 
+    # Save to file
     try:
         if file:
             # TODO: stream contents
@@ -94,6 +119,15 @@ def send_request(data, variables):
         result = r.text
 
     return result
+
+
+def get_authorization(context):
+    auth = None
+    if 'username' in context and 'password' in context:
+        auth = (context['username'], context['password'])
+
+    return auth
+
 
 def download(data, variables):
     if is_scalar(data):
