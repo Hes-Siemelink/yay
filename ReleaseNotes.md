@@ -2,7 +2,7 @@
 
 ## Yay 0.9 - unreleased
 
-**BREAKING CHANGES:**
+### BREAKING CHANGES
 * Replaced `context.yay` with `yay-context.yaml` that has a different structure. 
 
 Old `context.yay`:
@@ -31,7 +31,7 @@ New `yay-context.yaml`:
 * Renamed command line option to select a different context profile from `-c` to `-p`.
 * Data loaded with `Read file` no longer interprets `${...}` variable syntax in the file. 
 
-**Features:**
+### Features
 
 * Composability -- refer to scripts from a different directory by specifying them in the `path` section of the `yay-context.yaml` file.
 * Basic package support -- decalre packages in the `dependencies` section of the `yay-context.yaml` file and Yay wil look for them in the  `~/.yay/packages` directory by specifying them in the 
@@ -40,20 +40,21 @@ New `yay-context.yaml`:
 * Support for headers in HTTP commands
 * Support for Basic Authentication in HTTP commands
 * **Http endpoint** command now also takes nested arguments that serve as defaults for any HTTP command
+* **Merge** command supports merging object with output variable
 
-**New commands**
+### New commands
 
 * **Apply variables** -- Substitutes variables in raw YAML, for when content was loaded from a file.
 
 
 ## Yay 0.8 - August 22nd, 2019
 
-**New commands**:
+### New commands
 
 * **Repeat** -- Introduces Repeat / until control structure
 * **Wait** -- Wait for a number of seconds.
 
-**Features:**
+### Features
 
 * Adds 'save as' property to Http commands that saves the result to a file.
 * Removes Yaml warnings
@@ -61,7 +62,7 @@ New `yay-context.yaml`:
 
 ## Yay 0.7 - May 31st, 2019
 
-**BREAKING CHANGES:**
+### BREAKING CHANGES
 
 * Renamed output variable from `${result}` to `${output}`. For backwards compatibility, ${result} is still stored but usage of it is deprecated. No longer supported:
  ** Setting ${result} explicitly / 'Result' command. Use 'Output' command that sets the `${output}` var directly.
@@ -69,7 +70,7 @@ New `yay-context.yaml`:
 
 * Renames 'item' in 'If' to 'object' so it aligns with 'equals'.
 
-**New commands:**
+### New commands
 * **Input** -- defines parameters and provides default values.
 * **Output** -- simply sets the result.
 * **Execute yay file** -- executes a file in the same directory
@@ -77,7 +78,7 @@ New `yay-context.yaml`:
 * **Assert that** -- assert with 'if' syntax
 * **Merge** -- 
 
-**Features:**
+### Features
 
 * Original recipes in the examples!
 
