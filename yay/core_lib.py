@@ -1,6 +1,6 @@
 import time
 
-from yay.core import register, noop
+from yay.core import register, noop, OUTPUT_VARIABLE
 from yay.util import *
 from yay import vars
 
@@ -27,11 +27,14 @@ def join_single_variable(var, updates, variables):
 
 def merge(data, variables):
 
+    if is_dict(data):
+        merge([variables[OUTPUT_VARIABLE], data], variables)
+        return
+
     first = True
     output = None
 
     for item in data:
-
         if first:
             if is_dict(item):
                 output = item

@@ -16,6 +16,7 @@ Expected output:
   test: true
   something: else
   variable: !any
+  nested: !any
 
 ---
 Test case: Fill variables in file
@@ -23,12 +24,15 @@ Test case: Fill variables in file
 Read file: test/yay/Read file test sample with variable syntax.yaml
 As: raw
 ${unknown}: known
+${nested}:
+  something: there
 Apply variables: ${raw}
 
 Expected output:
   test: true
   something: else
   variable: known
+  nested: there
 
 ---
 Test case: Read file with variable syntax and multiple documents

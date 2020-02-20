@@ -1,3 +1,4 @@
 test: true
 something: else
 variable: ${unknown}
+nested: ${nested.something}
