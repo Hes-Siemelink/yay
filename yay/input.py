@@ -1,7 +1,7 @@
-from yay import core
-from yay.util import *
+from yay.core import command_handler
 from PyInquirer import prompt
 
+@command_handler('User Input')
 def ask_user(data, variables):
     if 'name' not in data:
         data['name'] = core.OUTPUT_VARIABLE
@@ -9,6 +9,7 @@ def ask_user(data, variables):
     answers = prompt([data])
     variables.update(answers)
 
+@command_handler('Check Input')
 def check_input(data, variables):
 
     for variable in data:
@@ -22,8 +23,3 @@ def check_input(data, variables):
         }
         answers = prompt([query])
         variables.update(answers)
-
-
-# Register command handlers
-core.register('User Input', ask_user)
-core.register('Check Input', check_input)

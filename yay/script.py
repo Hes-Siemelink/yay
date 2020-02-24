@@ -1,10 +1,5 @@
-from yay import core
+from yay.core import command_handler
 
-from yay.util import *
-
+@command_handler('Python')
 def execute_python_script(data, variables):
     exec(data, variables)
-
-
-# Register command handlers
-core.register('Python', execute_python_script)

@@ -1,17 +1,16 @@
 #
 # HTTP commands
 #
-import os
 import requests
 
-from yay import core
-
+from yay.core import command_handler
 from yay.util import *
 
 jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
 HTTP_DEFAULTS = '_http.defaults'
 
+@command_handler('Http endpoint')
 def set_http_defaults(data, variables):
 
     if is_scalar(data):
@@ -20,6 +19,7 @@ def set_http_defaults(data, variables):
 
     return None
 
+@command_handler('Http GET')
 def http_get(data, variables):
     if is_scalar(data):
         data = {
@@ -28,18 +28,22 @@ def http_get(data, variables):
     data['method'] = 'GET'
     return process_request(data, variables)
 
+@command_handler('Http POST')
 def http_post(data, variables):
     data['method'] = 'POST'
     return process_request(data, variables)
 
+@command_handler('Http PUT')
 def http_put(data, variables):
     data['method'] = 'PUT'
     return process_request(data, variables)
 
+@command_handler('Http DELETE')
 def http_delete(data, variables):
     data['method'] = 'DELETE'
     return process_request(data, variables)
 
+@command_handler('Http')
 def process_request(data, variables):
     result = send_request(data, variables)
 
@@ -136,12 +140,3 @@ def download(data, variables):
         }
     data['method'] = 'GET'
     return process_request(data, variables)
-
-
-# Register command handlers
-core.register('Http GET', http_get)
-core.register('Http POST', http_post)
-core.register('Http PUT', http_put)
-core.register('Http DELETE', http_delete)
-core.register('Http', process_request)
-core.register('Http endpoint', set_http_defaults)

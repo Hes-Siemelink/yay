@@ -1,13 +1,16 @@
 from arango.client import ArangoClient
+from yay.core import command_handler
 from yay.util import *
 
 ARANGO_ENDPOINT = 'arango.endpoint'
 ARANGO_DATABASE = 'arango.database'
 
+@command_handler('Arango endpoint')
 def set_endpoint(data, variables):
     variables[ARANGO_ENDPOINT] = data
     return data
 
+@command_handler('Arango database')
 def set_database(data, variables):
     variables[ARANGO_DATABASE] = data
     return data
@@ -20,6 +23,7 @@ def get_db(variables):
 
     return client.db(database, endpoint['username'], endpoint['password'])
 
+@command_handler('Arango query')
 def run_aql_query(data, variables):
     db = get_db(variables)
 
@@ -29,7 +33,7 @@ def run_aql_query(data, variables):
 
     return result
 
-
+@command_handler('Arango insert')
 def insert(data, variables):
 
     collection_name = get_parameter(data, 'in')
