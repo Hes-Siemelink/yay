@@ -118,7 +118,7 @@ def send_request(data, variables):
     except ValueError:
         result = r.text
 
-    return result
+    return raw(result)
 
 
 def get_authorization(context):
