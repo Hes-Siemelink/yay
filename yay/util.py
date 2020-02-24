@@ -2,20 +2,7 @@ import json
 import yaml
 import os
 
-from jsonpath_ng import jsonpath, parse
 from yay import YayException
-
-def get_json_path(data, path):
-    if not path:
-        return data
-
-    jsonpath = parse(path)
-    part = [match.value for match in jsonpath.find(data)]
-    if len(part) == 0:
-        return None
-    if len(part) == 1:
-        part = part[0]
-    return part
 
 def format_json(dict):
     return json.dumps(dict, indent=2, sort_keys=False)

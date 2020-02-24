@@ -1,7 +1,9 @@
 #
 # Variable resolving
 #
+
 import re
+from jsonpath_ng import jsonpath, parse
 
 from yay.util import *
 
@@ -94,3 +96,16 @@ def match_two_groups(text, regex):
 
 def in_var_syntax(variable):
     return '${' + variable + '}'
+
+
+def get_json_path(data, path):
+    if not path:
+        return data
+
+    jsonpath = parse(path)
+    part = [match.value for match in jsonpath.find(data)]
+    if len(part) == 0:
+        return None
+    if len(part) == 1:
+        part = part[0]
+    return part
