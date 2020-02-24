@@ -8,7 +8,6 @@ from yay import vars
 # Meta info
 #
 
-@command_handler('Name')
 @command_handler('Task')
 @command_handler('Test case')
 def noop(data, variables):
