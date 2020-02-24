@@ -4,6 +4,7 @@ from flask import request
 from threading import Thread
 
 import yay.context
+import yay.execution
 from yay.util import *
 from yay import execution
 
@@ -42,6 +43,6 @@ def handle_request():
 
 
 # Register command handlers
-yay.context.register('Webhook', create_webhook)
+yay.execution.register('Webhook', create_webhook)
 
 

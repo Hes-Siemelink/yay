@@ -1,13 +1,21 @@
 import re
 
 from yay import vars
-from yay.context import handlers
 from yay.util import *
-from yay.vars import OUTPUT_VARIABLE, DEPRECATED_RESULT_VARIABLE
 
 #
 # Execution logic
 #
+
+class Handler():
+    def __init__(self, handler_method, delayed_variable_resolver=False, list_processor=False):
+        self.handler_method = handler_method
+        self.delayed_variable_resolver = delayed_variable_resolver
+        self.list_processor = list_processor
+handlers = {}
+
+def register(command, handler_method, delayed_variable_resolver=False, list_processor=False):
+    handlers[command] = Handler(handler_method, delayed_variable_resolver, list_processor)
 
 def process_script(script, variables = {}):
     output = None
@@ -66,8 +74,8 @@ def execute_command(handler, data, variables):
         output = output_list[0]
 
     if not output_list == [None]:
-        variables[OUTPUT_VARIABLE] = output
-        variables[DEPRECATED_RESULT_VARIABLE] = output
+        variables[vars.OUTPUT_VARIABLE] = output
+        variables[vars.DEPRECATED_RESULT_VARIABLE] = output
 
     return output
 
@@ -87,6 +95,5 @@ def execute_single_command(handler, rawData, variables):
 class FlowBreak(Exception):
     def __init__(self, output = None):
         self.output = output
-
 
 

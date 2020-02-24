@@ -1,11 +1,8 @@
 import copy
-import os
 
-from yay import YayException
-from yay.execution import process_script
-from yay.vars import OUTPUT_VARIABLE
-from yay.util import read_yaml_file, get_parameter
-
+from yay import vars
+from yay import execution
+from yay.util import *
 
 #
 # Yay-context.yaml
@@ -42,27 +39,14 @@ def dict_merge(context, profile):
 # Command handlers
 #
 
-handlers = {}
-
-
-class Handler():
-
-    def __init__(self, handler_method, delayed_variable_resolver=False, list_processor=False):
-        self.handler_method = handler_method
-        self.delayed_variable_resolver = delayed_variable_resolver
-        self.list_processor = list_processor
-
-
-def register(command, handler_method, delayed_variable_resolver=False, list_processor=False):
-    handlers[command] = Handler(handler_method, delayed_variable_resolver, list_processor)
-
-
 def command_handler(command, delayed_variable_resolver=False, list_processor=False):
     def inner_decorator(handler_function):
-        register(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
+        execution.register(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
         return handler_function
     return inner_decorator
 
+def get_handler(command):
+    return execution.handlers.get(command)
 
 def register_scripts(path):
 
@@ -75,7 +59,7 @@ def register_scripts(path):
         if filename.endswith('.yay'):
             handler_name = to_handler_name(filename)
             filename = os.path.join(path, filename)
-            register(handler_name,
+            execution.register(handler_name,
                      lambda data, variables, file = filename:
                      execute_yay_file(data, variables, file))
 
@@ -85,7 +69,7 @@ def to_handler_name(filename):
     filename = filename.replace('-', ' ')
     return filename
 
-
+@command_handler('Execute yay file')
 def execute_yay_file(data, variables, file = None):
     if file == None:
         file = get_parameter(data, 'file')
@@ -94,13 +78,13 @@ def execute_yay_file(data, variables, file = None):
     script = read_yaml_file(file)
 
     # Process all
-    vars = copy.deepcopy(variables)
+    vars_copy = copy.deepcopy(variables)
     if file in data:
         del data['file']
 
     # FIXME handle case if data is str or list
-    vars.update(data)
+    vars_copy.update(data)
 
-    process_script(script, vars)
+    execution.process_script(script, vars_copy)
 
-    return vars.get(OUTPUT_VARIABLE)
+    return vars_copy.get(vars.OUTPUT_VARIABLE)

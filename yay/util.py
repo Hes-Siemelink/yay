@@ -2,7 +2,8 @@ import json
 import yaml
 import os
 
-from yay import YayException
+class YayException(Exception):
+    pass
 
 def format_json(dict):
     return json.dumps(dict, indent=2, sort_keys=False)
