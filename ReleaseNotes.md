@@ -1,6 +1,11 @@
 # Yay Release Notes
 
-## Yay 0.9 - unreleased
+## Yay 0.10 - unreleased
+
+### Features
+* **For each** command returns a list of results
+
+## Yay 0.9 - February 21st, 2020
 
 ### BREAKING CHANGES
 * Replaced `context.yay` with `yay-context.yaml` that has a different structure. 

@@ -119,18 +119,22 @@ def foreach(data, variables):
     items = data[loop_variable]
     items = vars.resolve_variables(items, variables)
 
+    output = []
     for item in items:
         stash = None
         if loop_variable in variables:
             stash = variables[loop_variable]
         variables[loop_variable] = item
 
-        execute_command(handlers['Do'], actions, variables)
+        result = execute_command(handlers['Do'], actions, variables)
+        output.append(result)
 
         if (stash):
             variables[loop_variable] = stash
         else:
             del variables[loop_variable]
+
+    return output
 
 def get_foreach_variable(data):
     for variable in data:
