@@ -1,10 +1,15 @@
-## Packages
-* Link to (zip)
-* Link to packages in home dir
-* Link to packages somewhere else
-* Download packages from Maven
-* Define context / profile per folder
-
+## Better examples for blogs than curl
+* Interactive OAuth script
+* http://tav.espians.com/oauth-3.0-the-sane-and-simple-way-to-do-it.html
 
 ## Test
 * Run main for test
+
+## Error handling
+* Define error handler
+* Define errors
+
+## Passwords
+* Define secrets
+* Connect to Vault
+
