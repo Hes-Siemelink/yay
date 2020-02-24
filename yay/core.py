@@ -7,7 +7,6 @@ import re
 
 from yay import vars
 from yay.util import *
-from yay.conditions import parse_condition, Equals
 
 #
 # Execution logic
@@ -138,73 +137,6 @@ def to_handler_name(filename):
     return filename
 
 
-#
-# Control flow
-#
-
-# Do
-@command_handler('Do', delayed_variable_resolver=True)
-def do(data, variables):
-    return process_task(data, variables)
-
-# For each
-@command_handler('For each', delayed_variable_resolver=True)
-def foreach(data, variables):
-    actions = get_parameter(data, 'Do')
-    if len(data) != 2:
-        raise YayException("'For each' needs exactly two parameters: 'Do' and the name of the variable.")
-
-    loop_variable = get_foreach_variable(data)
-
-    items = data[loop_variable]
-    items = vars.resolve_variables(items, variables)
-
-    output = []
-    for item in items:
-        stash = None
-        if loop_variable in variables:
-            stash = variables[loop_variable]
-        variables[loop_variable] = item
-
-        result = execute_command(handlers['Do'], actions, variables)
-        output.append(result)
-
-        if (stash):
-            variables[loop_variable] = stash
-        else:
-            del variables[loop_variable]
-
-    return output
-
-def get_foreach_variable(data):
-    for variable in data:
-        if variable == 'Do':
-            continue
-        return variable
-
-# Repeat
-
-@command_handler('Repeat', delayed_variable_resolver=True)
-def repeat(data, variables):
-    actions = get_parameter(data, 'Do')
-    until = get_parameter(data, 'Until')
-
-    finished = False
-    while not finished:
-        result = execute_command(handlers['Do'], actions, variables)
-
-        if is_dict(until):
-            until_copy = copy.deepcopy(until)
-            until_copy = vars.resolve_variables(until_copy, variables)
-
-            condition = parse_condition(until_copy)
-            finished = condition.is_true()
-        else:
-            finished = (result == until)
-
-# Execute yay file
-
-@command_handler('Execute yay file')
 def execute_yay_file(data, variables, file = None):
     if file == None:
         file = get_parameter(data, 'file')
@@ -224,94 +156,6 @@ def execute_yay_file(data, variables, file = None):
 
     return vars.get(OUTPUT_VARIABLE)
 
-# If and if any
-
-@command_handler('If any', delayed_variable_resolver=True)
-def if_any_statement(data, variables):
-    if_statement(data, variables, True)
-
-@command_handler('If', delayed_variable_resolver=True)
-def if_statement(data, variables, break_on_success = False):
-    actions = get_parameter(data, 'Do')
-
-    del data['Do']
-    data = vars.resolve_variables(data, variables)
-
-    condition = parse_condition(data)
-
-    if condition.is_true():
-        execute_command(Handler(process_task), actions, variables)
-
-        if break_on_success:
-            raise FlowBreak()
-
-
-#
-# Assert
-#
-
-@command_handler('Assert equals')
-def assert_equals(data, variables):
-    actual = get_parameter(data, 'actual')
-    expected = get_parameter(data, 'expected')
-
-    assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
-
-@command_handler('Assert that')
-def assert_that(data, variables):
-
-    condition = parse_condition(data)
-
-    if condition.is_true():
-        return
-
-    message = "\n{}".format(format_yaml(condition.as_dict()))
-    if type(condition) is Equals:
-        message = f"\nExpected: {condition.equals}\nActual:   {condition.object}"
-    assert False, message
-
-@command_handler('Expected output', list_processor=True)
-def expect_output(data, variables):
-    actual = variables.get(OUTPUT_VARIABLE)
-    expected = data
-
-    assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
-
-#
-# Variables
-#
-
-@command_handler('Set')
-@command_handler('Set variable')
-@command_handler('As')
-def set_variable(data, variables):
-
-    # set: varname
-    # => will set the output into 'varname'
-    if is_scalar(data):
-        variables[data] = variables[OUTPUT_VARIABLE]
-        return
-
-    # set:
-    #   var1: ${output}
-    #   var2: Something else
-    # => will set the output into 'varname'. You can also use literal values or variables with paths.
-    for var in data:
-        variables[var] = data[var]
-
-@command_handler('Input')
-def check_input(data, variables):
-    for input_parameter in data:
-        if not input_parameter in variables:
-            input_description = data[input_parameter]
-            if 'default' in input_description:
-                variables[input_parameter] = input_description['default']
-            else:
-                raise YayException("Variable not provided: " + input_parameter)
-
-@command_handler('Output')
-def return_input(data, variables):
-    return data
 
 #
 # Yay-context.yaml

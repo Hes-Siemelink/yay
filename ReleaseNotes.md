@@ -2,6 +2,9 @@
 
 ## Yay 0.10 - unreleased
 
+### BREAKING CHANGES
+* Removes 'Name' command. Use 'Task' instead
+
 ### Features
 * **For each** command returns a list of results
 
