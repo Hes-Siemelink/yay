@@ -1,13 +1,24 @@
 import time
 
-from yay.core import register, noop, OUTPUT_VARIABLE
+from yay.core import command_handler, OUTPUT_VARIABLE
 from yay.util import *
 from yay import vars
+
+#
+# Meta info
+#
+
+@command_handler('Name')
+@command_handler('Task')
+@command_handler('Test case')
+def noop(data, variables):
+    pass
 
 #
 # Join and merge
 #
 
+@command_handler('Join')
 def join(data, variables):
     for var in data:
         join_single_variable(var, data[var], variables)
@@ -25,6 +36,7 @@ def join_single_variable(var, updates, variables):
             value.extend(as_list(update))
     variables[var] = value
 
+@command_handler('Merge', list_processor=True)
 def merge(data, variables):
 
     if is_dict(data):
@@ -50,6 +62,7 @@ def merge(data, variables):
 
     return output
 
+@command_handler('Apply variables')
 def apply_variables(data, variables):
     return raw(vars.resolve_variables(live(data), variables))
 
@@ -57,6 +70,7 @@ def apply_variables(data, variables):
 # Replace
 #
 
+@command_handler('Replace')
 def replace_text(data, variables):
     part = get_parameter(data, 'part')
     text = get_parameter(data, 'in')
@@ -68,6 +82,7 @@ def replace_text(data, variables):
 # Wait
 #
 
+@command_handler('Wait')
 def wait(data, variables):
     time.sleep(data)
 
@@ -75,27 +90,16 @@ def wait(data, variables):
 # Printing
 #
 
+@command_handler('Print')
 def print_text(data, variables):
     print(data)
 
+@command_handler('Print JSON')
+@command_handler('Print as JSON')
 def print_json(data, variables):
     print_as_json(data)
 
+@command_handler('Print YAML')
+@command_handler('Print as YAML')
 def print_yaml(data, variables):
     print_as_yaml(data)
-
-register('Join', join)
-register('Merge into variable', join)
-register('Merge', merge, list_processor=True)
-register('Apply variables', apply_variables)
-
-register('Print JSON', print_json)
-register('Print as JSON', print_json)
-register('Print YAML', print_yaml)
-register('Print as YAML', print_yaml)
-register('Name',  noop)
-register('Task',  noop)
-register('Test case',  noop)
-register('Print',  print_text)
-register('Replace',  replace_text)
-register('Wait',  wait)

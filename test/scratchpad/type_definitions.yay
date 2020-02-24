@@ -1,6 +1,6 @@
 Task definition:
 
-  Name: Replace
+  Command: Replace
   Description: |
     Find and replaces text.
 

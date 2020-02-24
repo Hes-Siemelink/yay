@@ -142,9 +142,6 @@ def to_handler_name(filename):
 # Control flow
 #
 
-def noop(data, variables):
-    pass
-
 # Do
 @command_handler('Do', delayed_variable_resolver=True)
 def do(data, variables):
