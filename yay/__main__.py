@@ -72,13 +72,13 @@ def register_scripts(context, script_dir):
         for package in context['dependencies']:
             version = str(context['dependencies'][package])
             dir = os.path.join(yay_home(), 'packages', package, version)
-            execution.register_scripts(dir)
+            yay.context.register_scripts(dir)
 
     if 'path' in context:
         for dir in context['path']:
-            execution.register_scripts(dir)
+            yay.context.register_scripts(dir)
 
-    execution.register_scripts(script_dir)
+    yay.context.register_scripts(script_dir)
 
 
 def get_variables(args, context):

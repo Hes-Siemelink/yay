@@ -3,7 +3,7 @@
 #
 import requests
 
-from yay.execution import command_handler
+from yay.context import command_handler
 from yay.util import *
 
 jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}

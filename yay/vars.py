@@ -109,3 +109,7 @@ def get_json_path(data, path):
     if len(part) == 1:
         part = part[0]
     return part
+
+
+OUTPUT_VARIABLE = 'output'
+DEPRECATED_RESULT_VARIABLE = 'result'

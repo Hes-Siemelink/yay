@@ -19,7 +19,7 @@ def setup_test_server():
 @pytest.mark.parametrize("file", get_files('yay', __file__))
 def test_yay(file):
     script_dir = os.path.dirname(os.path.realpath(file))
-    execution.register_scripts(script_dir)
+    yay.context.register_scripts(script_dir)
     context = yay.context.get_context(script_dir, 'test')
 
     run_yay_test(file, context)
