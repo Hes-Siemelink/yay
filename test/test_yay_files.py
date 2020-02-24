@@ -1,5 +1,6 @@
 import pytest
 
+import yay.context
 from yay.test import *
 from yay import __main__
 
@@ -18,7 +19,7 @@ def setup_test_server():
 @pytest.mark.parametrize("file", get_files('yay', __file__))
 def test_yay(file):
     script_dir = os.path.dirname(os.path.realpath(file))
-    core.register_scripts(script_dir)
-    context = core.get_context(script_dir, 'test')
+    execution.register_scripts(script_dir)
+    context = yay.context.get_context(script_dir, 'test')
 
     run_yay_test(file, context)

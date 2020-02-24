@@ -2,9 +2,9 @@ import copy
 import time
 
 from yay import conditions
-from yay import core
+from yay import execution
 from yay import vars
-from yay.core import command_handler
+from yay.execution import command_handler
 from yay.util import *
 
 #
@@ -14,7 +14,7 @@ from yay.util import *
 # Do
 @command_handler('Do', delayed_variable_resolver=True)
 def do(data, variables):
-    return core.process_task(data, variables)
+    return execution.process_task(data, variables)
 
 # For each
 @command_handler('For each', delayed_variable_resolver=True)
@@ -35,7 +35,7 @@ def foreach(data, variables):
             stash = variables[loop_variable]
         variables[loop_variable] = item
 
-        result = core.execute_command(core.handlers['Do'], actions, variables)
+        result = execution.execute_command(execution.handlers['Do'], actions, variables)
         output.append(result)
 
         if (stash):
@@ -60,7 +60,7 @@ def repeat(data, variables):
 
     finished = False
     while not finished:
-        result = core.execute_command(core.handlers['Do'], actions, variables)
+        result = execution.execute_command(execution.handlers['Do'], actions, variables)
 
         if is_dict(until):
             until_copy = copy.deepcopy(until)
@@ -75,7 +75,7 @@ def repeat(data, variables):
 
 @command_handler('Execute yay file')
 def execute_yay_file(data, variables, file = None):
-    return core.execute_yay_file(data, variables, file)
+    return execution.execute_yay_file(data, variables, file)
 
 # If and if any
 
@@ -93,10 +93,10 @@ def if_statement(data, variables, break_on_success = False):
     condition = conditions.parse_condition(data)
 
     if condition.is_true():
-        core.execute_command(core.Handler(core.process_task), actions, variables)
+        execution.execute_command(execution.Handler(execution.process_task), actions, variables)
 
         if break_on_success:
-            raise core.FlowBreak()
+            raise execution.FlowBreak()
 
 
 #
@@ -125,7 +125,7 @@ def assert_that(data, variables):
 
 @command_handler('Expected output', list_processor=True)
 def expect_output(data, variables):
-    actual = variables.get(core.OUTPUT_VARIABLE)
+    actual = variables.get(execution.OUTPUT_VARIABLE)
     expected = data
 
     assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
@@ -142,7 +142,7 @@ def set_variable(data, variables):
     # set: varname
     # => will set the output into 'varname'
     if is_scalar(data):
-        variables[data] = variables[core.OUTPUT_VARIABLE]
+        variables[data] = variables[execution.OUTPUT_VARIABLE]
         return
 
     # set:
@@ -201,7 +201,7 @@ def join_single_variable(var, updates, variables):
 def merge(data, variables):
 
     if is_dict(data):
-        merge([variables[core.OUTPUT_VARIABLE], data], variables)
+        merge([variables[execution.OUTPUT_VARIABLE], data], variables)
         return
 
     first = True

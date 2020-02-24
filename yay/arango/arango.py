@@ -1,5 +1,5 @@
 from arango.client import ArangoClient
-from yay.core import command_handler
+from yay.execution import command_handler
 from yay.util import *
 
 ARANGO_ENDPOINT = 'arango.endpoint'

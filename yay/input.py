@@ -1,4 +1,4 @@
-from yay.core import command_handler
+from yay.execution import command_handler
 from PyInquirer import prompt
 
 @command_handler('User Input')

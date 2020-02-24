@@ -1,4 +1,4 @@
-from yay.core import command_handler
+from yay.execution import command_handler
 from yay.util import *
 
 @command_handler('Write file')
