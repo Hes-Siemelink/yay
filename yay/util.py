@@ -18,7 +18,7 @@ def get_json_path(data, path):
     return part
 
 def format_json(dict):
-    return json.dumps(dict, indent=2, sort_keys=True)
+    return json.dumps(dict, indent=2, sort_keys=False)
 
 def print_as_json(dict):
     print(format_json(dict))
