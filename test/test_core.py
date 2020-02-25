@@ -18,7 +18,7 @@ class TestCore():
     def test_process_tasks(self):
         mock = get_test_mock()
 
-        run('''
+        run_script('''
         Test: something
         ---
         Test: something else
@@ -34,7 +34,7 @@ class TestCore():
     def test_for_each(self):
         mock = get_test_mock()
 
-        run('''
+        run_script('''
         For each:
           item:
           - one
@@ -55,7 +55,7 @@ class TestCore():
     def test_pipe_result(self):
         mock = get_test_mock()
 
-        run('''
+        run_script('''
         Test: something
         ---
         Test: ${result}
@@ -67,7 +67,7 @@ class TestCore():
     def test_store_result(self):
         mock = get_test_mock()
 
-        run('''
+        run_script('''
         Test: something
         Set: test_outcome
         ---
@@ -80,7 +80,7 @@ class TestCore():
     def test_store_result_long_form(self):
         mock = get_test_mock()
 
-        run('''
+        run_script('''
         Test: something
         Set:
           test_outcome: ${result}
@@ -94,7 +94,7 @@ class TestCore():
     def test_store_result_with_path(self):
         mock = get_test_mock()
 
-        run('''
+        run_script('''
         Test:
           something: nested
         Set:
@@ -108,7 +108,7 @@ class TestCore():
     def test_change_result_part(self):
         mock = get_test_mock()
 
-        run('''
+        run_script('''
         Test: 
           something: nested
         Set:
@@ -120,7 +120,7 @@ class TestCore():
         assert mock.invocations[1].data == 'nested'
 
     def test_assert(self):
-        run('''
+        run_script('''
         Assert equals: 
           actual:   one
           expected: one
@@ -138,7 +138,7 @@ class TestCore():
         mock = get_test_mock()
 
         variables = {}
-        run('''
+        run_script('''
         Test: 
         - something
         - again
@@ -151,7 +151,7 @@ class TestCore():
         mock = get_test_mock()
 
         variables = {}
-        run('''
+        run_script('''
         Do:
         - Test: something 
         - Test: again 
@@ -161,6 +161,4 @@ class TestCore():
         assert variables['result'] == ['something', 'again']
 
 
-def run(yay_script_in_yaml, variables):
-    runtime.run_script(from_yaml(yay_script_in_yaml), variables)
 

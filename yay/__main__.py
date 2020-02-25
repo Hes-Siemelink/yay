@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 
-from yay.context import runtime, load_context, yay_home
+from yay.context import runtime, YayContext, yay_home
 from yay.util import *
 
 def main():
@@ -16,13 +16,16 @@ def main():
 
         # Load context
         profile = get_command_line_parameter(sys.argv, '-p')
-        context = load_context(script_dir, profile)
+
+        context = YayContext()
+        context.load_context(script_dir, profile)
 
         # Initialize variables
-        variables = get_variables(sys.argv[2:], context)
+        commandLineVars = get_variables(sys.argv[2:])
+        context.variables.update(commandLineVars)
 
         # Process all
-        result = runtime.run_script(script, variables)
+        result = context.run_script(script)
 
     except Exception as exception:
         import traceback
@@ -47,19 +50,10 @@ def get_file(filename):
     raise YayException(f"Could not find file: {filename}")
 
 
-def get_variables(args, context):
+def get_variables(args):
 
+    # Convert arguments into dict
     variables = {}
-
-    # Load default variables from home dir
-    defaultValuesFile = os.path.join(os.path.expanduser('~'), '.yay/default-variables.yaml')
-    add_from_yaml_file(defaultValuesFile, variables)
-
-    # Use local context
-    if 'variables' in context:
-        variables.update(context['variables'])
-
-    # Parse arguments into values
     for argument in args:
         if '=' in argument:
             key, value = argument.split('=')

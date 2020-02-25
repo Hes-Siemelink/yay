@@ -3,4 +3,5 @@ variables:
 
 profiles:
   test:
-    contextVariable: set
+    variables:
+      contextVariable: set
