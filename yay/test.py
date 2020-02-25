@@ -7,7 +7,7 @@ import os
 import textwrap
 import yaml
 
-from yay import execution
+from yay import context
 
 Invocation = namedtuple('Invocation', ['data', 'variables'])
 class MockTask:
@@ -20,7 +20,7 @@ class MockTask:
 
 def get_test_mock():
     mock = MockTask()
-    execution.add_command_handler('Test', mock.invoke)
+    context.runtime.add_command_handler('Test', mock.invoke)
     return mock
 
 def from_yaml(text):
@@ -65,5 +65,5 @@ def from_file(file):
 def run_yay_test(file, variables):
     script = from_file(file)
 
-    execution.run_script(script, variables)
+    context.runtime.run_script(script, variables)
 

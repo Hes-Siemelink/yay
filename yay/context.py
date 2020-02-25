@@ -39,14 +39,16 @@ def dict_merge(context, profile):
 # Command handlers
 #
 
+runtime = execution.Runtime()
+
 def command_handler(command, delayed_variable_resolver=False, list_processor=False):
     def inner_decorator(handler_function):
-        execution.add_command_handler(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
+        runtime.add_command_handler(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
         return handler_function
     return inner_decorator
 
 def get_handler(command):
-    return execution.command_handlers.get(command)
+    return runtime.command_handlers.get(command)
 
 def register_scripts(path):
 
@@ -59,9 +61,8 @@ def register_scripts(path):
         if filename.endswith('.yay'):
             handler_name = to_handler_name(filename)
             filename = os.path.join(path, filename)
-            execution.add_command_handler(handler_name,
-                                          lambda data, variables, file = filename:
-                     run_yay_file(data, variables, file))
+            runtime.add_command_handler(handler_name,
+                                                  lambda data, variables, file = filename: run_yay_file(data, variables, file))
 
 
 def to_handler_name(filename):
@@ -85,6 +86,6 @@ def run_yay_file(data, variables, file = None):
     # FIXME handle case if data is str or list
     vars_copy.update(data)
 
-    execution.run_script(script, vars_copy)
+    runtime.run_script(script, vars_copy)
 
     return vars_copy.get(vars.OUTPUT_VARIABLE)

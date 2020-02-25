@@ -4,7 +4,7 @@ import os
 
 # Core handlers
 import yay.context
-from yay import execution
+from yay.context import runtime, get_context
 from yay import core_lib
 from yay import http
 from yay import files
@@ -30,7 +30,7 @@ def main():
 
         # Read context
         profile = get_command_line_parameter(sys.argv, '-p')
-        context = yay.context.get_context(script_dir, profile)
+        context = get_context(script_dir, profile)
 
         # Register external commands
         register_scripts(context, script_dir)
@@ -39,7 +39,7 @@ def main():
         variables = get_variables(sys.argv[2:], context)
 
         # Process all
-        result = execution.run_script(script, variables)
+        result = runtime.run_script(script, variables)
 
     except Exception as exception:
         import traceback
