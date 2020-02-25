@@ -57,7 +57,7 @@ def send_request(data, variables):
     if not data: return
 
     defaults = variables.get(HTTP_DEFAULTS)
-    context = {**defaults, **data}
+    context = {**defaults, **data} if defaults else data
 
     # Parameters
     url = get_parameter(context, 'url')
