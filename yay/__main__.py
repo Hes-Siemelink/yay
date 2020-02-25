@@ -1,21 +1,7 @@
 #!/usr/bin/env python3
 import sys
-import os
 
-# Core handlers
-import yay.context
-from yay.context import runtime, get_context
-from yay import core_lib
-from yay import http
-from yay import files
-from yay import script
-from yay import input
-from yay import xl_cli
-
-# Extension handlers
-import yay.arango
-import yay.xl_cli
-
+from yay.context import runtime, load_context, yay_home
 from yay.util import *
 
 def main():
@@ -28,12 +14,9 @@ def main():
         # Read YAML script
         script = read_yaml_files(filename)
 
-        # Read context
+        # Load context
         profile = get_command_line_parameter(sys.argv, '-p')
-        context = get_context(script_dir, profile)
-
-        # Register external commands
-        register_scripts(context, script_dir)
+        context = load_context(script_dir, profile)
 
         # Initialize variables
         variables = get_variables(sys.argv[2:], context)
@@ -62,23 +45,6 @@ def get_file(filename):
         return filename_in_home_folder
 
     raise YayException(f"Could not find file: {filename}")
-
-def yay_home():
-    return os.path.join(os.path.expanduser('~'), '.yay')
-
-def register_scripts(context, script_dir):
-
-    if 'dependencies' in context:
-        for package in context['dependencies']:
-            version = str(context['dependencies'][package])
-            dir = os.path.join(yay_home(), 'packages', package, version)
-            yay.context.register_scripts(dir)
-
-    if 'path' in context:
-        for dir in context['path']:
-            yay.context.register_scripts(dir)
-
-    yay.context.register_scripts(script_dir)
 
 
 def get_variables(args, context):

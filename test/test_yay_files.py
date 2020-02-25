@@ -2,7 +2,6 @@ import pytest
 
 import yay.context
 from yay.test import *
-from yay import __main__
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_server():
@@ -20,6 +19,6 @@ def setup_test_server():
 def test_yay(file):
     script_dir = os.path.dirname(os.path.realpath(file))
     yay.context.register_scripts(script_dir)
-    context = yay.context.get_context(script_dir, 'test')
+    context = yay.context.load_context(script_dir, 'test')
 
     run_yay_test(file, context)

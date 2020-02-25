@@ -1,5 +1,4 @@
-import yay.vars
-from yay import util
+from yay import vars
 
 class TestJsonpath():
 
@@ -13,17 +12,17 @@ class TestJsonpath():
     }
 
     def test_json_path_with_dollar(self):
-        result = yay.vars.get_json_path(self.data, '$.one')
+        result = vars.get_json_path(self.data, '$.one')
         assert result == '1'
 
     def test_json_path_nested(self):
-        result = yay.vars.get_json_path(self.data, '$.nested.item')
+        result = vars.get_json_path(self.data, '$.nested.item')
         assert result == 'stuff'
 
     def test_json_path_nested2(self):
-        result = yay.vars.get_json_path(self.data, '$..item')
+        result = vars.get_json_path(self.data, '$..item')
         assert result == 'stuff'
 
     def test_json_path_list(self):
-        result = yay.vars.get_json_path(self.data, '$.list[0]')
+        result = vars.get_json_path(self.data, '$.list[0]')
         assert result == 1

@@ -1,7 +1,5 @@
 from yay import vars
 
-import pytest
-
 class TestVariableResolution():
 
     variables = {

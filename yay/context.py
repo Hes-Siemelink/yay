@@ -1,20 +1,25 @@
 import copy
+import os
 
 from yay import vars
 from yay import execution
 from yay.util import *
 
+
 #
 # Yay-context.yaml
 #
 
-def get_context(script_dir, profile_name):
+def load_context(script_dir, profile_name):
     context_file = os.path.join(script_dir, 'yay-context.yaml')
     if not os.path.isfile(context_file):
         return {}
 
     context = read_yaml_file(context_file)[0]
     apply_profile(context, profile_name)
+
+    register_scripts_from_context(context)
+    register_scripts(script_dir)
 
     return context
 
@@ -34,6 +39,22 @@ def dict_merge(context, profile):
             context[key].update(profile[key])
         else:
             context[key] = profile[key]
+
+def register_scripts_from_context(context):
+
+    if 'dependencies' in context:
+        for package in context['dependencies']:
+            version = str(context['dependencies'][package])
+            dir = os.path.join(yay_home(), 'packages', package, version)
+            register_scripts(dir)
+
+    if 'path' in context:
+        for dir in context['path']:
+            register_scripts(dir)
+
+
+def yay_home():
+    return os.path.join(os.path.expanduser('~'), '.yay')
 
 #
 # Command handlers
@@ -89,3 +110,16 @@ def run_yay_file(data, variables, file = None):
     runtime.run_script(script, vars_copy)
 
     return vars_copy.get(vars.OUTPUT_VARIABLE)
+
+#
+# Import standard libraries
+#
+
+import importlib
+importlib.import_module('yay.core_lib')
+importlib.import_module('yay.http')
+importlib.import_module('yay.files')
+importlib.import_module('yay.script')
+importlib.import_module('yay.input')
+importlib.import_module('yay.xl_cli')
+importlib.import_module('yay.arango')
