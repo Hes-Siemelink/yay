@@ -6,7 +6,7 @@ class TestCore():
     def test_process_task(self):
         mock = get_test_mock()
 
-        execution.process_task({'Test': 'something'})
+        execution.run_task({'Test': 'something'})
 
         assert len(mock.invocations) == 1
         assert mock.invocations[0].data == 'something'
@@ -126,7 +126,7 @@ class TestCore():
 
     def test_assertion_failure(self):
         with pytest.raises(AssertionError):
-            execution.process_script(from_yaml('''
+            execution.run_script(from_yaml('''
             Assert equals: 
               actual:   one
               expected: two
@@ -160,5 +160,5 @@ class TestCore():
 
 
 def run(yay_script_in_yaml, variables = {}):
-    execution.process_script(from_yaml(yay_script_in_yaml), variables)
+    execution.run_script(from_yaml(yay_script_in_yaml), variables)
 

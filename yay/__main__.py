@@ -39,7 +39,7 @@ def main():
         variables = get_variables(sys.argv[2:], context)
 
         # Process all
-        result = execution.process_script(script, variables)
+        result = execution.run_script(script, variables)
 
     except Exception as exception:
         import traceback

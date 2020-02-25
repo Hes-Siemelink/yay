@@ -43,6 +43,6 @@ def handle_request():
 
 
 # Register command handlers
-yay.execution.register('Webhook', create_webhook)
+yay.execution.add_command_handler('Webhook', create_webhook)
 
 

@@ -7,23 +7,23 @@ from yay.util import *
 # Execution logic
 #
 
-class Handler():
+class CommandHandler():
     def __init__(self, handler_method, delayed_variable_resolver=False, list_processor=False):
         self.handler_method = handler_method
         self.delayed_variable_resolver = delayed_variable_resolver
         self.list_processor = list_processor
-handlers = {}
+command_handlers = {}
 
-def register(command, handler_method, delayed_variable_resolver=False, list_processor=False):
-    handlers[command] = Handler(handler_method, delayed_variable_resolver, list_processor)
+def add_command_handler(command, handler_method, delayed_variable_resolver=False, list_processor=False):
+    command_handlers[command] = CommandHandler(handler_method, delayed_variable_resolver, list_processor)
 
-def process_script(script, variables = {}):
+def run_script(script, variables = {}):
     output = None
     for task_block in script:
-        output = process_task(task_block, variables)
+        output = run_task(task_block, variables)
     return output
 
-def process_task(task_block, variables = {}):
+def run_task(task_block, variables = {}):
 
     # Execute all commands in a task
     output = None
@@ -38,8 +38,8 @@ def process_task(task_block, variables = {}):
             variables[variableMatch.group(1)] = data
 
         # Execute handler
-        elif command in handlers:
-            output = execute_command(handlers[command], rawData, variables)
+        elif command in command_handlers:
+            output = run_command(command_handlers[command], rawData, variables)
 
         # Unknown action
         else:
@@ -48,7 +48,7 @@ def process_task(task_block, variables = {}):
     return output
 
 
-def execute_command(handler, data, variables):
+def run_command(handler, data, variables):
 
     output_list = []
 
@@ -60,7 +60,7 @@ def execute_command(handler, data, variables):
 
         # Execute the handler
         try:
-            output = execute_single_command(handler, commandData, variables)
+            output = run_single_command(handler, commandData, variables)
             output_list.append(output)
 
         # Stop processing on a break statement
@@ -79,7 +79,7 @@ def execute_command(handler, data, variables):
 
     return output
 
-def execute_single_command(handler, rawData, variables):
+def run_single_command(handler, rawData, variables):
 
     # Resolve variables
     # Don't resolve variables yet for Do or For each, etc. -- they will be resolved just in time

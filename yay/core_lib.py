@@ -16,7 +16,7 @@ from yay.util import *
 
 @command_handler('Do', delayed_variable_resolver=True)
 def do(data, variables):
-    return execution.process_task(data, variables)
+    return execution.run_task(data, variables)
 
 
 # For each
@@ -39,7 +39,7 @@ def foreach(data, variables):
             stash = variables[loop_variable]
         variables[loop_variable] = item
 
-        result = execution.process_task({'Do': actions}, variables)
+        result = execution.run_task({'Do': actions}, variables)
         output.append(result)
 
         if (stash):
@@ -65,7 +65,7 @@ def repeat(data, variables):
 
     finished = False
     while not finished:
-        result = execution.process_task({'Do': actions}, variables)
+        result = execution.run_task({'Do': actions}, variables)
 
         if is_dict(until):
             until_copy = copy.deepcopy(until)
@@ -93,7 +93,7 @@ def if_statement(data, variables, break_on_success = False):
     condition = conditions.parse_condition(data)
 
     if condition.is_true():
-        execution.process_task({'Do': actions}, variables)
+        execution.run_task({'Do': actions}, variables)
 
         if break_on_success:
             raise execution.FlowBreak()
