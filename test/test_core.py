@@ -7,7 +7,7 @@ class TestCore():
     def test_process_task(self):
         mock = get_test_mock()
 
-        runtime.run_task({'Test': 'something'})
+        runtime.run_task({'Test': 'something'}, {})
 
         assert len(mock.invocations) == 1
         assert mock.invocations[0].data == 'something'
@@ -21,7 +21,7 @@ class TestCore():
         Test: something
         ---
         Test: something else
-        ''')
+        ''', {})
 
         assert len(mock.invocations) == 2
         assert mock.invocations[0].data == 'something'
@@ -41,7 +41,7 @@ class TestCore():
           - three
           Do:
             Test: ${item}
-        ''')
+        ''', {})
 
         assert len(mock.invocations) == 3
         assert mock.invocations[0].data == 'one'
@@ -58,7 +58,7 @@ class TestCore():
         Test: something
         ---
         Test: ${result}
-        ''')
+        ''', {})
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
@@ -71,7 +71,7 @@ class TestCore():
         Set: test_outcome
         ---
         Test: ${test_outcome}
-        ''')
+        ''', {})
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
@@ -85,7 +85,7 @@ class TestCore():
           test_outcome: ${result}
         ---
         Test: ${test_outcome}
-        ''')
+        ''', {})
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
@@ -100,7 +100,7 @@ class TestCore():
           test_outcome: ${result.something}
         ---
         Test: ${test_outcome}
-        ''')
+        ''', {})
 
         assert mock.invocations[1].data == 'nested'
 
@@ -114,7 +114,7 @@ class TestCore():
           result: ${result.something}
         ---
         Test: ${result}
-        ''')
+        ''', {})
 
         assert mock.invocations[1].data == 'nested'
 
@@ -123,7 +123,7 @@ class TestCore():
         Assert equals: 
           actual:   one
           expected: one
-        ''')
+        ''', {})
 
     def test_assertion_failure(self):
         with pytest.raises(AssertionError):
@@ -160,6 +160,6 @@ class TestCore():
         assert variables['result'] == ['something', 'again']
 
 
-def run(yay_script_in_yaml, variables = {}):
+def run(yay_script_in_yaml, variables):
     runtime.run_script(from_yaml(yay_script_in_yaml), variables)
 

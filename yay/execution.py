@@ -21,13 +21,13 @@ class Runtime():
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
         self.command_handlers[command] = CommandHandler(handler_method, delayed_variable_resolver, list_processor)
 
-    def run_script(self, script, variables = {}):
+    def run_script(self, script, variables):
         output = None
         for task_block in script:
             output = self.run_task(task_block, variables)
         return output
 
-    def run_task(self, task_block, variables = {}):
+    def run_task(self, task_block, variables):
 
         # Execute all commands in a task
         output = None
