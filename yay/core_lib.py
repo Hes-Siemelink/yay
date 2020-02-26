@@ -15,14 +15,14 @@ from yay.util import *
 # Do
 
 @command_handler('Do', delayed_variable_resolver=True)
-def do(data, variables):
-    return runtime.run_task(data, variables)
+def do(data, context):
+    return context.runtime.run_task(data, context)
 
 
 # For each
 
 @command_handler('For each', delayed_variable_resolver=True)
-def foreach(data, variables):
+def foreach(data, context):
     actions = get_parameter(data, 'Do')
     if len(data) != 2:
         raise YayException("'For each' needs exactly two parameters: 'Do' and the name of the variable.")
@@ -30,22 +30,22 @@ def foreach(data, variables):
     loop_variable = get_foreach_variable(data)
 
     items = data[loop_variable]
-    items = vars.resolve_variables(items, variables)
+    items = vars.resolve_variables(items, context.variables)
 
     output = []
     for item in items:
         stash = None
-        if loop_variable in variables:
-            stash = variables[loop_variable]
-        variables[loop_variable] = item
+        if loop_variable in context.variables:
+            stash = context.variables[loop_variable]
+        context.variables[loop_variable] = item
 
-        result = runtime.run_task({'Do': actions}, variables)
+        result = runtime.run_task({'Do': actions}, context)
         output.append(result)
 
         if (stash):
-            variables[loop_variable] = stash
+            context.variables[loop_variable] = stash
         else:
-            del variables[loop_variable]
+            del context.variables[loop_variable]
 
     return output
 
@@ -59,17 +59,17 @@ def get_foreach_variable(data):
 # Repeat
 
 @command_handler('Repeat', delayed_variable_resolver=True)
-def repeat(data, variables):
+def repeat(data, context):
     actions = get_parameter(data, 'Do')
     until = get_parameter(data, 'Until')
 
     finished = False
     while not finished:
-        result = runtime.run_task({'Do': actions}, variables)
+        result = runtime.run_task({'Do': actions}, context)
 
         if is_dict(until):
             until_copy = copy.deepcopy(until)
-            until_copy = vars.resolve_variables(until_copy, variables)
+            until_copy = vars.resolve_variables(until_copy, context.variables)
 
             condition = conditions.parse_condition(until_copy)
             finished = condition.is_true()
@@ -80,20 +80,20 @@ def repeat(data, variables):
 # If and if any
 
 @command_handler('If any', delayed_variable_resolver=True)
-def if_any_statement(data, variables):
-    if_statement(data, variables, True)
+def if_any_statement(data, context):
+    if_statement(data, context, True)
 
 @command_handler('If', delayed_variable_resolver=True)
-def if_statement(data, variables, break_on_success = False):
+def if_statement(data, context, break_on_success = False):
     actions = get_parameter(data, 'Do')
     del data['Do']
 
-    data = vars.resolve_variables(data, variables)
+    data = vars.resolve_variables(data, context.variables)
 
     condition = conditions.parse_condition(data)
 
     if condition.is_true():
-        runtime.run_task({'Do': actions}, variables)
+        runtime.run_task({'Do': actions}, context)
 
         if break_on_success:
             raise FlowBreak()
@@ -104,14 +104,14 @@ def if_statement(data, variables, break_on_success = False):
 #
 
 @command_handler('Assert equals')
-def assert_equals(data, variables):
+def assert_equals(data, context):
     actual = get_parameter(data, 'actual')
     expected = get_parameter(data, 'expected')
 
     assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
 
 @command_handler('Assert that')
-def assert_that(data, variables):
+def assert_that(data, context):
 
     condition = conditions.parse_condition(data)
 
@@ -124,8 +124,8 @@ def assert_that(data, variables):
     assert False, message
 
 @command_handler('Expected output', list_processor=True)
-def expect_output(data, variables):
-    actual = variables.get(vars.OUTPUT_VARIABLE)
+def expect_output(data, context):
+    actual = context.variables.get(vars.OUTPUT_VARIABLE)
     expected = data
 
     assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
@@ -137,12 +137,12 @@ def expect_output(data, variables):
 @command_handler('Set')
 @command_handler('Set variable')
 @command_handler('As')
-def set_variable(data, variables):
+def set_variable(data, context):
 
     # set: varname
     # => will set the output into 'varname'
     if is_scalar(data):
-        variables[data] = variables[vars.OUTPUT_VARIABLE]
+        context.variables[data] = context.variables[vars.OUTPUT_VARIABLE]
         return
 
     # set:
@@ -150,20 +150,20 @@ def set_variable(data, variables):
     #   var2: Something else
     # => will set the output into 'varname'. You can also use literal values or variables with paths.
     for var in data:
-        variables[var] = data[var]
+        context.variables[var] = data[var]
 
 @command_handler('Input')
-def check_input(data, variables):
+def check_input(data, context):
     for input_parameter in data:
-        if not input_parameter in variables:
+        if not input_parameter in context.variables:
             input_description = data[input_parameter]
             if 'default' in input_description:
-                variables[input_parameter] = input_description['default']
+                context.variables[input_parameter] = input_description['default']
             else:
                 raise YayException("Variable not provided: " + input_parameter)
 
 @command_handler('Output')
-def return_input(data, variables):
+def return_input(data, context):
     return data
 
 #
@@ -172,7 +172,7 @@ def return_input(data, variables):
 
 @command_handler('Task')
 @command_handler('Test case')
-def noop(data, variables):
+def noop(data, context):
     pass
 
 #
@@ -180,9 +180,9 @@ def noop(data, variables):
 #
 
 @command_handler('Join')
-def join(data, variables):
+def join(data, context):
     for var in data:
-        join_single_variable(var, data[var], variables)
+        join_single_variable(var, data[var], context.variables)
 
 def join_single_variable(var, updates, variables):
     value = variables.get(var)
@@ -198,10 +198,10 @@ def join_single_variable(var, updates, variables):
     variables[var] = value
 
 @command_handler('Merge', list_processor=True)
-def merge(data, variables):
+def merge(data, context):
 
     if is_dict(data):
-        merge([variables[vars.OUTPUT_VARIABLE], data], variables)
+        merge([context.variables[vars.OUTPUT_VARIABLE], data], context.variables)
         return
 
     first = True
@@ -224,15 +224,15 @@ def merge(data, variables):
     return output
 
 @command_handler('Apply variables')
-def apply_variables(data, variables):
-    return raw(vars.resolve_variables(live(data), variables))
+def apply_variables(data, context):
+    return raw(vars.resolve_variables(live(data), context.variables))
 
 #
 # Replace
 #
 
 @command_handler('Replace')
-def replace_text(data, variables):
+def replace_text(data, context):
     part = get_parameter(data, 'part')
     text = get_parameter(data, 'in')
     replacement = get_parameter(data, 'with')
@@ -244,7 +244,7 @@ def replace_text(data, variables):
 #
 
 @command_handler('Wait')
-def wait(data, variables):
+def wait(data, context):
     time.sleep(data)
 
 #
@@ -252,15 +252,15 @@ def wait(data, variables):
 #
 
 @command_handler('Print')
-def print_text(data, variables):
+def print_text(data, context):
     print(data)
 
 @command_handler('Print JSON')
 @command_handler('Print as JSON')
-def print_json(data, variables):
+def print_json(data, context):
     print_as_json(data)
 
 @command_handler('Print YAML')
 @command_handler('Print as YAML')
-def print_yaml(data, variables):
+def print_yaml(data, context):
     print_as_yaml(data)

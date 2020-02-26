@@ -6,26 +6,26 @@ ARANGO_ENDPOINT = 'arango.endpoint'
 ARANGO_DATABASE = 'arango.database'
 
 @command_handler('Arango endpoint')
-def set_endpoint(data, variables):
-    variables[ARANGO_ENDPOINT] = data
+def set_endpoint(data, context):
+    context.variables[ARANGO_ENDPOINT] = data
     return data
 
 @command_handler('Arango database')
-def set_database(data, variables):
-    variables[ARANGO_DATABASE] = data
+def set_database(data, context):
+    context.variables[ARANGO_DATABASE] = data
     return data
 
-def get_db(variables):
-    endpoint = variables[ARANGO_ENDPOINT]
-    database = variables[ARANGO_DATABASE]
+def get_db(context):
+    endpoint = context.variables[ARANGO_ENDPOINT]
+    database = context.variables[ARANGO_DATABASE]
 
     client = ArangoClient(endpoint['protocol'], endpoint['host'], endpoint['port'])
 
     return client.db(database, endpoint['username'], endpoint['password'])
 
 @command_handler('Arango query')
-def run_aql_query(data, variables):
-    db = get_db(variables)
+def run_aql_query(data, context):
+    db = get_db(context)
 
     cursor = db.aql.execute(data)
 
@@ -34,12 +34,12 @@ def run_aql_query(data, variables):
     return result
 
 @command_handler('Arango insert')
-def insert(data, variables):
+def insert(data, context):
 
     collection_name = get_parameter(data, 'in')
     record_data = get_parameter(data, 'record')
 
-    db = get_db(variables)
+    db = get_db(context)
 
     collection = db.collection(collection_name)
     collection.insert(record_data)

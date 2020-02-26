@@ -1,19 +1,20 @@
 from yay.context import command_handler
+from yay.vars import OUTPUT_VARIABLE
 from PyInquirer import prompt
 
 @command_handler('User Input')
-def ask_user(data, variables):
+def ask_user(data, context):
     if 'name' not in data:
-        data['name'] = core.OUTPUT_VARIABLE
+        data['name'] = OUTPUT_VARIABLE
 
     answers = prompt([data])
-    variables.update(answers)
+    context.variables.update(answers)
 
 @command_handler('Check Input')
-def check_input(data, variables):
+def check_input(data, context):
 
     for variable in data:
-        if variable in variables:
+        if variable in context.variables:
             continue
 
         query = {
@@ -22,4 +23,4 @@ def check_input(data, variables):
             'name': variable
         }
         answers = prompt([query])
-        variables.update(answers)
+        context.variables.update(answers)

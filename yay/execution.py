@@ -21,13 +21,13 @@ class Runtime():
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
         self.command_handlers[command] = CommandHandler(handler_method, delayed_variable_resolver, list_processor)
 
-    def run_script(self, script, variables):
+    def run_script(self, script, context):
         output = None
         for task_block in script:
-            output = self.run_task(task_block, variables)
+            output = self.run_task(task_block, context)
         return output
 
-    def run_task(self, task_block, variables):
+    def run_task(self, task_block, context):
 
         # Execute all commands in a task
         output = None
@@ -38,12 +38,12 @@ class Runtime():
             # Variable assignment
             variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
             if variableMatch:
-                data = vars.resolve_variables(rawData, variables)
-                variables[variableMatch.group(1)] = data
+                data = vars.resolve_variables(rawData, context.variables)
+                context.variables[variableMatch.group(1)] = data
 
             # Execute handler
             elif command in self.command_handlers:
-                output = self.run_command(self.command_handlers[command], rawData, variables)
+                output = self.run_command(self.command_handlers[command], rawData, context)
 
             # Unknown action
             else:
@@ -52,7 +52,7 @@ class Runtime():
         return output
 
 
-    def run_command(self, handler, data, variables):
+    def run_command(self, handler, data, context):
 
         output_list = []
 
@@ -64,7 +64,7 @@ class Runtime():
 
             # Execute the handler
             try:
-                output = self.run_single_command(handler, commandData, variables)
+                output = self.run_single_command(handler, commandData, context)
                 output_list.append(output)
 
             # Stop processing on a break statement
@@ -78,22 +78,22 @@ class Runtime():
             output = output_list[0]
 
         if not output_list == [None]:
-            variables[vars.OUTPUT_VARIABLE] = output
-            variables[vars.DEPRECATED_RESULT_VARIABLE] = output
+            context.variables[vars.OUTPUT_VARIABLE] = output
+            context.variables[vars.DEPRECATED_RESULT_VARIABLE] = output
 
         return output
 
-    def run_single_command(self, handler, rawData, variables):
+    def run_single_command(self, handler, rawData, context):
 
         # Resolve variables
         # Don't resolve variables yet for Do or For each, etc. -- they will be resolved just in time
         if handler.delayed_variable_resolver:
             data = rawData
         else:
-            data = vars.resolve_variables(rawData, variables)
+            data = vars.resolve_variables(rawData, context.variables)
 
         # Execute action
-        return handler.handler_method(data, variables)
+        return handler.handler_method(data, context)
 
 
 class FlowBreak(Exception):

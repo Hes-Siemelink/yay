@@ -7,24 +7,23 @@ import os
 import textwrap
 import yaml
 
-from yay.context import runtime
+from yay.context import runtime, YayContext
 
 Invocation = namedtuple('Invocation', ['data', 'variables'])
 class MockTask:
     def __init__(self):
         self.invocations = []
 
-    def invoke(self, data, variables):
-        self.invocations.append(Invocation(data, variables.copy()))
+    def invoke(self, data, context):
+        self.invocations.append(Invocation(data, context.variables.copy()))
         return data
 
-def get_test_mock():
-    mock = MockTask()
-    runtime.add_command_handler('Test', mock.invoke)
-    return mock
+def run_script(yay_script_in_yaml, variables, mock = None):
+    context = YayContext(variables)
+    if mock:
+        context.runtime.add_command_handler('Test', mock.invoke)
 
-def run_script(yay_script_in_yaml, variables):
-    runtime.run_script(from_yaml(yay_script_in_yaml), variables)
+    context.run_script(from_yaml(yay_script_in_yaml))
 
 def from_yaml(text):
     return list(yaml.load_all(textwrap.dedent(text), Loader=yaml.Loader))

@@ -1,14 +1,15 @@
 import pytest
 
 from yay.test import *
-from yay.context import runtime
+from yay.context import runtime, YayContext
 
 class TestCore():
 
     def test_process_task(self):
-        mock = get_test_mock()
+        mock = MockTask()
+        runtime.add_command_handler('Test', mock.invoke)
 
-        runtime.run_task({'Test': 'something'}, {})
+        runtime.run_task({'Test': 'something'}, YayContext())
 
         assert len(mock.invocations) == 1
         assert mock.invocations[0].data == 'something'
@@ -16,13 +17,13 @@ class TestCore():
 
 
     def test_process_tasks(self):
-        mock = get_test_mock()
+        mock = MockTask()
 
         run_script('''
         Test: something
         ---
         Test: something else
-        ''', {})
+        ''', {}, mock)
 
         assert len(mock.invocations) == 2
         assert mock.invocations[0].data == 'something'
@@ -32,7 +33,7 @@ class TestCore():
 
 
     def test_for_each(self):
-        mock = get_test_mock()
+        mock = MockTask()
 
         run_script('''
         For each:
@@ -42,7 +43,7 @@ class TestCore():
           - three
           Do:
             Test: ${item}
-        ''', {})
+        ''', {}, mock)
 
         assert len(mock.invocations) == 3
         assert mock.invocations[0].data == 'one'
@@ -53,32 +54,32 @@ class TestCore():
         assert mock.invocations[2].variables['item'] == 'three'
 
     def test_pipe_result(self):
-        mock = get_test_mock()
+        mock = MockTask()
 
         run_script('''
         Test: something
         ---
         Test: ${result}
-        ''', {})
+        ''', {}, mock)
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
     def test_store_result(self):
-        mock = get_test_mock()
+        mock = MockTask()
 
         run_script('''
         Test: something
         Set: test_outcome
         ---
         Test: ${test_outcome}
-        ''', {})
+        ''', {}, mock)
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
     def test_store_result_long_form(self):
-        mock = get_test_mock()
+        mock = MockTask()
 
         run_script('''
         Test: something
@@ -86,13 +87,13 @@ class TestCore():
           test_outcome: ${result}
         ---
         Test: ${test_outcome}
-        ''', {})
+        ''', {}, mock)
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
     def test_store_result_with_path(self):
-        mock = get_test_mock()
+        mock = MockTask()
 
         run_script('''
         Test:
@@ -101,12 +102,12 @@ class TestCore():
           test_outcome: ${result.something}
         ---
         Test: ${test_outcome}
-        ''', {})
+        ''', {}, mock)
 
         assert mock.invocations[1].data == 'nested'
 
     def test_change_result_part(self):
-        mock = get_test_mock()
+        mock = MockTask()
 
         run_script('''
         Test: 
@@ -115,7 +116,7 @@ class TestCore():
           result: ${result.something}
         ---
         Test: ${result}
-        ''', {})
+        ''', {}, mock)
 
         assert mock.invocations[1].data == 'nested'
 
@@ -132,30 +133,30 @@ class TestCore():
             Assert equals: 
               actual:   one
               expected: two
-            '''), {})
+            '''), YayContext())
 
     def test_multiple_invocations_with_list(self):
-        mock = get_test_mock()
+        mock = MockTask()
 
         variables = {}
         run_script('''
         Test: 
         - something
         - again
-        ''', variables)
+        ''', variables, mock)
 
         assert len(mock.invocations) == 2
         assert variables['result'] == ['something', 'again']
 
     def test_do(self):
-        mock = get_test_mock()
+        mock = MockTask()
 
         variables = {}
         run_script('''
         Do:
         - Test: something 
         - Test: again 
-        ''', variables)
+        ''', variables, mock)
 
         assert len(mock.invocations) == 2
         assert variables['result'] == ['something', 'again']

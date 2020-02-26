@@ -69,7 +69,7 @@ class YayContext:
             self.variables.update(context['variables'])
 
     def run_script(self, script):
-        return self.runtime.run_script(script, self.variables)
+        return self.runtime.run_script(script, self)
 
     def register_scripts(self, path):
 
@@ -111,7 +111,7 @@ def to_handler_name(filename):
     return filename
 
 @command_handler('Execute yay file')
-def run_yay_file(data, variables, file = None):
+def run_yay_file(data, context, file = None):
     if file == None:
         file = get_parameter(data, 'file')
 
@@ -119,14 +119,14 @@ def run_yay_file(data, variables, file = None):
     script = read_yaml_file(file)
 
     # Process all
-    vars_copy = copy.deepcopy(variables)
+    vars_copy = copy.deepcopy(context.variables)
     if file in data:
         del data['file']
 
     # FIXME handle case if data is str or list
     vars_copy.update(data)
 
-    runtime.run_script(script, vars_copy)
+    runtime.run_script(script, YayContext(vars_copy))
 
     return vars_copy.get(vars.OUTPUT_VARIABLE)
 

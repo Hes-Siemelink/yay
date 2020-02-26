@@ -11,68 +11,68 @@ jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 HTTP_DEFAULTS = '_http.defaults'
 
 @command_handler('Http endpoint')
-def set_http_defaults(data, variables):
+def set_http_defaults(data, context):
 
     if is_scalar(data):
         data = {'url': data}
-    variables[HTTP_DEFAULTS] = data
+    context.variables[HTTP_DEFAULTS] = data
 
     return None
 
 @command_handler('Http GET')
-def http_get(data, variables):
+def http_get(data, context):
     if is_scalar(data):
         data = {
           'path': data
         }
     data['method'] = 'GET'
-    return process_request(data, variables)
+    return process_request(data, context)
 
 @command_handler('Http POST')
-def http_post(data, variables):
+def http_post(data, context):
     data['method'] = 'POST'
-    return process_request(data, variables)
+    return process_request(data, context)
 
 @command_handler('Http PUT')
-def http_put(data, variables):
+def http_put(data, context):
     data['method'] = 'PUT'
-    return process_request(data, variables)
+    return process_request(data, context)
 
 @command_handler('Http DELETE')
-def http_delete(data, variables):
+def http_delete(data, context):
     data['method'] = 'DELETE'
-    return process_request(data, variables)
+    return process_request(data, context)
 
 @command_handler('Http')
-def process_request(data, variables):
-    result = send_request(data, variables)
+def process_request(data, context):
+    result = send_request(data, context)
 
     if is_dict(result):
-        variables.update(result)
+        context.variables.update(result)
 
     return result
 
-def send_request(data, variables):
+def send_request(data, context):
 
     if not data: return
 
-    defaults = variables.get(HTTP_DEFAULTS)
-    context = {**defaults, **data} if defaults else data
+    defaults = context.variables.get(HTTP_DEFAULTS)
+    vars = {**defaults, **data} if defaults else data
 
     # Parameters
-    url = get_parameter(context, 'url')
-    path = context['path'] if 'path' in context else ''
-    body = context['body'] if 'body' in context else None
-    method = context['method'] if 'method' in context else 'GET'
-    file = context['save as'] if 'save as' in context else None
+    url = get_parameter(vars, 'url')
+    path = vars['path'] if 'path' in vars else ''
+    body = vars['body'] if 'body' in vars else None
+    method = vars['method'] if 'method' in vars else 'GET'
+    file = vars['save as'] if 'save as' in vars else None
 
     # Headers
     headers = dict(jsonHeaders)
-    if 'headers' in context:
-        headers.update(context['headers'])
+    if 'headers' in vars:
+        headers.update(vars['headers'])
 
     # Authorization
-    auth = get_authorization(context)
+    auth = get_authorization(vars)
 
     # Do request
     if method == 'GET':
@@ -125,10 +125,10 @@ def send_request(data, variables):
     return raw(result)
 
 
-def get_authorization(context):
+def get_authorization(vars):
     auth = None
-    if 'username' in context and 'password' in context:
-        auth = (context['username'], context['password'])
+    if 'username' in vars and 'password' in vars:
+        auth = (vars['username'], vars['password'])
 
     return auth
 

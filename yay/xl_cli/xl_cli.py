@@ -5,7 +5,7 @@ import os
 import tempfile
 
 @command_handler('XL apply')
-def xl_apply(data, variables):
+def xl_apply(data, context):
 
     file, path = tempfile.mkstemp()
     try:

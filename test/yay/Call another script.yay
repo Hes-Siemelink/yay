@@ -9,3 +9,12 @@ Do test routine:
   name: Kay
 
 Expected output: Hello Kay!
+
+---
+Test case: another script inside Do
+
+Do:
+  Do test routine:
+    name: Kay
+
+Expected output: Hello Kay!
