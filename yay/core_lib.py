@@ -82,6 +82,7 @@ def repeat(data, context):
 def if_any_statement(data, context):
     if_statement(data, context, True)
 
+
 @command_handler('If', delayed_variable_resolver=True)
 def if_statement(data, context, break_on_success = False):
     actions = get_parameter(data, 'Do')
@@ -109,6 +110,7 @@ def assert_equals(data, context):
 
     assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
 
+
 @command_handler('Assert that')
 def assert_that(data, context):
 
@@ -122,12 +124,11 @@ def assert_that(data, context):
         message = f"\nExpected: {condition.equals}\nActual:   {condition.object}"
     assert False, message
 
+
 @command_handler('Expected output', list_processor=True)
 def expect_output(data, context):
-    actual = context.variables.get(vars.OUTPUT_VARIABLE)
-    expected = data
 
-    assert expected == actual, "\nExpected: {}\nActual:   {}".format(expected, actual)
+    assert data == context.output(), "\nExpected: {}\nActual:   {}".format(data, context.output)
 
 #
 # Variables
@@ -141,7 +142,7 @@ def set_variable(data, context):
     # set: varname
     # => will set the output into 'varname'
     if is_scalar(data):
-        context.variables[data] = context.variables[vars.OUTPUT_VARIABLE]
+        context.variables[data] = context.output()
         return
 
     # set:
@@ -200,7 +201,7 @@ def join_single_variable(var, updates, variables):
 def merge(data, context):
 
     if is_dict(data):
-        merge([context.variables[vars.OUTPUT_VARIABLE], data], context.variables)
+        merge([context.output(), data], context.variables)
         return
 
     first = True

@@ -105,6 +105,8 @@ class YayExecutionContext():
         # Execute action
         return handler.handler_method(data, self)
 
+    def output(self):
+        return self.variables.get(vars.OUTPUT_VARIABLE)
 
 class FlowBreak(Exception):
     def __init__(self, output = None):

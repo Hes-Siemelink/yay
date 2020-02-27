@@ -132,7 +132,7 @@ def run_yay_file(data, context, file = None):
     scriptContext.variables.update(data)
     scriptContext.run_script(script)
 
-    return scriptContext.variables.get(vars.OUTPUT_VARIABLE)
+    return scriptContext.output()
 
 #
 # Util
