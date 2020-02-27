@@ -13,7 +13,6 @@ class YayContext:
     def __init__(self, context = None):
         self.variables = {}
         self.command_handlers = {}
-        self.runtime = runtime
 
         if context:
             self.variables = copy.deepcopy(context.variables)
@@ -75,7 +74,7 @@ class YayContext:
             self.variables.update(context['variables'])
 
     def run_script(self, script):
-        return runtime.run_script(script, self)
+        return execution.run_script(script, self)
 
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
         self.command_handlers[command] = CommandHandler(handler_method, delayed_variable_resolver, list_processor)
@@ -101,7 +100,6 @@ def yay_home():
 # Command handlers
 #
 
-runtime = execution.Runtime()
 defaultContext = YayContext()
 
 class CommandHandler():
@@ -137,7 +135,7 @@ def run_yay_file(data, context, file = None):
     return scriptContext.variables.get(vars.OUTPUT_VARIABLE)
 
 #
-# Import standard libraries and register command handlers in default runtime
+# Import standard libraries and register command handlers in default context
 #
 
 import importlib

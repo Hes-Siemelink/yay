@@ -2,9 +2,10 @@ import copy
 import time
 
 from yay import conditions
+from yay import execution
 from yay import vars
 
-from yay.context import command_handler, runtime
+from yay.context import command_handler
 from yay.execution import FlowBreak
 from yay.util import *
 
@@ -16,7 +17,7 @@ from yay.util import *
 
 @command_handler('Do', delayed_variable_resolver=True)
 def do(data, context):
-    return context.runtime.run_task(data, context)
+    return execution.run_task(data, context)
 
 
 # For each
@@ -39,7 +40,7 @@ def foreach(data, context):
             stash = context.variables[loop_variable]
         context.variables[loop_variable] = item
 
-        result = runtime.run_task({'Do': actions}, context)
+        result = execution.run_task({'Do': actions}, context)
         output.append(result)
 
         if (stash):
@@ -65,7 +66,7 @@ def repeat(data, context):
 
     finished = False
     while not finished:
-        result = runtime.run_task({'Do': actions}, context)
+        result = execution.run_task({'Do': actions}, context)
 
         if is_dict(until):
             until_copy = copy.deepcopy(until)
@@ -93,7 +94,7 @@ def if_statement(data, context, break_on_success = False):
     condition = conditions.parse_condition(data)
 
     if condition.is_true():
-        runtime.run_task({'Do': actions}, context)
+        execution.run_task({'Do': actions}, context)
 
         if break_on_success:
             raise FlowBreak()
