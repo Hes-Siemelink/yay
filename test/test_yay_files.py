@@ -21,5 +21,5 @@ def test_yay(file):
     script_dir = os.path.dirname(os.path.realpath(file))
 
     context = YayContext(defaultContext)
-    context.load_context(script_dir, profile='test')
+    context.apply_directory_context(script_dir, profile='test')
     context.run_script(from_file(file))

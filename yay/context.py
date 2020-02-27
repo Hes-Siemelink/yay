@@ -19,7 +19,7 @@ class YayContext:
             self.command_handlers = copy.deepcopy(context.command_handlers)
 
 
-    def load_context(self, script_dir, profile):
+    def apply_directory_context(self, script_dir, profile):
         context_file = os.path.join(script_dir, 'yay-context.yaml')
         if not os.path.isfile(context_file):
             return {}

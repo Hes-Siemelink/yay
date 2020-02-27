@@ -18,7 +18,7 @@ def main():
         profile = get_command_line_parameter(sys.argv, '-p')
 
         context = YayContext(defaultContext)
-        context.load_context(script_dir, profile)
+        context.apply_directory_context(script_dir, profile)
 
         # Initialize variables
         commandLineVars = get_variables(sys.argv[2:])
