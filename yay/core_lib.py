@@ -13,7 +13,6 @@ from yay.util import *
 #
 
 # Do
-
 @command_handler('Do', delayed_variable_resolver=True)
 def do(data, context):
     return context.run_task(data)

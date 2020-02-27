@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 
-from yay.context import YayContext, yay_home
+from yay.context import YayRuntime, yay_home
 from yay.util import *
 
 def main():
@@ -14,18 +14,18 @@ def main():
         # Read YAML script
         script = read_yaml_files(filename)
 
-        # Load context
+        # Initialize runtime
         profile = get_command_line_parameter(sys.argv, '-p')
 
-        context = YayContext()
-        context.apply_directory_context(script_dir, profile)
+        runtime = YayRuntime()
+        runtime.apply_directory_context(script_dir, profile)
 
         # Initialize variables
         commandLineVars = get_variables(sys.argv[2:])
-        context.runner.variables.update(commandLineVars)
+        runtime.update_variables(commandLineVars)
 
         # Process all
-        result = context.run_script(script)
+        result = runtime.run_script(script)
 
     except Exception as exception:
         import traceback

@@ -1,16 +1,16 @@
 import pytest
 
 from yay.test import *
-from yay.context import YayContext
+from yay.execution import YayExecutionContext
 
 class TestCore():
 
     def test_process_task(self):
         mock = MockHandler()
-        context = YayContext()
-        context.add_command_handler('Test', mock.invoke)
+        runner = YayExecutionContext()
+        runner.add_command_handler('Test', mock.invoke)
 
-        context.run_task({'Test': 'something'})
+        runner.run_task({'Test': 'something'})
 
         assert len(mock.invocations) == 1
         assert mock.invocations[0].data == 'something'

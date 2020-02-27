@@ -8,7 +8,7 @@ from yay.util import *
 # Execution logic
 #
 
-class YayRunner():
+class YayExecutionContext():
 
     def __init__(self):
         self.variables = {}
