@@ -7,19 +7,8 @@ from yay.util import *
 # Execution logic
 #
 
-class CommandHandler():
-    def __init__(self, handler_method, delayed_variable_resolver=False, list_processor=False):
-        self.handler_method = handler_method
-        self.delayed_variable_resolver = delayed_variable_resolver
-        self.list_processor = list_processor
 
 class Runtime():
-
-    def __init__(self, command_handlers = None):
-        self.command_handlers = command_handlers if command_handlers else {}
-
-    def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
-        self.command_handlers[command] = CommandHandler(handler_method, delayed_variable_resolver, list_processor)
 
     def run_script(self, script, context):
         output = None
@@ -42,8 +31,8 @@ class Runtime():
                 context.variables[variableMatch.group(1)] = data
 
             # Execute handler
-            elif command in self.command_handlers:
-                output = self.run_command(self.command_handlers[command], rawData, context)
+            elif command in context.command_handlers:
+                output = self.run_command(context.command_handlers[command], rawData, context)
 
             # Unknown action
             else:

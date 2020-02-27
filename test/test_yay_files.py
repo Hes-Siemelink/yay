@@ -1,6 +1,6 @@
 import pytest
 
-from yay.context import YayContext
+from yay.context import YayContext, defaultContext
 from yay.test import *
 
 @pytest.fixture(scope="session", autouse=True)
@@ -20,6 +20,6 @@ def test_yay(file):
 
     script_dir = os.path.dirname(os.path.realpath(file))
 
-    context = YayContext()
+    context = YayContext(defaultContext)
     context.load_context(script_dir, profile='test')
     context.run_script(from_file(file))

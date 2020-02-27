@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 
-from yay.context import runtime, YayContext, yay_home
+from yay.context import YayContext, yay_home, defaultContext
 from yay.util import *
 
 def main():
@@ -17,7 +17,7 @@ def main():
         # Load context
         profile = get_command_line_parameter(sys.argv, '-p')
 
-        context = YayContext()
+        context = YayContext(defaultContext)
         context.load_context(script_dir, profile)
 
         # Initialize variables

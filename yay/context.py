@@ -10,9 +10,15 @@ from yay.util import *
 
 class YayContext:
 
-    def __init__(self, variables = None):
-        self.variables = {} if variables is None else variables
-        self.runtime = copy.deepcopy(runtime)
+    def __init__(self, context = None):
+        self.variables = {}
+        self.command_handlers = {}
+        self.runtime = runtime
+
+        if context:
+            self.variables = copy.deepcopy(context.variables)
+            self.command_handlers = copy.deepcopy(context.command_handlers)
+
 
     def load_context(self, script_dir, profile):
         context_file = os.path.join(script_dir, 'yay-context.yaml')
@@ -69,7 +75,10 @@ class YayContext:
             self.variables.update(context['variables'])
 
     def run_script(self, script):
-        return self.runtime.run_script(script, self)
+        return runtime.run_script(script, self)
+
+    def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
+        self.command_handlers[command] = CommandHandler(handler_method, delayed_variable_resolver, list_processor)
 
     def register_scripts(self, path):
 
@@ -82,7 +91,7 @@ class YayContext:
             if filename.endswith('.yay'):
                 handler_name = to_handler_name(filename)
                 filename = os.path.join(path, filename)
-                self.runtime.add_command_handler(handler_name,
+                self.add_command_handler(handler_name,
                                             lambda data, variables, file = filename: run_yay_file(data, variables, file))
 
 def yay_home():
@@ -93,16 +102,19 @@ def yay_home():
 #
 
 runtime = execution.Runtime()
+defaultContext = YayContext()
+
+class CommandHandler():
+    def __init__(self, handler_method, delayed_variable_resolver=False, list_processor=False):
+        self.handler_method = handler_method
+        self.delayed_variable_resolver = delayed_variable_resolver
+        self.list_processor = list_processor
 
 def command_handler(command, delayed_variable_resolver=False, list_processor=False):
     def inner_decorator(handler_function):
-        runtime.add_command_handler(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
+        defaultContext.add_command_handler(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
         return handler_function
     return inner_decorator
-
-def get_handler(command):
-    return runtime.command_handlers.get(command)
-
 
 
 def to_handler_name(filename):
@@ -118,17 +130,11 @@ def run_yay_file(data, context, file = None):
     # Read YAML script
     script = read_yaml_file(file)
 
-    # Process all
-    vars_copy = copy.deepcopy(context.variables)
-    if file in data:
-        del data['file']
+    scriptContext = YayContext(context)
+    scriptContext.variables.update(data)
+    scriptContext.run_script(script)
 
-    # FIXME handle case if data is str or list
-    vars_copy.update(data)
-
-    runtime.run_script(script, YayContext(vars_copy))
-
-    return vars_copy.get(vars.OUTPUT_VARIABLE)
+    return scriptContext.variables.get(vars.OUTPUT_VARIABLE)
 
 #
 # Import standard libraries and register command handlers in default runtime

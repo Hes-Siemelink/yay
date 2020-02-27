@@ -1,15 +1,16 @@
 import pytest
 
 from yay.test import *
-from yay.context import runtime, YayContext
+from yay.context import runtime, YayContext, defaultContext
 
 class TestCore():
 
     def test_process_task(self):
         mock = MockTask()
-        runtime.add_command_handler('Test', mock.invoke)
+        context = YayContext(defaultContext)
+        context.add_command_handler('Test', mock.invoke)
 
-        runtime.run_task({'Test': 'something'}, YayContext())
+        runtime.run_task({'Test': 'something'}, context)
 
         assert len(mock.invocations) == 1
         assert mock.invocations[0].data == 'something'
@@ -133,7 +134,7 @@ class TestCore():
             Assert equals: 
               actual:   one
               expected: two
-            '''), YayContext())
+            '''), YayContext(defaultContext))
 
     def test_multiple_invocations_with_list(self):
         mock = MockTask()
