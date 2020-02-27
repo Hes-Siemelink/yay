@@ -1,6 +1,5 @@
 import pytest
 
-from yay import execution
 from yay.test import *
 from yay.context import YayContext, defaultContext
 
@@ -11,7 +10,7 @@ class TestCore():
         context = YayContext(defaultContext)
         context.add_command_handler('Test', mock.invoke)
 
-        execution.run_task({'Test': 'something'}, context)
+        context.run_task({'Test': 'something'})
 
         assert len(mock.invocations) == 1
         assert mock.invocations[0].data == 'something'

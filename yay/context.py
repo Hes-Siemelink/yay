@@ -76,6 +76,9 @@ class YayContext:
     def run_script(self, script):
         return execution.run_script(script, self)
 
+    def run_task(self, data):
+        return execution.run_task(data, self)
+
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
         self.command_handlers[command] = CommandHandler(handler_method, delayed_variable_resolver, list_processor)
 
