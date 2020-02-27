@@ -1,13 +1,13 @@
 import pytest
 
 from yay.test import *
-from yay.context import YayContext, defaultContext
+from yay.context import YayContext
 
 class TestCore():
 
     def test_process_task(self):
         mock = MockHandler()
-        context = YayContext(defaultContext)
+        context = YayContext()
         context.add_command_handler('Test', mock.invoke)
 
         context.run_task({'Test': 'something'})

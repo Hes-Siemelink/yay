@@ -1,3 +1,4 @@
+import copy
 import re
 
 from yay import vars
@@ -7,79 +8,102 @@ from yay.util import *
 # Execution logic
 #
 
-def run_script(script, context):
-    output = None
-    for task_block in script:
-        output = run_task(task_block, context)
-    return output
+class YayRunner():
 
-def run_task(task_block, context):
+    def __init__(self):
+        self.variables = {}
+        self.command_handlers = {}
 
-    # Execute all commands in a task
-    output = None
-    for command in task_block:
+    #
+    # Command handlers
+    #
 
-        rawData = task_block[command]
+    class CommandHandler():
+        def __init__(self, handler_method, delayed_variable_resolver=False, list_processor=False):
+            self.handler_method = handler_method
+            self.delayed_variable_resolver = delayed_variable_resolver
+            self.list_processor = list_processor
 
-        # Variable assignment
-        variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
-        if variableMatch:
-            data = vars.resolve_variables(rawData, context.variables)
-            context.variables[variableMatch.group(1)] = data
+    def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
+        self.command_handlers[command] = self.CommandHandler(handler_method, delayed_variable_resolver, list_processor)
 
-        # Execute handler
-        elif command in context.command_handlers:
-            output = run_command(context.command_handlers[command], rawData, context)
+    #
+    # Execution
+    #
 
-        # Unknown action
+    def run_script(self, script):
+        output = None
+        for task_block in script:
+            output = self.run_task(task_block)
+        return output
+
+    def run_task(self, task_block):
+
+        # Execute all commands in a task
+        output = None
+        for command in task_block:
+
+            rawData = task_block[command]
+
+            # Variable assignment
+            variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
+            if variableMatch:
+                data = vars.resolve_variables(rawData, self.variables)
+                self.variables[variableMatch.group(1)] = data
+
+            # Execute handler
+            elif command in self.command_handlers:
+                output = self.run_command(self.command_handlers[command], rawData)
+
+            # Unknown action
+            else:
+                raise YayException("Unknown action: {}".format(command))
+
+        return output
+
+
+    def run_command(self, handler, data):
+
+        output_list = []
+
+        if handler.list_processor:
+            data = [data]
+
+        # Process list as a sequence of actions
+        for commandData in as_list(data):
+
+            # Execute the handler
+            try:
+                output = self.run_single_command(handler, commandData)
+                output_list.append(output)
+
+            # Stop processing on a break statement
+            except FlowBreak as f:
+                output_list.append(f.output)
+                break
+
+        # Store result
+        output = output_list
+        if not is_list(data) or handler.list_processor:
+            output = output_list[0]
+
+        if not output_list == [None]:
+            self.variables[vars.OUTPUT_VARIABLE] = output
+            self.variables[vars.DEPRECATED_RESULT_VARIABLE] = output
+
+        return output
+
+    def run_single_command(self, handler, rawData):
+
+        # Resolve variables
+        # Don't resolve variables yet for Do or For each, etc. -- they will be resolved just in time
+        if handler.delayed_variable_resolver:
+            data = rawData
         else:
-            raise YayException("Unknown action: {}".format(command))
+            data = vars.resolve_variables(rawData, self.variables)
 
-    return output
-
-
-def run_command(handler, data, context):
-
-    output_list = []
-
-    if handler.list_processor:
-        data = [data]
-
-    # Process list as a sequence of actions
-    for commandData in as_list(data):
-
-        # Execute the handler
-        try:
-            output = run_single_command(handler, commandData, context)
-            output_list.append(output)
-
-        # Stop processing on a break statement
-        except FlowBreak as f:
-            output_list.append(f.output)
-            break
-
-    # Store result
-    output = output_list
-    if not is_list(data) or handler.list_processor:
-        output = output_list[0]
-
-    if not output_list == [None]:
-        context.variables[vars.OUTPUT_VARIABLE] = output
-        context.variables[vars.DEPRECATED_RESULT_VARIABLE] = output
-
-    return output
-
-def run_single_command(handler, rawData, context):
-
-    # Resolve variables
-    # Don't resolve variables yet for Do or For each, etc. -- they will be resolved just in time
-    if handler.delayed_variable_resolver:
-        data = rawData
-    else:
-        data = vars.resolve_variables(rawData, context.variables)
-
-    # Execute action
-    return handler.handler_method(data, context)
+        # Execute action
+        return handler.handler_method(data, self)
 
 
 class FlowBreak(Exception):

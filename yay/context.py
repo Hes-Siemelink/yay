@@ -1,23 +1,29 @@
 import copy
 
 from yay import vars
-from yay import execution
 from yay.util import *
+from yay.execution import YayRunner
 
 #
 # Yay-context.yaml
 #
 
-class YayContext:
+class YayContext():
 
-    def __init__(self, context = None):
-        self.variables = {}
-        self.command_handlers = {}
+    def __init__(self, runner = None):
+        self.runner = defaultRunner
 
-        if context:
-            self.variables = copy.deepcopy(context.variables)
-            self.command_handlers = copy.deepcopy(context.command_handlers)
+        if runner:
+            self.runner = copy.deepcopy(runner)
 
+    def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
+        self.runner.add_command_handler(command, handler_method, delayed_variable_resolver, list_processor)
+
+    def run_script(self, script):
+        return self.runner.run_script(script)
+
+    def run_task(self, data):
+        return self.runner.run_task(data)
 
     def apply_directory_context(self, script_dir, profile):
         context_file = os.path.join(script_dir, 'yay-context.yaml')
@@ -67,20 +73,11 @@ class YayContext:
 
         # Load default variables from home dir
         defaultValuesFile = os.path.join(yay_home(), 'default-variables.yaml')
-        add_from_yaml_file(defaultValuesFile, self.variables)
+        add_from_yaml_file(defaultValuesFile, self.runner.variables)
 
         # Use local context
         if 'variables' in context:
-            self.variables.update(context['variables'])
-
-    def run_script(self, script):
-        return execution.run_script(script, self)
-
-    def run_task(self, data):
-        return execution.run_task(data, self)
-
-    def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
-        self.command_handlers[command] = CommandHandler(handler_method, delayed_variable_resolver, list_processor)
+            self.runner.variables.update(context['variables'])
 
     def register_scripts(self, path):
 
@@ -96,6 +93,7 @@ class YayContext:
                 self.add_command_handler(handler_name,
                                             lambda data, variables, file = filename: run_yay_file(data, variables, file))
 
+
 def yay_home():
     return os.path.join(os.path.expanduser('~'), '.yay')
 
@@ -103,17 +101,12 @@ def yay_home():
 # Command handlers
 #
 
-defaultContext = YayContext()
+defaultRunner = YayRunner()
 
-class CommandHandler():
-    def __init__(self, handler_method, delayed_variable_resolver=False, list_processor=False):
-        self.handler_method = handler_method
-        self.delayed_variable_resolver = delayed_variable_resolver
-        self.list_processor = list_processor
 
 def command_handler(command, delayed_variable_resolver=False, list_processor=False):
     def inner_decorator(handler_function):
-        defaultContext.add_command_handler(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
+        defaultRunner.add_command_handler(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
         return handler_function
     return inner_decorator
 
@@ -132,13 +125,13 @@ def run_yay_file(data, context, file = None):
     script = read_yaml_file(file)
 
     scriptContext = YayContext(context)
-    scriptContext.variables.update(data)
+    scriptContext.runner.variables.update(data)
     scriptContext.run_script(script)
 
-    return scriptContext.variables.get(vars.OUTPUT_VARIABLE)
+    return scriptContext.runner.variables.get(vars.OUTPUT_VARIABLE)
 
 #
-# Import standard libraries and register command handlers in default context
+# Import standard libraries and register command handlers in default runtime
 #
 
 import importlib

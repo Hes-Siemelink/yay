@@ -7,7 +7,7 @@ import os
 import textwrap
 import yaml
 
-from yay.context import YayContext, defaultContext
+from yay.context import YayContext
 
 Invocation = namedtuple('Invocation', ['data', 'variables'])
 class MockHandler:
@@ -19,8 +19,8 @@ class MockHandler:
         return data
 
 def run_script(yay_script_in_yaml, variables, mock = None):
-    context = YayContext(defaultContext)
-    context.variables = variables
+    context = YayContext()
+    context.runner.variables = variables
     if mock:
         context.add_command_handler('Test', mock.invoke)
 
