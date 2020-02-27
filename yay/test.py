@@ -10,7 +10,7 @@ import yaml
 from yay.context import YayContext, defaultContext
 
 Invocation = namedtuple('Invocation', ['data', 'variables'])
-class MockTask:
+class MockHandler:
     def __init__(self):
         self.invocations = []
 

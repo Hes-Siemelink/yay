@@ -7,7 +7,7 @@ from yay.context import YayContext, defaultContext
 class TestCore():
 
     def test_process_task(self):
-        mock = MockTask()
+        mock = MockHandler()
         context = YayContext(defaultContext)
         context.add_command_handler('Test', mock.invoke)
 
@@ -19,7 +19,7 @@ class TestCore():
 
 
     def test_process_tasks(self):
-        mock = MockTask()
+        mock = MockHandler()
 
         run_script('''
         Test: something
@@ -35,7 +35,7 @@ class TestCore():
 
 
     def test_for_each(self):
-        mock = MockTask()
+        mock = MockHandler()
 
         run_script('''
         For each:
@@ -56,7 +56,7 @@ class TestCore():
         assert mock.invocations[2].variables['item'] == 'three'
 
     def test_pipe_result(self):
-        mock = MockTask()
+        mock = MockHandler()
 
         run_script('''
         Test: something
@@ -68,7 +68,7 @@ class TestCore():
         assert mock.invocations[1].data == 'something'
 
     def test_store_result(self):
-        mock = MockTask()
+        mock = MockHandler()
 
         run_script('''
         Test: something
@@ -81,7 +81,7 @@ class TestCore():
         assert mock.invocations[1].data == 'something'
 
     def test_store_result_long_form(self):
-        mock = MockTask()
+        mock = MockHandler()
 
         run_script('''
         Test: something
@@ -95,7 +95,7 @@ class TestCore():
         assert mock.invocations[1].data == 'something'
 
     def test_store_result_with_path(self):
-        mock = MockTask()
+        mock = MockHandler()
 
         run_script('''
         Test:
@@ -109,7 +109,7 @@ class TestCore():
         assert mock.invocations[1].data == 'nested'
 
     def test_change_result_part(self):
-        mock = MockTask()
+        mock = MockHandler()
 
         run_script('''
         Test: 
@@ -138,7 +138,7 @@ class TestCore():
             ''', {})
 
     def test_multiple_invocations_with_list(self):
-        mock = MockTask()
+        mock = MockHandler()
 
         variables = {}
         run_script('''
@@ -151,7 +151,7 @@ class TestCore():
         assert variables['result'] == ['something', 'again']
 
     def test_do(self):
-        mock = MockTask()
+        mock = MockHandler()
 
         variables = {}
         run_script('''
