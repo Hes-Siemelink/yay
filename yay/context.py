@@ -1,6 +1,5 @@
 import copy
 
-from yay import vars
 from yay.util import *
 from yay.execution import YayExecutionContext
 
@@ -34,7 +33,6 @@ class YayRuntime():
         self.load_variables(context)
 
         return context
-
 
     def apply_profile(self, context, profile_name):
         profiles = context.pop('profiles', None)

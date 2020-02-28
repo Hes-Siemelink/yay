@@ -6,31 +6,33 @@ from yay.util import *
 
 def main():
 
+    # Get command line arguments
+    script_name = sys.argv[1]
+    profile = get_command_line_parameter(sys.argv, '-p')
+    variables = get_variables(sys.argv[2:])
+
+    # Run script
     try:
-        # Make sure we can find the file
-        filename = get_file(sys.argv[1])
-        script_dir = os.path.dirname(os.path.abspath(filename))
-
-        # Read YAML script
-        script = read_yaml_files(filename)
-
-        # Initialize runtime
-        profile = get_command_line_parameter(sys.argv, '-p')
-
-        runtime = YayRuntime()
-        runtime.apply_directory_context(script_dir, profile)
-
-        # Initialize variables
-        commandLineVars = get_variables(sys.argv[2:])
-        runtime.update_variables(commandLineVars)
-
-        # Process all
-        result = runtime.run_script(script)
-
+        run_yay_script(script_name, profile, variables)
     except Exception as exception:
         import traceback
         traceback.print_exc()
         print(exception)
+
+def run_yay_script(script_name, profile, variables) :
+
+    # Read YAML file
+    file = get_file(script_name)
+    script = read_yaml_files(file)
+
+    # Initialize runtime
+    runtime = YayRuntime()
+    script_dir = os.path.dirname(os.path.abspath(file))
+    runtime.apply_directory_context(script_dir, profile)
+    runtime.update_variables(variables)
+
+    # Run script
+    return runtime.run_script(script)
 
 
 def get_file(filename):
