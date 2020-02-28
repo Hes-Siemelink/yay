@@ -29,7 +29,7 @@ class YayRuntime():
 
         self.apply_profile(context, profile)
         self.register_scripts_from_context(context)
-        self.register_scripts(script_dir)
+        self.register_scripts_in_directory(script_dir)
         self.load_variables(context)
 
         return context
@@ -54,24 +54,24 @@ class YayRuntime():
         if 'dependencies' in context:
             for package in context['dependencies']:
                 version = str(context['dependencies'][package])
-                dir = os.path.join(yay_home(), 'packages', package, version)
-                self.register_scripts(dir)
+                dir = yay_home('packages', package, version)
+                self.register_scripts_in_directory(dir)
 
         if 'path' in context:
             for dir in context['path']:
-                self.register_scripts(dir)
+                self.register_scripts_in_directory(dir)
 
     def load_variables(self, context):
 
         # Load default variables from home dir
-        defaultValuesFile = os.path.join(yay_home(), 'default-variables.yaml')
+        defaultValuesFile = yay_home('default-variables.yaml')
         add_from_yaml_file(defaultValuesFile, self.context.variables)
 
         # Use local context
         if 'variables' in context:
             self.context.variables.update(context['variables'])
 
-    def register_scripts(self, path):
+    def register_scripts_in_directory(self, path):
 
         # Resolve ~ for home dir
         path = os.path.expanduser(path)
@@ -86,8 +86,9 @@ class YayRuntime():
                                                  lambda data, variables, file = filename: run_yay_file(data, variables, file))
 
 
-def yay_home():
-    return os.path.join(os.path.expanduser('~'), '.yay')
+def yay_home(*paths):
+    home = os.path.join(os.path.expanduser('~'), '.yay')
+    return os.path.join(home, *paths)
 
 #
 # Command handlers

@@ -45,7 +45,7 @@ def get_file(filename):
         return filename
 
     # Return file from .yay home
-    filename_in_home_folder = os.path.join(yay_home(), filename)
+    filename_in_home_folder = yay_home(filename)
     if os.path.isfile(filename_in_home_folder):
         return filename_in_home_folder
 
