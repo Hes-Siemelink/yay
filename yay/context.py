@@ -26,15 +26,11 @@ class YayRuntime():
 
     def apply_directory_context(self, script_dir, profile):
         context_file = os.path.join(script_dir, 'yay-context.yaml')
-        if not os.path.isfile(context_file):
-            return {}
+        context = read_yaml_file(context_file)[0] if os.path.isfile(context_file) else {}
 
-        context = read_yaml_file(context_file)[0]
         self.apply_profile(context, profile)
-
         self.register_scripts_from_context(context)
         self.register_scripts(script_dir)
-
         self.load_variables(context)
 
         return context
