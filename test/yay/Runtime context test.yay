@@ -1,0 +1,12 @@
+Test case: Make sure variable from 'test' profile is set
+
+Assert that:
+  object: ${contextVariable}
+  equals: set
+
+---
+Test case: Default variables are loaded
+
+Assert that:
+  object: ${testDir}
+  equals: yay_home

@@ -1,5 +1,0 @@
-Test case: Make sure context variable is set
-
-Assert that:
-  object: ${contextVariable}
-  equals: set
