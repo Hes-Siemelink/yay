@@ -112,6 +112,7 @@ importlib.import_module('yay.script')
 importlib.import_module('yay.input')
 importlib.import_module('yay.xl_cli')
 importlib.import_module('yay.arango')
+importlib.import_module('yay.webhook')
 
 
 @command_handler('Execute yay file')
