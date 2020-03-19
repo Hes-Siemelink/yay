@@ -5,5 +5,5 @@ Http GET: /hello
 Print: ${output}
 
 ---
-Http GET: /hello2
+Http GET: /hello/World
 Print: ${output}

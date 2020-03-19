@@ -1,12 +1,9 @@
-Webhook:
-  path: /hello
-  Do:
-    Print: Got request
-    Output: Hello from Server!
+On Http request:
+  /hello:
+    GET:
+      Print: Got request
+      Output: Hello from Server!
 
----
-Webhook:
-  path: /hello2
-  Do:
-    Print: Got request
-    Output: Hello too from Server!
+  /hello/{name}:
+    GET:
+      Output: Hello ${name}!
