@@ -65,6 +65,7 @@ def send_request(data, context):
     body = vars['body'] if 'body' in vars else None
     method = vars['method'] if 'method' in vars else 'GET'
     file = vars['save as'] if 'save as' in vars else None
+    verify = vars['verify certificate'] if 'verify certificate' in vars else True
 
     # Headers
     headers = dict(jsonHeaders)
@@ -75,31 +76,11 @@ def send_request(data, context):
     auth = get_authorization(vars)
 
     # Do request
-    if method == 'GET':
-        r = requests.get(
-            url + path,
-            headers = headers,
-            auth = auth)
-
-    if method == 'POST':
-        r = requests.post(
-            url + path,
-            data = json.dumps(body),
-            headers = headers,
-            auth = auth)
-
-    if method == 'PUT':
-        r = requests.put(
-            url + path,
-            data = json.dumps(body),
-            headers = headers,
-            auth = auth)
-
-    if method == 'DELETE':
-        r = requests.delete(
-            url + path,
-            headers = headers,
-            auth = auth)
+    r = requests.request(method.lower(),
+                     url + path,
+                     headers = headers,
+                     auth = auth,
+                     verify = verify)
 
     # Check result
     if r.status_code >= 300:

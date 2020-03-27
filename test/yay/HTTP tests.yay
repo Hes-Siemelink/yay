@@ -1,4 +1,6 @@
-Http endpoint: http://localhost:5000
+Http endpoint:
+  url: http://localhost:5000
+  verify certificate: false
 
 ---
 Test case: GET with explicit parameters
