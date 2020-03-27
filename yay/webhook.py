@@ -10,7 +10,6 @@ app = flask.Flask("Yay webhook handler")
 app.testing = False
 
 
-
 @command_handler('On Http request', delayed_variable_resolver=True)
 def add_webhook(data, context):
 
@@ -24,12 +23,12 @@ def add_webhook(data, context):
 
 
 def add_rule(path, context, actions):
-    print(f"Adding rule for {path}")
     app.add_url_rule(
         path,
         path,
         lambda **parameters: run_rule(context, actions, parameters)
     )
+
 
 def run_rule(context, actions, parameters):
     my_context = deepcopy(context)

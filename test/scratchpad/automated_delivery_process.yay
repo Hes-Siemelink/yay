@@ -1,0 +1,188 @@
+# Removed
+# - Directory
+# - Script username / password
+# - Variables not need on start release screen
+
+Script info:
+  Title: Automated delivery process
+  Input:
+    featureName:
+      description: The name of the feature that is to be implemented
+      type: string
+      required: true
+---
+Phase:
+  title: Dev
+  color: '#08B153'
+
+---
+Task: Create ticket
+Task info:
+  description: Release process for feature ${release.title} has started.
+  team: Product Owner
+
+JIRA - Create isue:
+  jiraServer: Jira Server
+  project: SAN
+  title: ${featureName}
+As: jiraTicket
+
+---
+Task: Update feature ticket for building
+Task info:
+  team: Product Owner
+
+JIRA - Update issue:
+  jiraServer: Jira Server
+  issueId: ${jiraTicket}
+  newStatus: IN PROGRESS
+  comment: The feature is being built
+
+---
+Task: Build feature
+Task info:
+  team: Dev
+
+Jenkins - Build:
+  jenkinsServer: Jenkins localhost
+  jobName: Unknown job # Skip this to speed up demo
+Or:
+  Do asynch:
+    Jenkins - Build:
+      jenkinsServer: Jenkins localhost
+      jobName: Unknown job # Skip this to speed up demo
+  As: jenkinsBuild
+  Wait for: ${jenkinsBuild}
+
+On failure:
+  Task action: skip
+
+---
+              - name: Update feature ticket for testing
+                type: jira.UpdateIssue
+                jiraServer: Jira Server
+                issueId: ${jiraTicket}
+                newStatus: TESTING
+                comment: The feature is being tested.
+                team: Product Owner
+
+              - name: Code Quality
+                type: sonar.checkCompliance
+                sonarServer: SonarQube
+                resource: it.eng.knowage:knowagesdk
+                team: Dev
+
+              - name: Security Analysis
+                type: fortify.checkCompliance
+                fortifyServer: Fortify SSC
+                projectName: Address Book
+                projectVersion: COOL-234
+                minimumStarRating: 0
+                team: Dev
+                taskFailureHandlerEnabled: true
+                taskRecoverOp: SKIP_TASK
+
+              - name: Code Compliance Check
+                type: blackduck.checkCompliance
+                blackduckServer: Blackduck
+                projectName: xl-release
+                versionName: master
+                securityRiskHighThreshold: 1000
+                securityRiskMediumThreshold: 1000
+                securityRiskLowThreshold: 1000
+                licenseRiskHighThreshold: 1000
+                licenseRiskMediumThreshold: 1000
+                licenseRiskLowThreshold: 1000
+                operationalRiskHighThreshold: 2000
+                operationalRiskMediumThreshold: 1000
+                operationalRiskLowThreshold: 1000
+                team: Dev
+
+          - phase: QA
+            color: '#FD8D10'
+            tasks:
+              - name: Create ServiceNow Task
+                type: servicenow.CreateChangeTask
+                servicenowServer: ServiceNow
+                shortDescription: Test ${jiraTicket}
+                additionalFields:
+                  description: Test ${jiraTicket}
+                variableMapping:
+                  pythonScript.Ticket: ${taskTicket}
+                  pythonScript.data: ${taskData}
+                  pythonScript.sysId: ${taskId}
+                team: QA
+
+              - name: Deploy to Test Environment
+                type: xldeploy.Deploy
+                taskFailureHandlerEnabled: true
+                taskRecoverOp: SKIP_TASK
+                team: QA
+
+              - name: Update Task
+                type: servicenow.UpdateChangeTask
+                servicenowServer: ServiceNow
+                state: Work in Progress
+                additionalFields:
+                  comments: ${jiraTicket} is ready for testing
+                  priority: 3 - Moderate
+                sysId: ${taskId}
+                variableMapping:
+                  pythonScript.data: ${updateTaskData}
+                team: QA
+
+              - name: Perform tests
+                type: xlrelease.ParallelGroup
+                tasks:
+                  - name: Do API tests
+                    type: xlrelease.ScriptTask
+                    script: |-
+                      import time
+                      time.sleep(0)
+                    team: QA
+
+                  - name: Do Performance tests
+                    type: xlrelease.ScriptTask
+                    script: |-
+                      import time
+                      time.sleep(0)
+                    team: QA
+
+              - name: Update Task
+                type: servicenow.UpdateChangeTask
+                servicenowServer: ServiceNow
+                state: Closed Complete
+                additionalFields:
+                  comments: ${jiraTicket} has been tested
+                  priority: 3 - Moderate
+                sysId: ${taskId}
+                variableMapping:
+                  pythonScript.data: ${updateTaskData}
+                team: QA
+
+          - phase: Merge Feature
+            color: '#0099CC'
+            tasks:
+              - name: Send notification
+                type: xlrelease.NotificationTask
+                taskFailureHandlerEnabled: true
+                taskRecoverOp: SKIP_TASK
+                addresses:
+                  - po@example.com
+                subject: Feature ${release.title} is complete
+                body: Feature ${release.title} is complete and will be merged.
+                team: Product Owner
+
+              - name: Merge pull request
+                type: github.MergePullRequest
+                taskFailureHandlerEnabled: true
+                taskRecoverOp: SKIP_TASK
+                team: Dev
+
+              - name: Close feature ticket
+                type: jira.UpdateIssue
+                jiraServer: Jira Server
+                issueId: ${jiraTicket}
+                newStatus: CLOSED
+                comment: Feature was tested.
+                team: Product Owner

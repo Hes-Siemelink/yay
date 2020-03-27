@@ -25,7 +25,6 @@ Assert that:
 - object: ${chocolate}
   equals: Found
 
-
 ---
 Test case:  If with and / or
 

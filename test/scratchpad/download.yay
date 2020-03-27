@@ -1,5 +1,0 @@
-Http GET:
-  url: https://github.com/xebialabs/devops-as-code-workshop/archive/master.zip
-  save as: master.zip
-
-Print as YAML: ${output}
