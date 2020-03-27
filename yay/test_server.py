@@ -31,8 +31,8 @@ def list_items():
 
 @app.route('/items', methods=['POST'])
 def add_item():
-    data['4'] = 'Four'
-    return flask.jsonify({'4': 'Four'})
+    data = dict(request.json)
+    return flask.jsonify(list(data.keys()))
 
 @app.route('/reset', methods=['POST'])
 def reset():

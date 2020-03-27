@@ -16,7 +16,11 @@ Test case: POST and simple GET
 
 Http POST:
   path: /items
-Http GET: /items
+  body:
+    1: One
+    2: Two
+    3: Three
+    4: Four
 
 Expected output: ['1', '2', '3', '4']
 

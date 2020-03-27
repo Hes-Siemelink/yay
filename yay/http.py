@@ -80,7 +80,8 @@ def send_request(data, context):
                      url + path,
                      headers = headers,
                      auth = auth,
-                     verify = verify)
+                     verify = verify,
+                     data = json.dumps(body))
 
     # Check result
     if r.status_code >= 300:
