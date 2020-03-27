@@ -1,15 +1,13 @@
-#
-# Test util
-#
-
-from collections import namedtuple
 import os
 import textwrap
 import yaml
 
+from collections import namedtuple
 from yay.context import YayRuntime
 
 Invocation = namedtuple('Invocation', ['data', 'variables'])
+
+
 class MockHandler:
     def __init__(self):
         self.invocations = []
@@ -18,7 +16,8 @@ class MockHandler:
         self.invocations.append(Invocation(data, context.variables.copy()))
         return data
 
-def run_script(yay_script_in_yaml, variables, mock = None):
+
+def run_script(yay_script_in_yaml, variables, mock=None):
     runtime = YayRuntime()
     runtime.context.variables = variables
     if mock:
@@ -26,8 +25,10 @@ def run_script(yay_script_in_yaml, variables, mock = None):
 
     runtime.run_script(from_yaml(yay_script_in_yaml))
 
+
 def from_yaml(text):
     return list(yaml.load_all(textwrap.dedent(text), Loader=yaml.Loader))
+
 
 def get_files(testDir, base=None):
     if not base:
@@ -56,11 +57,12 @@ def get_files(testDir, base=None):
 
     return files
 
+
 def from_yaml(text):
     return list(yaml.load_all(textwrap.dedent(text), Loader=yaml.Loader))
 
+
 def from_file(file):
-    with open (file, "r") as myfile:
+    with open(file, "r") as myfile:
         data = myfile.read()
     return from_yaml(data)
-

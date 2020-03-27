@@ -4,8 +4,8 @@ import sys
 from yay.context import YayRuntime, yay_home
 from yay.util import *
 
-def main():
 
+def main():
     # Get command line arguments
     script_name = sys.argv[1]
     profile = get_command_line_parameter(sys.argv, '-p')
@@ -19,8 +19,8 @@ def main():
         traceback.print_exc()
         print(exception)
 
-def run_yay_script(script_name, profile, variables) :
 
+def run_yay_script(script_name, profile, variables):
     # Read YAML file
     file = get_file(script_name)
     script = read_yaml_files(file)
@@ -36,7 +36,6 @@ def run_yay_script(script_name, profile, variables) :
 
 
 def get_file(filename):
-
     # Add yay extension to filename if not given
     filename = filename if filename.endswith('.yay') else filename + '.yay'
 
@@ -53,7 +52,6 @@ def get_file(filename):
 
 
 def get_variables(args):
-
     # Convert arguments into dict
     variables = {}
     for argument in args:
@@ -73,6 +71,7 @@ def get_command_line_parameter(args, parameter, default=''):
             use_this_one = True
 
     return default
+
 
 # Execute script
 if __name__ == '__main__':

@@ -2,6 +2,7 @@ from yay.context import command_handler
 from yay.vars import OUTPUT_VARIABLE
 from PyInquirer import prompt
 
+
 @command_handler('User Input')
 def ask_user(data, context):
     if 'name' not in data:
@@ -10,9 +11,9 @@ def ask_user(data, context):
     answers = prompt([data])
     context.variables.update(answers)
 
+
 @command_handler('Check Input')
 def check_input(data, context):
-
     for variable in data:
         if variable in context.variables:
             continue

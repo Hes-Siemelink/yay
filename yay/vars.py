@@ -12,6 +12,7 @@ class VariableMatcher:
     VARIABLE_REGEX = r'\$\{([^\}]+)\}'
     ONE_VARIABLE_ONLY_REGEX = r'^' + VARIABLE_REGEX + '$'
 
+
 def resolve_variables(item, variables):
     if not item:
         return item
@@ -24,6 +25,7 @@ def resolve_variables(item, variables):
     if is_list(item):
         return resolve_variables_in_list(item, variables)
     return item
+
 
 def resolve_variables_in_string(text, variables):
     match = re.search(VariableMatcher.ONE_VARIABLE_ONLY_REGEX, text)
@@ -38,11 +40,13 @@ def resolve_variables_in_string(text, variables):
                 text = text.replace(in_var_syntax(variable), to_string(value))
         return text
 
+
 def to_string(value):
     if is_dict(value) or is_list(value):
         return format_yaml(value).strip()
 
     return str(value)
+
 
 def resolve_variables_in_dict(dict, variables):
     copy = {}
@@ -50,14 +54,15 @@ def resolve_variables_in_dict(dict, variables):
         copy[key] = resolve_variables(dict[key], variables)
     return copy
 
+
 def resolve_variables_in_list(list, variables):
     copy = []
     for item in list:
         copy.append(resolve_variables(item, variables))
     return copy
 
-def get_value_with_path(variable, variables):
 
+def get_value_with_path(variable, variables):
     # Check if we have a JSON path syntax and split variable into root and path component
     (var, path) = split_jsonpath(variable)
 
@@ -79,13 +84,15 @@ def get_value_with_path(variable, variables):
     else:
         return resolve_variables(value, variables)
 
+
 def split_jsonpath(var):
-    PATH_SYNTAX  = r"^(.*?)([\.\[].*)$"
+    PATH_SYNTAX = r"^(.*?)([\.\[].*)$"
     (var, path) = match_two_groups(var, PATH_SYNTAX)
     if path:
         path = '$' + path
 
     return (var, path)
+
 
 def match_two_groups(text, regex):
     match = re.search(regex, text)
@@ -93,6 +100,7 @@ def match_two_groups(text, regex):
         return (match.group(1), match.group(2))
     else:
         return (text, None)
+
 
 def in_var_syntax(variable):
     return '${' + variable + '}'

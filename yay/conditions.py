@@ -1,5 +1,6 @@
 from yay.util import *
 
+
 def parse_condition(data):
     if 'object' in data:
         object = get_parameter(data, 'object')
@@ -39,10 +40,11 @@ class Equals():
         return f"{self.object} == {self.equals}"
 
     def as_dict(self):
-        dict = {'object': as_dict(self.object), 'equals' : as_dict(self.equals)}
+        dict = {'object': as_dict(self.object), 'equals': as_dict(self.equals)}
         if not self.is_true():
             dict['RESULT'] = 'FALSE'
         return dict
+
 
 class Contains():
 
@@ -57,10 +59,11 @@ class Contains():
         return f"{self.object} in {self.list}"
 
     def as_dict(self):
-        dict = {'object': as_dict(self.object), 'in' : as_dict(self.list)}
+        dict = {'object': as_dict(self.object), 'in': as_dict(self.list)}
         if not self.is_true():
             dict['RESULT'] = 'FALSE'
         return dict
+
 
 class All():
 
@@ -79,6 +82,7 @@ class All():
             dict['RESULT'] = 'FALSE'
         return dict
 
+
 class Any():
 
     def __init__(self, list):
@@ -96,6 +100,7 @@ class Any():
             dict['RESULT'] = 'FALSE'
         return dict
 
+
 def as_dict(object):
     if hasattr(object, 'as_dict'):
         return object.as_dict()
@@ -104,6 +109,6 @@ def as_dict(object):
         return [as_dict(item) for item in object]
 
     if is_dict(object):
-        return { key: as_dict(value) for key, value in object.items() }
+        return {key: as_dict(value) for key, value in object.items()}
 
     return object

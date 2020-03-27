@@ -2,27 +2,33 @@ import json
 import yaml
 import os
 
+
 class YayException(Exception):
     pass
+
 
 def format_json(dict):
     return json.dumps(dict, indent=2, sort_keys=False)
 
+
 def print_as_json(dict):
     print(format_json(dict))
+
 
 def format_yaml(dict):
     return yaml.dump(dict, default_flow_style=False)
 
+
 def print_as_yaml(dict):
     print(format_yaml(dict))
+
 
 def read_file(filename):
     with open(filename, 'r') as file:
         return file.read()
 
-def read_yaml_file(fileArgument, data = None):
 
+def read_yaml_file(fileArgument, data=None):
     if data == None:
         data = []
 
@@ -30,6 +36,7 @@ def read_yaml_file(fileArgument, data = None):
         for fileData in yaml.load_all(stream, Loader=yaml.Loader):
             data.append(fileData)
     return data
+
 
 def add_from_yaml_file(fileArgument, data):
     if not os.path.isfile(fileArgument):
@@ -41,8 +48,8 @@ def add_from_yaml_file(fileArgument, data):
 
     return data
 
-def read_yaml_files(fileArgument, data = None):
 
+def read_yaml_files(fileArgument, data=None):
     if data == None:
         data = []
 
@@ -61,22 +68,28 @@ def read_yaml_files(fileArgument, data = None):
 def is_dict(item):
     return isinstance(item, dict)
 
+
 def is_list(item):
     return isinstance(item, list)
 
+
 def is_scalar(item):
     return isinstance(item, str)
+
 
 class RawDict(dict):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
 
+
 class RawList(list):
     def __init__(self, *args, **kwargs):
         list.__init__(self, *args, **kwargs)
 
+
 def is_raw(item):
     return isinstance(item, RawDict) or isinstance(item, RawList)
+
 
 def raw(item):
     if is_list(item):
@@ -84,7 +97,8 @@ def raw(item):
     if is_dict(item):
         return RawDict(item)
 
-    return item # TODO handle strings
+    return item  # TODO handle strings
+
 
 def live(item):
     if is_list(item):
@@ -92,7 +106,8 @@ def live(item):
     if is_dict(item):
         return dict(item)
 
-    return item # TODO handle strings
+    return item  # TODO handle strings
+
 
 def is_empty(item):
     if item is None: return True
@@ -100,12 +115,14 @@ def is_empty(item):
         if not item: return False
     return True
 
+
 def as_list(item):
     if not is_list(item):
         return [item]
     return item
 
-def get_parameter(data, name, default = None):
+
+def get_parameter(data, name, default=None):
     parameter = data.get(name)
     if parameter is None:
         parameter = default
@@ -113,16 +130,20 @@ def get_parameter(data, name, default = None):
         raise YayException("Missing parameter '{}' in:\n{}".format(name, yaml.dump(data, default_flow_style=False)))
     return parameter
 
+
 class AnyContent():
     def __str__(self):
         return "!any"
+
     def __eq__(self, other):
         return True
+
     def __ne__(self, other):
         return False
 
 
 def yaml_any_content(loader, node):
     return AnyContent()
+
 
 yaml.add_constructor('!any', yaml_any_content)

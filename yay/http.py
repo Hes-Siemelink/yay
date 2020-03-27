@@ -10,38 +10,43 @@ jsonHeaders = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
 HTTP_DEFAULTS = '_http.defaults'
 
+
 @command_handler('Http endpoint')
 def set_http_defaults(data, context):
-
     if is_scalar(data):
         data = {'url': data}
     context.variables[HTTP_DEFAULTS] = data
 
     return None
 
+
 @command_handler('Http GET')
 def http_get(data, context):
     if is_scalar(data):
         data = {
-          'path': data
+            'path': data
         }
     data['method'] = 'GET'
     return process_request(data, context)
+
 
 @command_handler('Http POST')
 def http_post(data, context):
     data['method'] = 'POST'
     return process_request(data, context)
 
+
 @command_handler('Http PUT')
 def http_put(data, context):
     data['method'] = 'PUT'
     return process_request(data, context)
 
+
 @command_handler('Http DELETE')
 def http_delete(data, context):
     data['method'] = 'DELETE'
     return process_request(data, context)
+
 
 @command_handler('Http')
 def process_request(data, context):
@@ -52,8 +57,8 @@ def process_request(data, context):
 
     return result
 
-def send_request(data, context):
 
+def send_request(data, context):
     if not data: return
 
     defaults = context.variables.get(HTTP_DEFAULTS)
@@ -77,11 +82,11 @@ def send_request(data, context):
 
     # Do request
     r = requests.request(method.lower(),
-                     url + path,
-                     headers = headers,
-                     auth = auth,
-                     verify = verify,
-                     data = json.dumps(body))
+                         url + path,
+                         headers=headers,
+                         auth=auth,
+                         verify=verify,
+                         data=json.dumps(body))
 
     # Check result
     if r.status_code >= 300:

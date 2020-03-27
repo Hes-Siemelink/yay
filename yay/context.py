@@ -3,12 +3,12 @@ import copy
 from yay.util import *
 from yay.execution import YayExecutionContext
 
-
 defaultContext = YayExecutionContext()
+
 
 class YayRuntime():
 
-    def __init__(self, context = defaultContext):
+    def __init__(self, context=defaultContext):
         self.context = copy.deepcopy(context)
 
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
@@ -83,12 +83,13 @@ class YayRuntime():
                 handler_name = to_handler_name(filename)
                 filename = os.path.join(path, filename)
                 self.context.add_command_handler(handler_name,
-                                                 lambda data, variables, file = filename: run_yay_file(data, variables, file))
+                                                 lambda data, variables, file=filename: run_yay_file(data, variables, file))
 
 
 def yay_home(*paths):
     home = os.path.join(os.path.expanduser('~'), '.yay')
     return os.path.join(home, *paths)
+
 
 #
 # Command handlers
@@ -98,13 +99,16 @@ def command_handler(command, delayed_variable_resolver=False, list_processor=Fal
     def inner_decorator(handler_function):
         defaultContext.add_command_handler(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
         return handler_function
+
     return inner_decorator
+
 
 #
 # Import standard handlers and register them in default runtime
 #
 
 import importlib
+
 importlib.import_module('yay.core_lib')
 importlib.import_module('yay.http')
 importlib.import_module('yay.files')
@@ -116,7 +120,7 @@ importlib.import_module('yay.webhook')
 
 
 @command_handler('Execute yay file')
-def run_yay_file(data, context, file = None):
+def run_yay_file(data, context, file=None):
     if file == None:
         file = get_parameter(data, 'file')
 
@@ -130,6 +134,7 @@ def run_yay_file(data, context, file = None):
 
     return scriptContext.output()
 
+
 #
 # Util
 #
@@ -138,4 +143,3 @@ def to_handler_name(filename):
     filename = filename.replace('.yay', '')
     filename = filename.replace('-', ' ')
     return filename
-

@@ -8,6 +8,7 @@ from yay.context import command_handler
 from yay.execution import FlowBreak
 from yay.util import *
 
+
 #
 # Control flow
 #
@@ -48,6 +49,7 @@ def foreach(data, context):
 
     return output
 
+
 def get_foreach_variable(data):
     for variable in data:
         if variable == 'Do':
@@ -84,7 +86,7 @@ def if_any_statement(data, context):
 
 
 @command_handler('If', delayed_variable_resolver=True)
-def if_statement(data, context, break_on_success = False):
+def if_statement(data, context, break_on_success=False):
     actions = get_parameter(data, 'Do')
     del data['Do']
 
@@ -113,7 +115,6 @@ def assert_equals(data, context):
 
 @command_handler('Assert that')
 def assert_that(data, context):
-
     condition = conditions.parse_condition(data)
 
     if condition.is_true():
@@ -127,8 +128,8 @@ def assert_that(data, context):
 
 @command_handler('Expected output', list_processor=True)
 def expect_output(data, context):
-
     assert data == context.output(), "\nExpected: {}\nActual:   {}".format(data, context.output)
+
 
 #
 # Variables
@@ -138,7 +139,6 @@ def expect_output(data, context):
 @command_handler('Set variable')
 @command_handler('As')
 def set_variable(data, context):
-
     # set: varname
     # => will set the output into 'varname'
     if is_scalar(data):
@@ -152,6 +152,7 @@ def set_variable(data, context):
     for var in data:
         context.variables[var] = data[var]
 
+
 @command_handler('Input')
 def check_input(data, context):
     for input_parameter in data:
@@ -162,9 +163,11 @@ def check_input(data, context):
             else:
                 raise YayException("Variable not provided: " + input_parameter)
 
+
 @command_handler('Output')
 def return_input(data, context):
     return data
+
 
 #
 # Meta info
@@ -175,6 +178,7 @@ def return_input(data, context):
 def noop(data, context):
     pass
 
+
 #
 # Join and merge
 #
@@ -183,6 +187,7 @@ def noop(data, context):
 def join(data, context):
     for var in data:
         join_single_variable(var, data[var], context.variables)
+
 
 def join_single_variable(var, updates, variables):
     value = variables.get(var)
@@ -197,9 +202,9 @@ def join_single_variable(var, updates, variables):
             value.extend(as_list(update))
     variables[var] = value
 
+
 @command_handler('Merge', list_processor=True)
 def merge(data, context):
-
     if is_dict(data):
         merge([context.output(), data], context.variables)
         return
@@ -223,9 +228,11 @@ def merge(data, context):
 
     return output
 
+
 @command_handler('Apply variables')
 def apply_variables(data, context):
     return raw(vars.resolve_variables(live(data), context.variables))
+
 
 #
 # Replace
@@ -239,6 +246,7 @@ def replace_text(data, context):
 
     return text.replace(part, replacement)
 
+
 #
 # Wait
 #
@@ -246,6 +254,7 @@ def replace_text(data, context):
 @command_handler('Wait')
 def wait(data, context):
     time.sleep(data)
+
 
 #
 # Printing
@@ -255,10 +264,12 @@ def wait(data, context):
 def print_text(data, context):
     print(data)
 
+
 @command_handler('Print JSON')
 @command_handler('Print as JSON')
 def print_json(data, context):
     print_as_json(data)
+
 
 @command_handler('Print YAML')
 @command_handler('Print as YAML')

@@ -4,6 +4,7 @@ import re
 from yay import vars
 from yay.util import *
 
+
 #
 # Execution logic
 #
@@ -61,7 +62,6 @@ class YayExecutionContext():
 
         return output
 
-
     def run_command(self, handler, data):
 
         output_list = []
@@ -108,7 +108,7 @@ class YayExecutionContext():
     def output(self):
         return self.variables.get(vars.OUTPUT_VARIABLE)
 
-class FlowBreak(Exception):
-    def __init__(self, output = None):
-        self.output = output
 
+class FlowBreak(Exception):
+    def __init__(self, output=None):
+        self.output = output
