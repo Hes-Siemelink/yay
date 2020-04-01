@@ -1,4 +1,4 @@
-from yay.context import command_handler
+from yay.runtime import command_handler
 
 
 @command_handler('Python')

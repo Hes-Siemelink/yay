@@ -4,7 +4,7 @@ import time
 from yay import conditions
 from yay import vars
 
-from yay.context import command_handler
+from yay.runtime import command_handler
 from yay.execution import FlowBreak
 from yay.util import *
 

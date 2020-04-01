@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 
-from yay.context import YayRuntime, yay_home
+from yay.runtime import YayRuntime, yay_home
 from yay.util import *
 
 

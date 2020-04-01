@@ -3,7 +3,7 @@ import textwrap
 import yaml
 
 from collections import namedtuple
-from yay.context import YayRuntime
+from yay.runtime import YayRuntime
 
 Invocation = namedtuple('Invocation', ['data', 'variables'])
 

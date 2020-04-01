@@ -3,7 +3,7 @@ import flask
 from copy import deepcopy
 from threading import Thread
 
-from yay.context import command_handler
+from yay.runtime import command_handler
 from yay.util import *
 
 app = flask.Flask("Yay webhook handler")

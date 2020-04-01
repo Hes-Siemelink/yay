@@ -3,7 +3,7 @@ from flask import request
 
 from threading import Thread
 
-import yay.context
+import yay.runtime
 import yay.execution
 from yay.util import *
 from yay import execution
