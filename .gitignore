@@ -39,3 +39,5 @@ __pycache__
 .pytest_cache
 *.egg-info
 venv
+Pipfile
+Pipfile.lock
