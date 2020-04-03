@@ -1,25 +1,16 @@
 Check Input:
 - jenkinsUrl: Jenkins server URL
 
----
+Http endpoint: ${jenkinsUrl}
 
-Http GET:
-  url: ${jenkinsUrl}
-  path: /api/json
-Set:
-  jobs: ${result.jobs}
 
 ---
+Http GET: /api/json
 
 For each:
-  job: ${jobs}
-  Do:
-    Print:
-    - ${job.name} (${job._class})
-    - ${job.url}
-    - "   "
----
+  ${job}: ${output.jobs}
 
-Write file:
-  name: jenkins-jobs.yaml
-  contents: ${jobs}
+  Print: |
+    ${job.name} (${job._class})
+    ${job.url}
+

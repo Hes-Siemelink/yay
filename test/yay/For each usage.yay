@@ -1,0 +1,81 @@
+Test case: Output from for each
+
+Output: something
+
+For each:
+  ${item}:
+  - one
+  - two
+  - three
+  Output:
+    item: ${item}
+
+Expected output:
+  - item: one
+  - item: two
+  - item: three
+
+
+---
+Test case: Recursive output from for each
+
+Output: something
+
+For each:
+  ${item}:
+  - one
+  - two
+  - three
+  Output: ${output} ${item}
+
+Expected output:
+- something one
+- something one two
+- something one two three
+
+
+---
+Test case: Make sure variables are resolved at right time in Do command
+
+${output}: something else
+${test}: []
+
+For each:
+  ${recipe}:
+    - Mango ice cream
+    - Ratatouille
+    - Meatballs
+  ${output}: ${recipe}
+  Join:
+    test:
+    - ${output}
+
+Assert equals:
+- actual: ${test}
+  expected:
+    - Mango ice cream
+    - Ratatouille
+    - Meatballs
+
+
+---
+Test case: variable in For each
+
+${items}:
+  - One
+  - Two
+  - Three
+${test_result}: []
+
+For each:
+  ${item}: ${items}
+  Join:
+    test_result:
+    - (${item})
+
+Assert equals:
+  - actual: ${test_result}
+    expected:
+      - (One)
+      - (Two)
+      - (Three)

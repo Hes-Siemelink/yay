@@ -6,6 +6,7 @@
 * Removes 'Name' command. Use 'Task' instead
 
 ### Features
+* New **For each** syntax. Old syntax is deprecated but still works
 * **For each** command returns a list of results
 
 ## Yay 0.9 - February 21st, 2020

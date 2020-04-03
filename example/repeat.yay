@@ -1,17 +1,21 @@
 For each:
-  number:
+  ${number}:
   - One
   - Two
   - Three
-  Do:
-    Print: ${number}
+
+  Print: ${number}
+
+
 ---
 Print: "- - - - -"
+
 For each:
-  number:
+  ${number}:
   - One
   - Two
   - Three
-  Do:
-  - Print: ${number}
-  - Print: Mississipi
+
+  Print:
+  - ${number}
+  - Mississipi
