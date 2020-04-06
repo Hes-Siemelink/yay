@@ -38,16 +38,9 @@ class YayRuntime():
         profiles = context.pop('profiles', None)
         if profile_name:
             if profiles and profile_name in profiles:
-                self.dict_merge(context, profiles[profile_name])
+                dict_merge(context, profiles[profile_name])
             else:
                 raise YayException(f"Profile '{profile_name}' not found in yay-context.yaml")
-
-    def dict_merge(self, context, profile):
-        for key in profile:
-            if key in context:
-                context[key].update(profile[key])
-            else:
-                context[key] = profile[key]
 
     def register_scripts_from_context(self, context):
 
@@ -91,6 +84,11 @@ def yay_home(*paths):
     return os.path.join(home, *paths)
 
 
+def to_handler_name(filename):
+    filename = filename.replace('.yay', '')
+    filename = filename.replace('-', ' ')
+    return filename
+
 #
 # Command handlers
 #
@@ -133,13 +131,3 @@ def run_yay_file(data, context, file=None):
     scriptContext.run_script(script)
 
     return scriptContext.output()
-
-
-#
-# Util
-#
-
-def to_handler_name(filename):
-    filename = filename.replace('.yay', '')
-    filename = filename.replace('-', ' ')
-    return filename

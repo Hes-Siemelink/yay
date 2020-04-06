@@ -122,6 +122,14 @@ def as_list(item):
     return item
 
 
+def dict_merge(context, profile):
+    for key in profile:
+        if key in context:
+            context[key].update(profile[key])
+        else:
+            context[key] = profile[key]
+
+
 def get_parameter(data, name, default=None):
     parameter = data.get(name)
     if parameter is None:
