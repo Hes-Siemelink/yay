@@ -78,6 +78,38 @@ This should result in a friendly greeting:
     Hello from Yay!
 
 
+## Yay directory
+
+Create a directory `.yay` in your home folder to store defaults.
+
+### default-variables.yaml
+
+The `default-variables.yaml` file contains default variables. Useful for server endpoints and passwords. By storing server addresses and passwords in this file, you don't have to hardcode them in your scripts.
+
+Example:
+
+    exampleUrl: http://user:pass@example.com:5000
+    exampleEndpoint:
+        url: http://example.com
+        username: user
+        password: pass
+        headers:
+            X-My-Header: Header value
+
+In a Yay script you would be able to refer to `${exampleUrl}` or `${exampleEndpoint}` respectively
+
+    Http endpoint: ${exampleEndpoint}
+    Http GET: /hello
+
+    
+### Default scripts
+
+Any script that in the `~/.yay` directory can be called directly from Yay. For example, by creating `.yay/Hello.yay`, you can invoke 
+
+    $ yay Hello
+
+from any directory.
+
 ## Development
 
 Use the following command to install Yay locally and have changes in the Yay code immediately available:
