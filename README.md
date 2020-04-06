@@ -56,7 +56,9 @@ $ yay list-recipes
 ]
 ```
 
-For more examples, read the [Tutorial](doc/Tutorial.md)
+For more examples, read the [Tutorial](doc/Tutorial.md).
+
+For a more detailed look at Yay code, take a look at the [test/yay](test/yay) directory, containing the Yay unit tests -- written in Yay of course.
 
 
 ## Installation
