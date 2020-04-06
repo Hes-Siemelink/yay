@@ -1,9 +1,11 @@
 User Input:
   type: input
   message: "Search recipes with keyword:"
+
 Http GET:
   url:  ${exampleUrl}
   path: /recipes/search?keyword=${output}
+
 Print as YAML: ${output}
 
 

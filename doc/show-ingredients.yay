@@ -1,14 +1,17 @@
 Http endpoint: ${exampleUrl}
+
 ---
 Http GET: /recipes
----
+
 User Input:
   type: list
   message: Select recipe
   choices: ${output}
-Set: recipe
+As: recipe
+
 ---
 Http GET: /recipe/${recipe}
+
 Print: |
   Ingredients for ${output.name}:
   ${output.ingredients}

@@ -305,7 +305,6 @@ Ingredients for Mango and coconut ice cream:
   type: Condiments
 ```
 
-## GET-modify-POST pattern
 
 ## Variable assignments
 

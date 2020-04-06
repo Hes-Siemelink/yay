@@ -1,4 +1,6 @@
 Http endpoint: ${exampleUrl}
+
 ---
 Http GET: /recipe/${recipe}
+
 Print as YAML: ${output.ingredients}

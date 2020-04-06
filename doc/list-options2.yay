@@ -1,11 +1,15 @@
 Http endpoint: ${exampleUrl}
+
 ---
 Http GET: /recipes/options?vegetarian=true
+
 Print: |
   Vegetarian options:
   ${output}
+
 ---
 Http GET: /recipes/options?vegetarian=false
+
 Print: |
   Non-vegetarian options:
   ${output}

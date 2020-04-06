@@ -1,13 +1,16 @@
 Http GET:
   url:  ${exampleUrl}
   path: /recipes/options?vegetarian=true
+
 Print: |
   Vegetarian options:
   ${output}
+
 ---
 Http GET:
   url:  ${exampleUrl}
   path: /recipes/options?vegetarian=false
+
 Print: |
   Non-vegetarian options:
   ${output}
