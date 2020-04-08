@@ -1,3 +1,0 @@
-Http endpoint: http://127.0.0.1:5000
-Http GET: /hello
-Print: ${output}

@@ -9,7 +9,14 @@ On Http request:
       Output: Hello ${name}!
 
   /echo:
-    PUT:
+    POST:
       Output:
+        headers: ${headers}
+        body: ${body}
+
+  /echo/{parameter}:
+    POST:
+      Output:
+        parameter: ${parameter}
         headers: ${headers}
         body: ${body}

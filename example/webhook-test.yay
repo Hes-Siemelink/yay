@@ -9,10 +9,16 @@ Http GET: /hello/World
 Print: ${output}
 
 ---
-Http PUT:
-  path: /echo
+Http POST:
+  path: /echo/something
   body: Hello Post Body!
 
-Print as YAML:
-  - headers: ${output.headers}
-  - body: ${output.body}
+Print: |
+
+  Path parameter: ${output.parameter}
+
+  Headers:
+  ${output.headers}
+
+  Body:
+  ${output.body}
