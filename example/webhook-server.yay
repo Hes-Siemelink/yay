@@ -7,3 +7,9 @@ On Http request:
   /hello/{name}:
     GET:
       Output: Hello ${name}!
+
+  /echo:
+    PUT:
+      Output:
+        headers: ${headers}
+        body: ${body}

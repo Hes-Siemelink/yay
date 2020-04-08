@@ -1,4 +1,5 @@
 import flask
+from flask import request
 
 from copy import deepcopy
 from threading import Thread
@@ -14,25 +15,34 @@ app.testing = False
 def add_webhook(data, context):
     handler_context = deepcopy(context)
     for path in data:
-        actions = get_parameter(data[path], 'GET')
-        path = make_flask_path(path)
-        add_rule(path, handler_context, actions)
+        for method in data[path]:
+            actions = get_parameter(data[path], method)
+            path = make_flask_path(path)
+            add_rule(path, handler_context, actions, methods=[method])
 
     start_server()
 
 
-def add_rule(path, context, actions):
+def add_rule(path, context, actions, **options):
     app.add_url_rule(
         path,
         path,
-        lambda **parameters: run_rule(context, actions, parameters)
+        lambda **parameters: run_rule(context, actions, parameters),
+        **options
     )
 
 
 def run_rule(context, actions, parameters):
     my_context = deepcopy(context)
+    print(str(request.json))
+    if request.json:
+        my_context.variables['body'] = request.json
+    my_context.variables['headers'] = dict(request.headers)
     my_context.variables.update(parameters)
-    return my_context.run_task({'Do': actions})
+
+    output = my_context.run_task({'Do': actions})
+
+    return flask.jsonify(output)
 
 
 def make_flask_path(swagger_path):

@@ -7,3 +7,12 @@ Print: ${output}
 ---
 Http GET: /hello/World
 Print: ${output}
+
+---
+Http PUT:
+  path: /echo
+  body: Hello Post Body!
+
+Print as YAML:
+  - headers: ${output.headers}
+  - body: ${output.body}
