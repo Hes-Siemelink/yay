@@ -87,8 +87,7 @@ class YayExecutionContext():
             output = output_list[0]
 
         if not output_list == [None]:
-            self.variables[vars.OUTPUT_VARIABLE] = output
-            self.variables[vars.DEPRECATED_RESULT_VARIABLE] = output
+            self.output(output)
 
         return output
 
@@ -104,7 +103,11 @@ class YayExecutionContext():
         # Execute action
         return handler.handler_method(data, self)
 
-    def output(self):
+    def output(self, value=None):
+        if value:
+            self.variables[vars.OUTPUT_VARIABLE] = value
+            self.variables[vars.DEPRECATED_RESULT_VARIABLE] = value
+
         return self.variables.get(vars.OUTPUT_VARIABLE)
 
 

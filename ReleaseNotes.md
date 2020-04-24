@@ -1,5 +1,12 @@
 # Yay Release Notes
 
+## Yay 0.11 - unreleased
+
+### New commands
+
+* **Do in parallel** -- To divide work in parallel threads
+
+
 ## Yay 0.10 - April 24th, 2020
 
 ### BREAKING CHANGES

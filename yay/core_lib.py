@@ -21,6 +21,28 @@ def do(data, context):
     return context.run_task(data)
 
 
+@command_handler('Do in parallel', delayed_variable_resolver=True, list_processor=True)
+def do_in_parallel(data, context):
+    original_output = context.output()
+    results = []
+
+    for command in commands_as_list(data):
+        context.output(original_output)
+        result = context.run_task(command)
+        results.append(result)
+
+    return results
+
+
+def commands_as_list(data):
+    if is_list(data):
+        return data
+    elif is_dict(data):
+        return [{key: data[key]} for key in data]
+    else:
+        raise YayException(f"data is not a command.")
+
+
 # For each
 
 @command_handler('For each', delayed_variable_resolver=True)
