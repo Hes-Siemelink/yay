@@ -1,13 +1,18 @@
 # Yay Release Notes
 
-## Yay 0.10 - unreleased
+## Yay 0.10 - April 24th, 2020
 
 ### BREAKING CHANGES
 * Removes 'Name' command. Use 'Task' instead
 
+### New commands
+
+* **On Http request** -- Basic webhook support allows you to run Yay as a web server listening to requests.
+
 ### Features
 * New **For each** syntax. Old syntax is deprecated but still works
 * **For each** command returns a list of results
+* Major refactoring of code base
 
 ## Yay 0.9 - February 21st, 2020
 
@@ -40,6 +45,10 @@ New `yay-context.yaml`:
 * Renamed command line option to select a different context profile from `-c` to `-p`.
 * Data loaded with `Read file` no longer interprets `${...}` variable syntax in the file. 
 
+### New commands
+
+* **Apply variables** -- Substitutes variables in raw YAML, for when content was loaded from a file.
+
 ### Features
 
 * Composability -- refer to scripts from a different directory by specifying them in the `path` section of the `yay-context.yaml` file.
@@ -50,10 +59,6 @@ New `yay-context.yaml`:
 * Support for Basic Authentication in HTTP commands
 * **Http endpoint** command now also takes nested arguments that serve as defaults for any HTTP command
 * **Merge** command supports merging object with output variable
-
-### New commands
-
-* **Apply variables** -- Substitutes variables in raw YAML, for when content was loaded from a file.
 
 
 ## Yay 0.8 - August 22nd, 2019
