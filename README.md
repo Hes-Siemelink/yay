@@ -132,7 +132,7 @@ Create a local installaion
 
     $ python setup.py install
     
-Tag latest commit with the version that was produced, e.g. `yay-0.10`.
+Tag latest commit with the version that was produced, e.g. `yay-0.11`.
 
 To create the Dockerfile, run the following command, then tag the image and upload it to Dockerhub
 
@@ -140,7 +140,7 @@ To create the Dockerfile, run the following command, then tag the image and uplo
     $ docker tag <IMAGE_ID> hsiemelink/yay:<VERSION>
     $ docker push hsiemelink/yay:<VERSION>
     
-Now update the version in `setup.py` to reflect the new version, e.g. `0.11-SNAPSHOT` and commit. Don't forget to push the tag...
+Now update the version in `setup.py` to reflect the new version, e.g. `0.12-SNAPSHOT` and commit. Don't forget to push the tag...
 
 
 
