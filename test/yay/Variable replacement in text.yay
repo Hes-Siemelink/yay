@@ -6,9 +6,9 @@ ${list}:
 - 2
 - 3
 ${map}:
-  1: One
-  2: Two
-  3: Three
+  1st: One
+  2nd: Two
+  3rd: Three
 
 
 ---
@@ -47,6 +47,6 @@ Assert equals:
   actual: ${map_replacement}
   expected: |
     My map:
-    1: One
-    2: Two
-    3: Three
+    1st: One
+    2nd: Two
+    3rd: Three
