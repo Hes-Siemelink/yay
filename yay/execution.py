@@ -3,29 +3,19 @@ import re
 from yay import vars
 from yay.util import *
 
-
 #
 # Execution logic
 #
 
 class YayExecutionContext():
 
-    def __init__(self):
-        self.variables = {}
-        self.command_handlers = {}
+    def __init__(self, variables = None, command_handlers = None):
+        self.variables = variables if variables else {}
+        self.command_handlers = command_handlers if command_handlers else {}
 
-    #
-    # Command handlers
-    #
-
-    class CommandHandler():
-        def __init__(self, handler_method, delayed_variable_resolver=False, list_processor=False):
-            self.handler_method = handler_method
-            self.delayed_variable_resolver = delayed_variable_resolver
-            self.list_processor = list_processor
 
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
-        self.command_handlers[command] = self.CommandHandler(handler_method, delayed_variable_resolver, list_processor)
+        self.command_handlers[command] = CommandHandler(command, handler_method, delayed_variable_resolver, list_processor)
 
     #
     # Execution
@@ -109,6 +99,14 @@ class YayExecutionContext():
             self.variables[vars.DEPRECATED_RESULT_VARIABLE] = value
 
         return self.variables.get(vars.OUTPUT_VARIABLE)
+
+
+class CommandHandler():
+    def __init__(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
+        self.command = command
+        self.handler_method = handler_method
+        self.delayed_variable_resolver = delayed_variable_resolver
+        self.list_processor = list_processor
 
 
 class FlowBreak(Exception):

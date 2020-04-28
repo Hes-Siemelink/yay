@@ -25,7 +25,8 @@ setuptools.setup(
         'jsonpath-ng',
         'PyInquirer',
         'flask',
-        'python-arango'
+        'python-arango',
+        'celery'
     ],
     entry_points = {
         'console_scripts': [

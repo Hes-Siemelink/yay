@@ -1,10 +1,15 @@
 import copy
+import importlib
 
 from yay.util import *
 from yay.execution import YayExecutionContext
 
-defaultContext = YayExecutionContext()
+from yay.cluster.execution import DistributedYayExecutionContext, get_celery_app
+app = get_celery_app()
+defaultContext = DistributedYayExecutionContext()
 
+# Disable line below to run in distributed mode
+defaultContext = YayExecutionContext()
 
 class YayRuntime():
 
@@ -104,8 +109,6 @@ def command_handler(command, delayed_variable_resolver=False, list_processor=Fal
 #
 # Import standard handlers and register them in default runtime
 #
-
-import importlib
 
 importlib.import_module('yay.core_lib')
 importlib.import_module('yay.http')
