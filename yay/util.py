@@ -16,7 +16,7 @@ def print_as_json(dict):
 
 
 def format_yaml(dict):
-    return yaml.dump(dict, default_flow_style=False)
+    return yaml.dump(dict, default_flow_style=False, sort_keys=False)
 
 
 def print_as_yaml(dict):
