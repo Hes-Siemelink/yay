@@ -120,4 +120,3 @@ def get_json_path(data, path):
 
 
 OUTPUT_VARIABLE = 'output'
-DEPRECATED_RESULT_VARIABLE = 'result'

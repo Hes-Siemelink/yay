@@ -3,7 +3,7 @@ Http endpoint: ${xlreleaseUrl}
 Task: Get Jenkins folder
 Http GET: /api/v1/folders/find?byPath=JenkinsWorld
 Set:
-  folderId: ${result.id}
+  folderId: ${output.id}
 Print: ${folderId}
 ---
 Task: Get teams

@@ -38,7 +38,7 @@ class TestCore():
 
         run_script('''
         For each:
-          item:
+          ${item}:
           - one
           - two
           - three
@@ -54,19 +54,19 @@ class TestCore():
         assert mock.invocations[2].data == 'three'
         assert mock.invocations[2].variables['item'] == 'three'
 
-    def test_pipe_result(self):
+    def test_pipe_output(self):
         mock = MockHandler()
 
         run_script('''
         Test: something
         ---
-        Test: ${result}
+        Test: ${output}
         ''', {}, mock)
 
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
-    def test_store_result(self):
+    def test_store_output(self):
         mock = MockHandler()
 
         run_script('''
@@ -79,13 +79,13 @@ class TestCore():
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
-    def test_store_result_long_form(self):
+    def test_store_output_long_form(self):
         mock = MockHandler()
 
         run_script('''
         Test: something
         Set:
-          test_outcome: ${result}
+          test_outcome: ${output}
         ---
         Test: ${test_outcome}
         ''', {}, mock)
@@ -93,30 +93,29 @@ class TestCore():
         assert len(mock.invocations) == 2
         assert mock.invocations[1].data == 'something'
 
-    def test_store_result_with_path(self):
+    def test_store_output_with_path(self):
         mock = MockHandler()
 
         run_script('''
         Test:
           something: nested
         Set:
-          test_outcome: ${result.something}
+          test_outcome: ${output.something}
         ---
         Test: ${test_outcome}
         ''', {}, mock)
 
         assert mock.invocations[1].data == 'nested'
 
-    def test_change_result_part(self):
+    def test_change_output_part(self):
         mock = MockHandler()
 
         run_script('''
         Test: 
           something: nested
-        Set:
-          result: ${result.something}
+        Output: ${output.something}
         ---
-        Test: ${result}
+        Test: ${output}
         ''', {}, mock)
 
         assert mock.invocations[1].data == 'nested'
@@ -147,7 +146,7 @@ class TestCore():
         ''', variables, mock)
 
         assert len(mock.invocations) == 2
-        assert variables['result'] == ['something', 'again']
+        assert variables['output'] == ['something', 'again']
 
     def test_do(self):
         mock = MockHandler()
@@ -160,7 +159,7 @@ class TestCore():
         ''', variables, mock)
 
         assert len(mock.invocations) == 2
-        assert variables['result'] == ['something', 'again']
+        assert variables['output'] == ['something', 'again']
 
 
 

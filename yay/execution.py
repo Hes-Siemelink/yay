@@ -96,7 +96,6 @@ class YayExecutionContext():
     def output(self, value=None):
         if value:
             self.variables[vars.OUTPUT_VARIABLE] = value
-            self.variables[vars.DEPRECATED_RESULT_VARIABLE] = value
 
         return self.variables.get(vars.OUTPUT_VARIABLE)
 

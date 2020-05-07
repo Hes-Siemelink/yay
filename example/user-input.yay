@@ -10,4 +10,4 @@ User Input:
   - name: Australia/Oceania
 ---
 Print: 'You chose:'
-Print YAML: ${result}
+Print YAML: ${output}

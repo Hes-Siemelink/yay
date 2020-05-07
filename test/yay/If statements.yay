@@ -84,14 +84,14 @@ Expected output: First match
 ---
 Test case:  Variable resolution in nested Do
 
-${result}: one
+${output}: one
 
 If:
   object: something
   equals: something
   Do:
-  - ${result}: two
-  - ${var}: ${result}
+  - ${output}: two
+  - ${var}: ${output}
 
 Assert equals:
 - actual: ${var}

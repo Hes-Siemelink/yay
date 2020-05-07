@@ -41,5 +41,5 @@ Task definition:
       with: World
 
     Assert equals:
-    - actual: ${result}
+    - actual: ${output}
       expected: Hello World

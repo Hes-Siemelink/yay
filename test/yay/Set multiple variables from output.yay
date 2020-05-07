@@ -5,8 +5,8 @@ Output:
     item1: one
     item2: two
 Set:
-  stuff: ${result.data.item1}
-  all: ${result}
+  stuff: ${output.data.item1}
+  all: ${output}
 
 
 Assert equals:
@@ -28,8 +28,8 @@ Output:
   data:
     item1: one
     item2: two
-${stuff}: ${result.data.item1}
-${all}: ${result}
+${stuff}: ${output.data.item1}
+${all}: ${output}
 
 
 Assert equals:

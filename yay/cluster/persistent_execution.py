@@ -18,6 +18,18 @@ def find_next_planned_step(step_group):
     return None
 
 
+def collect_outputs(step_group):
+    outputs = []
+    for step in step_group['steps']:
+        output = step.get('output')
+        if output:
+            outputs.append(output)
+
+    if len(outputs) == 1:
+        return outputs[0]
+
+    return outputs
+
 
 class PersistentExecutionContext():
 
@@ -42,7 +54,8 @@ class PersistentExecutionContext():
         self.run_next_step(persistent_run)
 
     def create_persistent_script_run(self, script):
-        run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
+        # run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
+        run = {'variables': {}, 'command': 'Do', 'steps':[], 'status': 'Planned'}
         for task_block in script:
             block = {'command': 'Do', 'status': 'Planned'}
             block['steps'] = self.create_persistent_command_step(task_block)
@@ -76,21 +89,24 @@ class PersistentExecutionContext():
 
         return steps
 
-    def run_next_step(self, persistent_run):
+    def run_next_step(self, step_group):
         running = True
 
         while running:
-            step = find_next_planned_step(persistent_run)
+            step = find_next_planned_step(step_group)
             if step:
                 step['status'] = 'In progress'
-                save(persistent_run)
+                save(step_group)
 
                 self.run_task(step)
 
                 step['status'] = 'Done'
-                save(persistent_run)
+                save(step_group)
             else:
-                persistent_run['status'] = 'Done'
+                step_group['status'] = 'Done'
+                self.output(collect_outputs(step_group))
+                print("---- Done ----")
+                print_as_json(step_group)
                 running = False
 
     def run_task(self, task_block):
@@ -111,6 +127,10 @@ class PersistentExecutionContext():
             raise YayException("Unknown action: {}".format(command))
 
         output = self.run_single_command(self.command_handlers[command], task_block['data'])
+        print("Variables after invoking " + command)
+        print_as_json(self.variables)
+        if output:
+            task_block['output'] = output
 
         self.output(output)
 
@@ -133,7 +153,6 @@ class PersistentExecutionContext():
     def output(self, value=None):
         if value:
             self.variables[vars.OUTPUT_VARIABLE] = value
-            self.variables[vars.DEPRECATED_RESULT_VARIABLE] = value
 
         return self.variables.get(vars.OUTPUT_VARIABLE)
 

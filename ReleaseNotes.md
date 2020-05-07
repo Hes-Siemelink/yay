@@ -2,6 +2,10 @@
 
 ## Yay 0.11 - unreleased
 
+### BREAKING CHANGES
+
+* Removes deprecated 'result' variable. Use `${output}` instead of `${result}`
+
 ### New commands
 
 * **Do in parallel** -- To divide work in parallel threads

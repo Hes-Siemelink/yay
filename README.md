@@ -31,7 +31,7 @@ You can save it in a YAML file and reuse it using Yay.
 Http GET:
   url:  http://localhost:5000
   path: /recipes
-Print as JSON: ${result}
+Print as JSON: ${output}
 ```
   
 Invoke it using the `yay` command:
