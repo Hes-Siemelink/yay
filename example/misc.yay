@@ -1,0 +1,20 @@
+Print: "Hello"
+---
+Print:
+  - One
+  - Two
+  - Three
+${var}: something
+
+Do:
+  Print: Something
+  Output: input
+---
+For each:
+  ${item}:
+    - One
+    - Two
+    - Three
+
+  Print: ${item}
+  Output: ${item}

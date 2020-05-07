@@ -4,11 +4,16 @@ import importlib
 from yay.util import *
 from yay.execution import YayExecutionContext
 
-from yay.cluster.execution import DistributedYayExecutionContext, get_celery_app
-app = get_celery_app()
-defaultContext = DistributedYayExecutionContext()
+# Use distributed context
+# from yay.cluster.execution import DistributedYayExecutionContext, get_celery_app
+# app = get_celery_app()
+# defaultContext = DistributedYayExecutionContext()
 
-# Disable line below to run in distributed mode
+# Use persistent context
+# from yay.cluster.persistent_execution import PersistentExecutionContext
+# defaultContext = PersistentExecutionContext()
+
+# Use normal context
 defaultContext = YayExecutionContext()
 
 class YayRuntime():

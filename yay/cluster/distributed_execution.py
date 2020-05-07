@@ -23,17 +23,18 @@ class DistributedYayExecutionContext(YayExecutionContext):
 
     def run_single_command(self, handler, rawData):
 
-        # Resolve variables
+        # Execute control structures immediately
         if handler.delayed_variable_resolver:
-            # Execute control structures immediately
             data = rawData
             return handler.handler_method(data, self)
+
+        # Execute command handlers locally that are not loaded by default
         elif handler.command not in runtime.defaultContext.command_handlers:
-            # Execute command handlers locally that are not loaded by default
             data = vars.resolve_variables(rawData, self.variables)
             return handler.handler_method(data, self)
+
+        # Run remotely through Celery
         else:
-            # Run remotely through Celery
             data = vars.resolve_variables(rawData, self.variables)
             celery_task = run_command_remotely.apply_async((handler.command, data, self.variables), serializer='pickle')
             (result, self.variables) = celery_task.get(disable_sync_subtasks=False)

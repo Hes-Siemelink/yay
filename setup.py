@@ -26,7 +26,8 @@ setuptools.setup(
         'PyInquirer',
         'flask',
         'python-arango',
-        'celery'
+        'celery',
+        'pymongo'
     ],
     entry_points = {
         'console_scripts': [
