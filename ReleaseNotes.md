@@ -5,6 +5,7 @@
 ### BREAKING CHANGES
 
 * Removes deprecated 'result' variable. Use `${output}` instead of `${result}`
+* Removes deprecated 'For each' syntax. Use `${var}: [list]` assignment.
 
 ### New commands
 

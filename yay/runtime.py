@@ -10,8 +10,8 @@ from yay.execution import YayExecutionContext
 # defaultContext = DistributedYayExecutionContext()
 
 # Use persistent context
-from yay.cluster.persistent_execution import PersistentExecutionContext
-defaultContext = PersistentExecutionContext()
+from yay.cluster.stackless_execution import StacklessExecutionContext
+defaultContext = StacklessExecutionContext()
 
 # Use normal context
 defaultContext = YayExecutionContext()

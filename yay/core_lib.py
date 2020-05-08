@@ -47,10 +47,7 @@ def commands_as_list(data):
 
 @command_handler('For each', delayed_variable_resolver=True)
 def for_each(data, context):
-
     variable_assignment = get_first_variable_assignment(data)
-    if not variable_assignment:
-        return try_deprecated_for_each_or_fail(data, context)
 
     output = []
     items = data[variable_assignment]
@@ -65,55 +62,10 @@ def for_each(data, context):
 
 def get_first_variable_assignment(data):
     for command in data:
-        variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
-        if variableMatch:
+        match = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
+        if match:
             return command
     return None
-
-
-def try_deprecated_for_each_or_fail(data, context):
-    try:
-        return deprecated_for_each(data, context)
-    except:
-        raise YayException("'For each' needs a variable assignment for the looping variable.")
-
-
-def deprecated_for_each(data, context):
-    actions = get_parameter(data, 'Do')
-    if len(data) != 2:
-        raise YayException("'For each' needs exactly two parameters: 'Do' and the name of the variable.")
-
-    from sys import stderr
-    stderr.write("Warning: deprecated usage of For each.\n")
-
-    loop_variable = get_for_each_variable(data)
-
-    items = data[loop_variable]
-    items = vars.resolve_variables(items, context.variables)
-
-    output = []
-    for item in items:
-        stash = None
-        if loop_variable in context.variables:
-            stash = context.variables[loop_variable]
-        context.variables[loop_variable] = item
-
-        result = context.run_task({'Do': actions})
-        output.append(result)
-
-        if (stash):
-            context.variables[loop_variable] = stash
-        else:
-            del context.variables[loop_variable]
-
-    return output
-
-
-def get_for_each_variable(data):
-    for variable in data:
-        if variable == 'Do':
-            continue
-        return variable
 
 
 # Repeat
