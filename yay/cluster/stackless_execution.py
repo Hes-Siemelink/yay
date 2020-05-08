@@ -51,69 +51,68 @@ class StacklessExecutionContext():
         self.run_next_step(persistent_run)
 
     def create_persistent_script_run(self, script):
-        # run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
-        run = {'variables': {}, 'command': 'Do', 'steps': [], 'status': 'Planned'}
+        run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
         for task_block in script:
-            block = {'command': 'Do', 'status': 'Planned'}
-            block['steps'] = self.create_persistent_command_step(task_block)
+            block = {
+                'command': 'Do',
+                'status': 'Planned',
+                'steps': self.to_persistent_steps(task_block)
+            }
             run['steps'].append(block)
         return run
 
-    def create_persistent_command_step(self, task_block):
-        steps = []
-        for command in task_block:
+    def to_persistent_steps(self, task_block):
+        return [self.to_persistent_step(command, task_block) for command in task_block]
+
+    def to_persistent_step(self, command, task_block):
+        command, data = self.unpack(command, task_block)
+
+        step = {'status': 'Planned'}
+
+        # Variable assignment
+        variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
+        if variableMatch:
+            step['command'] = 'Set variable'
+            step['data'] = {variableMatch.group(1): data}
+            return step
+
+        # Expand list of arguments to individual invocations
+        handler = self.command_handlers.get(command)
+        if is_list(data) and not handler.list_processor and not command == 'Do':
+            step['join_output'] = True
+            data = [{command: item} for item in data]
+            command = 'Do'
+
+        # Convert 'Do in parallel' to 'Do'
+        if command == 'Do in parallel':
+            step['parallel'] = True
+            command = 'Do'
+
+        # Control structures
+        if command == 'Do':
+            step['steps'] = self.to_persistent_steps(data)
+            step['join_output'] = is_list(data)
             data = {}
-            if is_dict(task_block):
-                data = task_block[command]
-            elif is_list(task_block):
-                command_key = list(command.keys())[0]
-                data = command[command_key]
-                command = command_key
+        elif command == 'For each':
+            data = self.to_persistent_steps(data)
+            step['join_output'] = True
+        elif command in ['If', 'If any']:
+            step['steps'] = self.to_persistent_steps(data['Do'])
+        elif command == 'Repeat':
+            step['until'] = data['Until']
+            data = self.to_persistent_steps(data['Do'])
 
-            dict = {'command': command, 'data': data, 'status': 'Planned'}
+        step['command'] = command
+        step['data'] = data
 
-            # Variable assignment
-            variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
-            if variableMatch:
-                dict['command'] = 'Set variable'
-                dict['data'] = {variableMatch.group(1): data}
-                steps.append(dict)
-                continue
+        return step
 
-            handler = self.command_handlers.get(command)
-
-            if is_list(data) and not handler.list_processor and not command == 'Do':
-                dict['join_output'] = True
-                new_data = []
-                for item in data:
-                    new_data.append({command: item})
-                command = 'Do'
-                dict['command'] = 'Do'
-                data = new_data
-
-            if command == 'Do in parallel':
-                dict['parallel'] = True
-                command = 'Do'
-                dict['command'] = 'Do'
-
-            if command == 'Do':
-                dict['steps'] = self.create_persistent_command_step(data)
-                dict['join_output'] = is_list(data)
-                del dict['data']
-            elif command == 'For each':
-                for_each_body = self.create_persistent_command_step(data)
-                dict['data'] = for_each_body
-                dict['join_output'] = True
-            elif command in ['If', 'If any']:
-                dict['steps'] = self.create_persistent_command_step(data['Do'])
-                del data['Do']
-            elif command == 'Repeat':
-                dict['data'] = self.create_persistent_command_step(data['Do'])
-                dict['until'] = data['Until']
-
-            steps.append(dict)
-
-        return steps
+    def unpack(self, command, task_block):
+        if is_dict(command):
+            command_key = list(command.keys())[0]
+            return command_key, command[command_key]
+        else:
+            return command, task_block[command]
 
     def run_next_step(self, step_group):
         running = True
@@ -155,6 +154,7 @@ class StacklessExecutionContext():
             running = not condition.is_true()
         else:
             running = (output != until)
+
         return running
 
     def run_step(self, step):
