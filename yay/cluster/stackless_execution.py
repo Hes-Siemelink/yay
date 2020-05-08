@@ -1,12 +1,9 @@
 import copy
 import re
 
-from yay import vars
+from yay import vars, conditions
 from yay.util import *
 
-
-def save(persistent_run):
-    pass
 
 def find_next_planned_step(step_group):
     for step in step_group['steps']:
@@ -31,7 +28,7 @@ def collect_outputs(step_group):
     return outputs
 
 
-class PersistentExecutionContext():
+class StacklessExecutionContext():
 
     def __init__(self, variables = None, command_handlers = None):
         self.variables = variables if variables else {}
@@ -48,8 +45,9 @@ class PersistentExecutionContext():
     def run_script(self, script):
 
         persistent_run = self.create_persistent_script_run(script)
-        save(persistent_run)
-        # print_as_json(persistent_run)
+
+        print_as_yaml(script)
+        print_as_yaml(persistent_run)
 
         self.run_next_step(persistent_run)
 
@@ -65,7 +63,14 @@ class PersistentExecutionContext():
     def create_persistent_command_step(self, task_block):
         steps = []
         for command in task_block:
-            data =  task_block[command]
+            data = {}
+            if is_dict(task_block):
+                data = task_block[command]
+            elif is_list(task_block):
+                command_key = list(command.keys())[0]
+                data = command[command_key]
+                command = command_key
+
             dict = {'command': command, 'data': data, 'status': 'Planned'}
 
             # Variable assignment
@@ -78,12 +83,34 @@ class PersistentExecutionContext():
 
             handler = self.command_handlers.get(command)
 
+            if is_list(data) and not handler.list_processor and not command == 'Do':
+                dict['join_output'] = True
+                new_data = []
+                for item in data:
+                    new_data.append({command: item})
+                command = 'Do'
+                dict['command'] = 'Do'
+                data = new_data
+
+            if command == 'Do in parallel':
+                dict['parallel'] = True
+                command = 'Do'
+                dict['command'] = 'Do'
+
             if command == 'Do':
                 dict['steps'] = self.create_persistent_command_step(data)
+                dict['join_output'] = is_list(data)
                 del dict['data']
             elif command == 'For each':
                 for_each_body = self.create_persistent_command_step(data)
                 dict['data'] = for_each_body
+                dict['join_output'] = True
+            elif command in ['If', 'If any']:
+                dict['steps'] = self.create_persistent_command_step(data['Do'])
+                del data['Do']
+            elif command == 'Repeat':
+                dict['data'] = self.create_persistent_command_step(data['Do'])
+                dict['until'] = data['Until']
 
             steps.append(dict)
 
@@ -96,44 +123,76 @@ class PersistentExecutionContext():
             step = find_next_planned_step(step_group)
             if step:
                 step['status'] = 'In progress'
-                save(step_group)
 
-                self.run_task(step)
+                output = None
+                try:
+                    output = self.run_step(step)
+                except FlowBreak as f:
+                    running = False
+
+                if not step_group.get('parallel'):
+                    self.output(output)
 
                 step['status'] = 'Done'
-                save(step_group)
+
+                # Handle 'Repeat until'
+                if 'until' in step_group:
+                    running = self.handle_until(step_group['until'], output)
+                    if running:
+                        step['status'] = 'In progress'
             else:
-                step_group['status'] = 'Done'
-                self.output(collect_outputs(step_group))
-                print("---- Done ----")
-                print_as_json(step_group)
                 running = False
 
-    def run_task(self, task_block):
+        if step_group.get('join_output') == True:
+            self.output(collect_outputs(step_group))
+        step_group['status'] = 'Done'
 
-        if task_block['command'] == 'Do':
-            self.run_next_step(task_block)
+    def handle_until(self, until, output):
+        if is_dict(until):
+            until_copy = copy.deepcopy(until)
+            until_copy = vars.resolve_variables(until_copy, self.variables)
+
+            condition = conditions.parse_condition(until_copy)
+            running = not condition.is_true()
+        else:
+            running = (output != until)
+        return running
+
+    def run_step(self, step):
+
+        command = step['command']
+
+        # Handle flow control
+        if 'Do' == command:
+            self.run_next_step(step)
+            return
+        if 'For each' == command:
+            self.expand_for_each(step)
+            self.run_next_step(step)
+            return
+        if 'If' == command or 'If any' == command:
+            data = vars.resolve_variables(step['data'], self.variables)
+            condition = conditions.parse_condition(data)
+            if condition.is_true():
+                self.run_next_step(step)
+
+                if 'If any' == command:
+                    raise FlowBreak()
+            return
+        if 'Repeat' == command:
+            step['steps'] = copy.deepcopy(step['data'])
+            self.run_next_step(step)
             return
 
-        if task_block['command'] == 'For each':
-            expand_for_each(task_block)
-
-            self.run_next_step(task_block)
-            return
-
-        command = task_block['command']
-
+        # Unknown command
         if command not in self.command_handlers:
             raise YayException("Unknown action: {}".format(command))
 
-        output = self.run_single_command(self.command_handlers[command], task_block['data'])
-        print("Variables after invoking " + command)
-        print_as_json(self.variables)
+        # Execute command
+        output = self.run_single_command(self.command_handlers[command], step['data'])
+
         if output:
-            task_block['output'] = output
-
-        self.output(output)
-
+            step['output'] = output
 
         return output
 
@@ -156,15 +215,16 @@ class PersistentExecutionContext():
 
         return self.variables.get(vars.OUTPUT_VARIABLE)
 
-def expand_for_each(for_each_command):
-    for_each_command['steps'] = []
-    set_variable_command = for_each_command['data'][0]['data']
-    variable = list(set_variable_command.keys())[0]
-    values = set_variable_command[variable]
-    for value in values:
-        for_each_body = copy.deepcopy(for_each_command['data'])
-        for_each_body[0]['data'][variable] = value
-        for_each_command['steps'].extend(for_each_body)
+    def expand_for_each(self, for_each_command):
+        for_each_command['steps'] = []
+        set_variable_command = for_each_command['data'][0]['data']
+        variable = list(set_variable_command.keys())[0]
+        values = set_variable_command[variable]
+        values = vars.resolve_variables(values, self.variables)
+        for value in values:
+            for_each_body = copy.deepcopy(for_each_command['data'])
+            for_each_body[0]['data'][variable] = value
+            for_each_command['steps'].extend(for_each_body)
 
 class CommandHandler():
     def __init__(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):

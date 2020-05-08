@@ -66,7 +66,7 @@ Assert equals:
 
 
 ---
-Test case: If then else; break after successful match
+Test case: Switch-like if; break after successful match
 
 If any:
 - object: a value
@@ -77,7 +77,6 @@ If any:
   in: another value
   Do:
     Output: Second match
-- Output: Deafult match
 
 Expected output: First match
 
