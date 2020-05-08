@@ -30,10 +30,9 @@ def collect_outputs(step_group):
 
 class StacklessExecutionContext():
 
-    def __init__(self, variables = None, command_handlers = None):
+    def __init__(self, variables=None, command_handlers=None):
         self.variables = variables if variables else {}
         self.command_handlers = command_handlers if command_handlers else {}
-
 
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
         self.command_handlers[command] = CommandHandler(command, handler_method, delayed_variable_resolver, list_processor)
@@ -53,7 +52,7 @@ class StacklessExecutionContext():
 
     def create_persistent_script_run(self, script):
         # run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
-        run = {'variables': {}, 'command': 'Do', 'steps':[], 'status': 'Planned'}
+        run = {'variables': {}, 'command': 'Do', 'steps': [], 'status': 'Planned'}
         for task_block in script:
             block = {'command': 'Do', 'status': 'Planned'}
             block['steps'] = self.create_persistent_command_step(task_block)
@@ -196,7 +195,6 @@ class StacklessExecutionContext():
 
         return output
 
-
     def run_single_command(self, handler, rawData):
 
         # Resolve variables
@@ -225,6 +223,7 @@ class StacklessExecutionContext():
             for_each_body = copy.deepcopy(for_each_command['data'])
             for_each_body[0]['data'][variable] = value
             for_each_command['steps'].extend(for_each_body)
+
 
 class CommandHandler():
     def __init__(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
