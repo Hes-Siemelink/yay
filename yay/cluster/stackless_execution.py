@@ -1,8 +1,16 @@
 import copy
 import re
 
+import pymongo
+from bson.objectid import ObjectId
+
 from yay import vars, conditions
 from yay.util import *
+
+mongo_client = pymongo.MongoClient("mongodb://localhost:27017/")
+yay_db = mongo_client["yay-db"]
+
+script_collection = yay_db["scripts"]
 
 
 def find_next_planned_step(step_group):
@@ -10,8 +18,11 @@ def find_next_planned_step(step_group):
         if step['status'] == 'Planned':
             return step
         if step['status'] == 'In progress':
-            # TODO recursively find Planned steps
-            return None
+            if 'steps' in step:
+                next_step = find_next_planned_step(step)
+                return next_step if next_step else step
+            else:
+                return None
     return None
 
 
@@ -33,6 +44,7 @@ class StacklessExecutionContext():
     def __init__(self, variables=None, command_handlers=None):
         self.variables = variables if variables else {}
         self.command_handlers = command_handlers if command_handlers else {}
+        self.script = None
 
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
         self.command_handlers[command] = CommandHandler(command, handler_method, delayed_variable_resolver, list_processor)
@@ -41,17 +53,33 @@ class StacklessExecutionContext():
     # Execution
     #
 
+    def run_from_database(self, id):
+        print(f"ID: {id}")
+        self.script = script_collection.find_one({"_id": ObjectId(id)})
+
+        self.run_next_step(self.script)
+        print_as_yaml(self.script)
+
+    def save(self, script):
+        self.script = script_collection.insert_one(script)
+
+        print(self.script.inserted_id)
+
+    def update(self):
+        script_collection.update({'_id':self.script['_id']}, {"$set": self.script}, upsert=False)
+
     def run_script(self, script):
 
         persistent_run = self.create_persistent_script_run(script)
 
-        print_as_yaml(script)
-        print_as_yaml(persistent_run)
+        # print_as_yaml(persistent_run)
 
-        self.run_next_step(persistent_run)
+        self.save(persistent_run)
+        # self.run_next_step(persistent_run)
 
     def create_persistent_script_run(self, script):
-        run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
+        # run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
+        run = {'variables': {}, 'command': 'Do', 'steps':[], 'status': 'Planned'}
         for task_block in script:
             block = {
                 'command': 'Do',
@@ -115,35 +143,37 @@ class StacklessExecutionContext():
             return command, task_block[command]
 
     def run_next_step(self, step_group):
-        running = True
+        step = find_next_planned_step(step_group)
+        if step:
+            step['status'] = 'In progress'
 
-        while running:
-            step = find_next_planned_step(step_group)
-            if step:
-                step['status'] = 'In progress'
+            self.update()
 
-                output = None
-                try:
-                    output = self.run_step(step)
-                except FlowBreak as f:
-                    running = False
+            output = None
+            try:
+                output = self.run_step(step)
+            except FlowBreak as f:
+                running = False
 
+            if 'steps' not in step:
                 if not step_group.get('parallel'):
                     self.output(output)
 
-                step['status'] = 'Done'
+                step['status'] = 'Completed'
 
                 # Handle 'Repeat until'
                 if 'until' in step_group:
                     running = self.handle_until(step_group['until'], output)
                     if running:
                         step['status'] = 'In progress'
-            else:
-                running = False
-
-        if step_group.get('join_output') == True:
-            self.output(collect_outputs(step_group))
-        step_group['status'] = 'Done'
+                else:
+                    running = False
+            self.update()
+        else:
+            if step_group.get('join_output') == True:
+                self.output(collect_outputs(step_group))
+            step_group['status'] = 'Completed'
+            self.update()
 
     def handle_until(self, until, output):
         if is_dict(until):
