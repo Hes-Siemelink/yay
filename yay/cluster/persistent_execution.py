@@ -58,26 +58,27 @@ class PersistentExecutionContext():
         self.script = script_collection.find_one({"_id": ObjectId(id)})
 
         self.run_next_step(self.script)
-        print_as_yaml(self.script)
 
     def save(self, script):
         self.script = script_collection.insert_one(script)
 
         print(self.script.inserted_id)
 
+        return self.script
+
     def update(self):
         script_collection.update({'_id':self.script['_id']}, {"$set": self.script}, upsert=False)
 
     def run_script(self, script):
-
-        persistent_run = self.create_persistent_script_run(script)
+        persistent_script = self.to_persistent_script(script)
 
         # print_as_yaml(persistent_run)
 
-        self.save(persistent_run)
-        # self.run_next_step(persistent_run)
+        persistent_script = self.save(persistent_script)
 
-    def create_persistent_script_run(self, script):
+        self.run_from_database(persistent_script.inserted_id)
+
+    def to_persistent_script(self, script):
         # run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
         run = {'variables': {}, 'command': 'Do', 'steps':[], 'status': 'Planned'}
         for task_block in script:
