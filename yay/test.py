@@ -3,7 +3,8 @@ import textwrap
 import yaml
 
 from collections import namedtuple
-from yay.runtime import YayRuntime
+from yay.runtime import default_command_handlers
+from yay.execution import YayExecutionContext
 
 Invocation = namedtuple('Invocation', ['data', 'variables'])
 
@@ -18,12 +19,12 @@ class MockHandler:
 
 
 def run_script(yay_script_in_yaml, variables, mock=None):
-    runtime = YayRuntime()
-    runtime.context.variables = variables
-    if mock:
-        runtime.add_command_handler('Test', mock.invoke)
+    runner = YayExecutionContext(variables = variables, command_handlers=default_command_handlers)
 
-    runtime.run_script(from_yaml(yay_script_in_yaml))
+    if mock:
+        runner.add_command_handler('Test', mock.invoke)
+
+    runner.run_script(from_yaml(yay_script_in_yaml))
 
 
 def from_yaml(text):

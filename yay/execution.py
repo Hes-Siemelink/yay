@@ -10,11 +10,11 @@ from yay.util import *
 class YayExecutionContext():
 
     def __init__(self, variables = None, command_handlers = None):
-        self.variables = variables if variables else {}
+        self.variables = variables if variables is not None else {}
         self.command_handlers = command_handlers if command_handlers else {}
 
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
-            self.command_handlers[command] = CommandHandler(command, handler_method, delayed_variable_resolver, list_processor)
+        self.command_handlers[command] = CommandHandler(command, handler_method, delayed_variable_resolver, list_processor)
 
     #
     # Execution
