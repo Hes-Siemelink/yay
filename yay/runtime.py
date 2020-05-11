@@ -58,8 +58,8 @@ def run_yay_file(data, context, file=None):
 # defaultContext = DistributedYayExecutionContext()
 
 # Use persistent context
-from yay.cluster.stackless_execution import StacklessExecutionContext
-defaultContext = StacklessExecutionContext(command_handlers=default_command_handlers)
+from yay.cluster.persistent_execution import PersistentExecutionContext
+defaultContext = PersistentExecutionContext(command_handlers=default_command_handlers)
 
 # Use normal context
 defaultContext = YayExecutionContext(command_handlers=default_command_handlers)

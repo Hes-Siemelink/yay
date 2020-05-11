@@ -3,11 +3,12 @@ import pytest
 from os.path import *
 
 from yay import runtime
+from yay.runtime import YayRuntime
 from yay.test import *
+
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_server():
-
     # Start server
     from yay import test_server
     test_server.start()
@@ -20,11 +21,12 @@ def setup_test_server():
 def yay_home(*paths):
     return join(dirname(abspath(__file__)), 'yay_home', *paths)
 
+
 runtime.yay_home = yay_home
+
 
 @pytest.mark.parametrize("file", get_files('yay', __file__))
 def test_yay(file):
-
     script_dir = dirname(realpath(file))
 
     runtime = YayRuntime()

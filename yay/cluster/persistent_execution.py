@@ -39,7 +39,7 @@ def collect_outputs(step_group):
     return outputs
 
 
-class StacklessExecutionContext():
+class PersistentExecutionContext():
 
     def __init__(self, variables=None, command_handlers=None):
         self.variables = variables if variables else {}
@@ -126,6 +126,7 @@ class StacklessExecutionContext():
             step['join_output'] = True
         elif command in ['If', 'If any']:
             step['steps'] = self.to_persistent_steps(data['Do'])
+            del data['Do']
         elif command == 'Repeat':
             step['until'] = data['Until']
             data = self.to_persistent_steps(data['Do'])
