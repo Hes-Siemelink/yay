@@ -6,6 +6,7 @@
 
 * Removes deprecated 'result' variable. Use `${output}` instead of `${result}`
 * Removes deprecated 'For each' syntax. Use `${var}: [list]` assignment.
+* Removes '!any' YAML syntax. Use 'in' operator for tests.
 
 ### New commands
 

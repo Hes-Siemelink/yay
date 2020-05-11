@@ -137,21 +137,3 @@ def get_parameter(data, name, default=None):
     if parameter is None:
         raise YayException("Missing parameter '{}' in:\n{}".format(name, yaml.dump(data, default_flow_style=False)))
     return parameter
-
-
-class AnyContent():
-    def __str__(self):
-        return "!any"
-
-    def __eq__(self, other):
-        return True
-
-    def __ne__(self, other):
-        return False
-
-
-def yaml_any_content(loader, node):
-    return AnyContent()
-
-
-yaml.add_constructor('!any', yaml_any_content)

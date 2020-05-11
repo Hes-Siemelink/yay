@@ -53,7 +53,10 @@ class Contains():
         self.list = list
 
     def is_true(self):
-        return self.object in self.list
+        if is_dict(self.object) and is_dict(self.list):
+            return contains_all(self.object, self.list)
+        else:
+            return self.object in self.list
 
     def __repr__(self):
         return f"{self.object} in {self.list}"
@@ -64,6 +67,13 @@ class Contains():
             dict['RESULT'] = 'FALSE'
         return dict
 
+def contains_all(subset, superset):
+    for key in subset:
+        if key not in superset:
+            return False
+        if subset[key] != superset[key]:
+            return False
+    return True
 
 class All():
 

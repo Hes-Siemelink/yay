@@ -12,11 +12,12 @@ Test case: Read file with variable syntax
 Read file: test/samples/Simple example with variable syntax.yaml
 ${raw}: ${output}  # triggers variable substitution
 
-Expected output:
-  test: true
-  something: else
-  variable: !any
-  nested: !any
+Assert that:
+- object:
+    test: true
+    something: else
+  in:
+    ${output}
 
 ---
 Test case: Fill variables in file
@@ -40,9 +41,10 @@ Test case: Read file with variable syntax and multiple documents
 Read file: test/samples/Sample example with variable syntax in multiple documents.yaml
 ${raw}: ${output}
 
-Expected output:
-- test: true
-  something: else
-- variable: !any
-
+Assert that:
+  object:
+    test: true
+    something: else
+  in:
+    ${output}
 

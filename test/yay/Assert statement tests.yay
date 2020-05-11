@@ -5,10 +5,10 @@ Assert equals:
     something:
       id: 123
       path: /home
-      token: !any
+      token: 456
   expected:
     something:
-      id: !any
+      id: 123
       path: /home
       token: 456
 
