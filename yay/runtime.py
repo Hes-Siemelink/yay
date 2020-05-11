@@ -2,7 +2,55 @@ import copy
 import importlib
 
 from yay.util import *
-from yay.execution import YayExecutionContext
+from yay.execution import YayExecutionContext, CommandHandler
+
+
+#
+# Register command handlers
+#
+
+default_command_handlers = {}
+
+def command_handler(command, delayed_variable_resolver=False, list_processor=False):
+    def inner_decorator(handler_function):
+        global default_command_handlers
+        default_command_handlers[command] = CommandHandler(command, handler_function, delayed_variable_resolver, list_processor)
+        return handler_function
+
+    return inner_decorator
+
+#
+# Import standard handlers
+#
+
+importlib.import_module('yay.core_lib')
+importlib.import_module('yay.http')
+importlib.import_module('yay.files')
+importlib.import_module('yay.script')
+importlib.import_module('yay.input')
+importlib.import_module('yay.xl_cli')
+importlib.import_module('yay.arango')
+importlib.import_module('yay.webhook')
+
+
+@command_handler('Execute yay file')
+def run_yay_file(data, context, file=None):
+    if file == None:
+        file = get_parameter(data, 'file')
+
+    # Read YAML script
+    script = read_yaml_file(file)
+
+    # Run script
+    scriptContext = copy.deepcopy(context)
+    scriptContext.variables.update(data)
+    scriptContext.run_script(script)
+
+    return scriptContext.output()
+
+#
+# Default context
+#
 
 # Use distributed context
 # from yay.cluster.execution import DistributedYayExecutionContext, get_celery_app
@@ -11,10 +59,15 @@ from yay.execution import YayExecutionContext
 
 # Use persistent context
 from yay.cluster.stackless_execution import StacklessExecutionContext
-defaultContext = StacklessExecutionContext()
+defaultContext = StacklessExecutionContext(command_handlers=default_command_handlers)
 
 # Use normal context
-defaultContext = YayExecutionContext()
+defaultContext = YayExecutionContext(command_handlers=default_command_handlers)
+
+
+#
+# Create runtime
+#
 
 class YayRuntime():
 
@@ -98,44 +151,3 @@ def to_handler_name(filename):
     filename = filename.replace('.yay', '')
     filename = filename.replace('-', ' ')
     return filename
-
-#
-# Command handlers
-#
-
-def command_handler(command, delayed_variable_resolver=False, list_processor=False):
-    def inner_decorator(handler_function):
-        defaultContext.add_command_handler(command, handler_function, delayed_variable_resolver=delayed_variable_resolver, list_processor=list_processor)
-        return handler_function
-
-    return inner_decorator
-
-
-#
-# Import standard handlers and register them in default runtime
-#
-
-importlib.import_module('yay.core_lib')
-importlib.import_module('yay.http')
-importlib.import_module('yay.files')
-importlib.import_module('yay.script')
-importlib.import_module('yay.input')
-importlib.import_module('yay.xl_cli')
-importlib.import_module('yay.arango')
-importlib.import_module('yay.webhook')
-
-
-@command_handler('Execute yay file')
-def run_yay_file(data, context, file=None):
-    if file == None:
-        file = get_parameter(data, 'file')
-
-    # Read YAML script
-    script = read_yaml_file(file)
-
-    # Run script
-    scriptContext = copy.deepcopy(context)
-    scriptContext.variables.update(data)
-    scriptContext.run_script(script)
-
-    return scriptContext.output()
