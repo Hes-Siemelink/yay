@@ -16,14 +16,14 @@ script_collection = yay_db["scripts"]
 def find_next_planned_step(step_group):
     for step in step_group['steps']:
         if step['status'] == 'Planned':
-            return step
+            return (step, step_group)
         if step['status'] == 'In progress':
             if 'steps' in step:
                 next_step = find_next_planned_step(step)
-                return next_step if next_step else step
+                return (step, next_step) if next_step else (step, step_group)
             else:
-                return None
-    return None
+                return (None, None)
+    return (None, None)
 
 
 def collect_outputs(step_group):
@@ -54,15 +54,15 @@ class PersistentExecutionContext():
     #
 
     def run_from_database(self, id):
-        print(f"ID: {id}")
         self.script = script_collection.find_one({"_id": ObjectId(id)})
 
-        self.run_next_step(self.script)
+        while self.script['status'] != 'Completed':
+            self.run_next_step(self.script)
 
     def save(self, script):
         self.script = script_collection.insert_one(script)
 
-        print(self.script.inserted_id)
+        print(f"ID: {self.script.inserted_id}")
 
         return self.script
 
@@ -115,6 +115,7 @@ class PersistentExecutionContext():
         # Convert 'Do in parallel' to 'Do'
         if command == 'Do in parallel':
             step['parallel'] = True
+            step['join_output'] = True
             command = 'Do'
 
         # Control structures
@@ -145,37 +146,43 @@ class PersistentExecutionContext():
             return command, task_block[command]
 
     def run_next_step(self, step_group):
-        step = find_next_planned_step(step_group)
-        if step:
-            step['status'] = 'In progress'
+        step, parent = find_next_planned_step(step_group)
 
-            self.update()
+        if not step:
+            self.complete_group(step_group)
+            return
 
-            output = None
-            try:
-                output = self.run_step(step)
-            except FlowBreak as f:
-                running = False
+        if 'steps' in step and step['status'] == 'In progress':
+            self.complete_group(step)
+            return
 
-            if 'steps' not in step:
-                if not step_group.get('parallel'):
-                    self.output(output)
+        step['status'] = 'In progress'
 
-                step['status'] = 'Completed'
+        self.update()
 
-                # Handle 'Repeat until'
-                if 'until' in step_group:
-                    running = self.handle_until(step_group['until'], output)
-                    if running:
-                        step['status'] = 'In progress'
-                else:
-                    running = False
-            self.update()
-        else:
-            if step_group.get('join_output') == True:
-                self.output(collect_outputs(step_group))
-            step_group['status'] = 'Completed'
-            self.update()
+        output = None
+        try:
+            output = self.run_step(step)
+        except FlowBreak as f:
+            self.complete_group(step_group)
+
+        if 'steps' not in step:
+            if not parent.get('parallel'):
+                self.output(output)
+
+            step['status'] = 'Completed'
+            # Handle 'Repeat until'
+            if 'until' in step_group:
+                running = self.handle_until(step_group['until'], output)
+                if running:
+                    step['status'] = 'In progress'
+        self.update()
+
+    def complete_group(self, step_group):
+        if step_group.get('join_output') == True:
+            self.output(collect_outputs(step_group))
+        step_group['status'] = 'Completed'
+        self.update()
 
     def handle_until(self, until, output):
         if is_dict(until):
