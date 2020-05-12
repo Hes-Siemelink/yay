@@ -6,14 +6,16 @@ from yay.execution import YayExecutionContext
 
 app = Celery('yay', backend='rpc://', broker='pyamqp://')
 app.conf.update(
-    accept_content = ['pickle', 'json', 'msgpack', 'yaml'],
+    accept_content=['pickle', 'json', 'msgpack', 'yaml'],
     task_serializer='pickle',
     result_serializer='pickle'
 )
 
+
 def get_celery_app():
     global app
     return app
+
 
 #
 # Execution logic
@@ -29,7 +31,7 @@ class DistributedYayExecutionContext(YayExecutionContext):
             return handler.handler_method(data, self)
 
         # Execute command handlers locally that are not loaded by default
-        elif handler.command not in runtime.defaultContext.command_handlers:
+        elif handler.command not in runtime.default_command_handlers:
             data = vars.resolve_variables(rawData, self.variables)
             return handler.handler_method(data, self)
 
@@ -43,7 +45,7 @@ class DistributedYayExecutionContext(YayExecutionContext):
 
 @app.task
 def run_command_remotely(command, data, variables):
-    context = DistributedYayExecutionContext(variables, runtime.defaultContext.command_handlers)
+    context = DistributedYayExecutionContext(variables, runtime.default_command_handlers)
     result = context.command_handlers[command].handler_method(data, context)
 
     return result, context.variables
