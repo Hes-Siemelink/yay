@@ -13,14 +13,14 @@ yay_db = mongo_client["yay-db"]
 script_collection = yay_db["scripts"]
 
 
-def find_next_planned_step(step_group):
+def find_next_planned_step(step_group, level = 0):
     for step in step_group['steps']:
         if step['status'] == 'Planned':
             return (step, step_group)
         if step['status'] == 'In progress':
             if 'steps' in step:
-                next_step = find_next_planned_step(step)
-                return (step, next_step) if next_step else (step, step_group)
+                (next_step, parent) = find_next_planned_step(step, level + 1)
+                return (next_step, step) if next_step else (step, step_group)
             else:
                 return (None, None)
     return (None, None)
@@ -54,12 +54,18 @@ class PersistentExecutionContext():
     #
 
     def run_from_database(self, id):
-        self.script = script_collection.find_one({"_id": ObjectId(id)})
+        self.load(id)
 
         while self.script['status'] != 'Completed':
             self.run_next_step(self.script)
 
+    def load(self, id):
+        self.script = script_collection.find_one({"_id": ObjectId(id)})
+        self.variables = self.script['variables']
+        del self.script['variables']
+
     def save(self, script):
+        script['variables'] = self.variables
         self.script = script_collection.insert_one(script)
 
         print(f"ID: {self.script.inserted_id}")
@@ -67,12 +73,12 @@ class PersistentExecutionContext():
         return self.script
 
     def update(self):
+        self.script['variables'] = self.variables
         script_collection.update({'_id':self.script['_id']}, {"$set": self.script}, upsert=False)
+        del self.script['variables']
 
     def run_script(self, script):
         persistent_script = self.to_persistent_script(script)
-
-        # print_as_yaml(persistent_run)
 
         persistent_script = self.save(persistent_script)
 

@@ -1,8 +1,12 @@
 from celery import Celery
+import pymongo
+from bson.objectid import ObjectId
 
 from yay import vars
 from yay import runtime
+from yay.util import *
 from yay.execution import YayExecutionContext
+from yay.cluster.persistent_execution import PersistentExecutionContext
 
 app = Celery('yay', backend='rpc://', broker='pyamqp://')
 app.conf.update(
@@ -21,7 +25,7 @@ def get_celery_app():
 # Execution logic
 #
 
-class DistributedYayExecutionContext(YayExecutionContext):
+class DistributedContext(YayExecutionContext):
 
     def run_single_command(self, handler, rawData):
 
@@ -45,7 +49,32 @@ class DistributedYayExecutionContext(YayExecutionContext):
 
 @app.task
 def run_command_remotely(command, data, variables):
-    context = DistributedYayExecutionContext(variables, runtime.default_command_handlers)
+    context = DistributedContext(variables, runtime.default_command_handlers)
     result = context.command_handlers[command].handler_method(data, context)
 
     return result, context.variables
+
+
+mongo_client = pymongo.MongoClient("mongodb://localhost:27017/")
+yay_db = mongo_client["yay-db"]
+
+script_collection = yay_db["scripts"]
+
+
+class DistributedPersistentContext(PersistentExecutionContext):
+
+    def run_from_database(self, id):
+        do_next_step.apply_async((id, ), serializer='pickle')
+
+@app.task
+def do_next_step(id):
+    context = DistributedPersistentContext(command_handlers=runtime.default_command_handlers)
+    context.load(id)
+
+    context.run_next_step(context.script)
+
+    # print()
+    # print_as_yaml(context.script)
+
+    if context.script['status'] != 'Completed':
+        context.run_from_database(id)
