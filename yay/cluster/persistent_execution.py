@@ -45,6 +45,7 @@ class PersistentExecutionContext():
         self.variables = variables if variables else {}
         self.command_handlers = command_handlers if command_handlers else {}
         self.script = None
+        self.id = None
 
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
         self.command_handlers[command] = CommandHandler(command, handler_method, delayed_variable_resolver, list_processor)
@@ -59,27 +60,35 @@ class PersistentExecutionContext():
         while self.script['status'] not in ['Completed', 'Failed']:
             self.run_next_step(self.script)
 
-
     def load(self, id):
-        self.script = script_collection.find_one({"_id": ObjectId(id)})
-        self.variables = self.script['variables']
-        del self.script['variables']
+        document = script_collection.find_one({"_id": ObjectId(id)})
+        self.from_document(document)
 
     def save(self, script):
-        script['variables'] = self.variables
-        self.script = script_collection.insert_one(script)
+        self.script = script
+        document = script_collection.insert_one(self.to_document())
+        self.id = document.inserted_id
 
-        print(f"ID: {self.script.inserted_id}")
+        print(f"ID: {document.inserted_id}")
 
         return self.script
 
     def update(self):
-        self.script['variables'] = self.variables
-        script_collection.update({'_id':self.script['_id']}, {"$set": self.script}, upsert=False)
-        del self.script['variables']
+        script_collection.update({'_id':self.id}, {"$set": self.to_document()}, upsert=False)
+
+    def to_document(self):
+        document = {
+            'script': self.script,
+            'variables': self.variables
+        }
+        return document
+
+    def from_document(self, document):
+        self.id = document['_id']
+        self.script = document['script']
+        self.variables = document['variables']
 
     def update_state(self):
-
         self.update_step_group_state(self.script)
         self.update()
 
@@ -118,9 +127,9 @@ class PersistentExecutionContext():
     def run_script(self, script):
         persistent_script = self.to_persistent_script(script)
 
-        persistent_script = self.save(persistent_script)
+        self.save(persistent_script)
 
-        self.run_from_database(persistent_script.inserted_id)
+        self.run_from_database(self.id)
 
         self.raise_error(self.script)
 
