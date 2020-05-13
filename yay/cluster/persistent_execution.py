@@ -13,14 +13,18 @@ yay_db = mongo_client["yay-db"]
 script_collection = yay_db["scripts"]
 
 
-def find_next_planned_step(step_group, level = 0):
+def find_next_planned_step(step_group):
+
+    if step_group['status'] == 'Planned':
+        return (step_group, None)
+
     for step in step_group['steps']:
         if step['status'] == 'Planned':
             return (step, step_group)
         if step['status'] == 'In progress':
             if 'steps' in step:
-                (next_step, parent) = find_next_planned_step(step, level + 1)
-                return (next_step, step) if next_step else (step, step_group)
+                (next_step, parent) = find_next_planned_step(step)
+                return (next_step, step)
             else:
                 return (None, None)
     return (None, None)
@@ -56,8 +60,9 @@ class PersistentExecutionContext():
     def run_from_database(self, id):
         self.load(id)
 
-        while self.script['status'] != 'Completed':
+        while self.script['status'] not in ['Completed', 'Failed']:
             self.run_next_step(self.script)
+
 
     def load(self, id):
         self.script = script_collection.find_one({"_id": ObjectId(id)})
@@ -77,12 +82,51 @@ class PersistentExecutionContext():
         script_collection.update({'_id':self.script['_id']}, {"$set": self.script}, upsert=False)
         del self.script['variables']
 
+    def update_state(self):
+
+        self.update_step_group_state(self.script)
+        self.update()
+
+
+    def update_step_group_state(self, step_group):
+        if 'steps' not in step_group:
+            return
+
+        all_completed = True
+        one_failed = False
+
+        for step in step_group['steps']:
+            self.update_step_group_state(step)
+
+            if step['status'] == 'Failed':
+                one_failed = True
+                break;
+
+            all_completed = all_completed and step['status'] == 'Completed'
+
+        if all_completed and step_group['status'] == 'In progress':
+            step_group['status'] = 'Completed'
+            self.complete_group(step_group)
+        elif one_failed:
+            step_group['status'] = 'Failed'
+
+    def raise_error(self, step):
+        if 'error' in step:
+            raise YayException(step['error'])
+
+        if 'steps' in step:
+            for substep in step['steps']:
+                self.raise_error(substep)
+
+
     def run_script(self, script):
         persistent_script = self.to_persistent_script(script)
 
         persistent_script = self.save(persistent_script)
 
         self.run_from_database(persistent_script.inserted_id)
+
+        self.raise_error(self.script)
 
     def to_persistent_script(self, script):
         # run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
@@ -152,42 +196,49 @@ class PersistentExecutionContext():
             return command, task_block[command]
 
     def run_next_step(self, step_group):
+
+        # Find next step in child hierarchy
         step, parent = find_next_planned_step(step_group)
 
         if not step:
-            self.complete_group(step_group)
-            return
+            print("No step found")
+            print_as_yaml(self.script)
 
-        if 'steps' in step and step['status'] == 'In progress':
-            self.complete_group(step)
-            return
-
+        # Start step
         step['status'] = 'In progress'
-
         self.update()
 
+        # Run command
         output = None
         try:
             output = self.run_step(step)
-        except FlowBreak as f:
-            self.complete_group(step_group)
+        except FlowBreak:
+            self.complete_group(parent)
+        except Exception as e:
+            step['status'] = 'Failed'
+            step['error'] = str(e)
+            self.update_state()
+            return
 
+        # Complete steps that are not containers
         if 'steps' not in step:
             if not parent.get('parallel'):
                 self.output(output)
 
             step['status'] = 'Completed'
+
             # Handle 'Repeat until'
             if 'until' in step_group:
-                running = self.handle_until(step_group['until'], output)
-                if running:
+                should_repeat = self.handle_until(step_group['until'], output)
+                if should_repeat:
                     step['status'] = 'In progress'
-        self.update()
+
+        self.update_state()
 
     def complete_group(self, step_group):
+        step_group['status'] = 'Completed'
         if step_group.get('join_output') == True:
             self.output(collect_outputs(step_group))
-        step_group['status'] = 'Completed'
         self.update()
 
     def handle_until(self, until, output):

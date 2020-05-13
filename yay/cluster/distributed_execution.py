@@ -76,7 +76,7 @@ class DistributedPersistentContext(PersistentExecutionContext):
 
             finished = self.script['status'] not in ['Planned', 'In progress']
 
-        print_as_yaml(self.script)
+        self.raise_error(self.script)
 
     def run_next_asynch(self, id):
         do_next_step.apply_async((id, ), serializer='pickle')
@@ -91,5 +91,5 @@ def do_next_step(id):
     # print()
     # print_as_yaml(context.script)
 
-    if context.script['status'] != 'Completed':
+    if context.script['status'] not in ['Completed', 'Failed']:
         context.run_next_asynch(id)
