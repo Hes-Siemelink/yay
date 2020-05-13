@@ -86,10 +86,12 @@ def do_next_step(id):
     context = DistributedPersistentContext(command_handlers=runtime.default_command_handlers)
     context.load(id)
 
-    context.run_next_step(context.script)
-
-    # print()
-    # print_as_yaml(context.script)
+    try:
+        context.run_next_step(context.script)
+    except Exception as e:
+        context.script['status'] = 'Failed'
+        context.script['error'] = str(e)
+        context.update()
 
     if context.script['status'] not in ['Completed', 'Failed']:
         context.run_next_asynch(id)
