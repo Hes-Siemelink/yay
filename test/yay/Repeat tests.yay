@@ -1,4 +1,14 @@
-Test case:  Repeat with conditions
+Test case:  Only once do
+
+Output: one
+
+Repeat:
+  Do:
+    Output: done
+  Until: done
+
+---
+Test case: Append output
 
 Output: one
 
@@ -9,20 +19,16 @@ Repeat:
     object: ${output}
     equals: one one one
 
+#Expected output: one one one
 ---
-Test case:  Repeat with conditions
+Test case: Repeat checks a list result
 
 Output: one
 
-Repeat:
-  Do:
-    Output: done
-  Until: done
-
----
-Test case: Repeat that checks a list result in until
-
-Output: one
+Do:
+- Output: a
+- Output: b
+Expected output: [a, b]
 
 Repeat:
   Do:
@@ -30,23 +36,3 @@ Repeat:
   - Output: two
   Until: [one, two]
 
-#
-# Do
-#
-
----
-Test case:  Return output from single do
-
-Do:
-  Output: not in a list
-Expected output:  not in a list
-
----
-Test case:  Return output from do with list
-
-Do:
-- Output: one
-- Output: two
-Expected output:
-- one
-- two

@@ -173,11 +173,11 @@ class PersistentExecutionContext():
             data = self.to_persistent_steps(data)
             step['join_output'] = True
         elif command in ['If', 'If any']:
-            step['steps'] = self.to_persistent_steps(data['Do'])
+            step['steps'] = self.to_persistent_steps({'Do': data['Do']})
             del data['Do']
         elif command == 'Repeat':
             step['until'] = data['Until']
-            data = self.to_persistent_steps(data['Do'])
+            data = self.to_persistent_steps({'Do': data['Do']})
 
         step['command'] = command
         step['data'] = data
@@ -224,10 +224,10 @@ class PersistentExecutionContext():
             step['status'] = 'Completed'
 
             # Handle 'Repeat until'
-            if 'until' in step_group:
-                should_repeat = self.handle_until(step_group['until'], output)
+            if 'until' in parent:
+                should_repeat = self.handle_until(parent['until'], output)
                 if should_repeat:
-                    step['status'] = 'In progress'
+                    step['status'] = 'Planned'
 
         self.update_state()
 
