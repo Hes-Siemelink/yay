@@ -13,32 +13,6 @@ yay_db = mongo_client["yay-db"]
 script_collection = yay_db["scripts"]
 
 
-def find_next_planned_step(step_group, parent=None):
-
-    if step_group['status'] == 'Planned':
-        return (step_group, parent)
-
-    if 'steps' in step_group and step_group['status'] == 'In progress':
-        for step in step_group['steps']:
-            (next, next_parent) = find_next_planned_step(step, step_group)
-            if next:
-                return (next, next_parent)
-    return (None, None)
-
-
-def collect_outputs(step_group):
-    outputs = []
-    for step in step_group['steps']:
-        output = step.get('output')
-        if output:
-            outputs.append(output)
-
-    if len(outputs) == 1:
-        return outputs[0]
-
-    return outputs
-
-
 class PersistentExecutionContext():
 
     def __init__(self, variables=None, command_handlers=None):
@@ -50,15 +24,15 @@ class PersistentExecutionContext():
     def add_command_handler(self, command, handler_method, delayed_variable_resolver=False, list_processor=False):
         self.command_handlers[command] = CommandHandler(command, handler_method, delayed_variable_resolver, list_processor)
 
-    #
-    # Execution
-    #
+    def output(self, value=None):
+        if value:
+            self.variables[vars.OUTPUT_VARIABLE] = value
 
-    def run_from_database(self, id):
-        self.load(id)
+        return self.variables.get(vars.OUTPUT_VARIABLE)
 
-        while self.script['status'] not in ['Completed', 'Failed']:
-            self.run_next_step(self.script)
+    #
+    # Database
+    #
 
     def load(self, id):
         document = script_collection.find_one({"_id": ObjectId(id)})
@@ -74,7 +48,7 @@ class PersistentExecutionContext():
         return self.script
 
     def update(self):
-        script_collection.update({'_id':self.id}, {"$set": self.to_document()}, upsert=False)
+        script_collection.update({'_id': self.id}, {"$set": self.to_document()}, upsert=False)
 
     def to_document(self):
         variables = {}
@@ -100,44 +74,13 @@ class PersistentExecutionContext():
         for (key, value) in document['raw_variables'].items():
             self.variables[key] = raw(value)
 
-    def update_state(self):
-        self.update_step_group_state(self.script)
-        self.update()
 
-
-    def update_step_group_state(self, step_group):
-        if 'steps' not in step_group:
-            return
-
-        all_completed = True
-        one_failed = False
-
-        for step in step_group['steps']:
-            self.update_step_group_state(step)
-
-            if step['status'] == 'Failed':
-                one_failed = True
-                break;
-
-            all_completed = all_completed and step['status'] == 'Completed'
-
-        if all_completed and step_group['status'] == 'In progress':
-            step_group['status'] = 'Completed'
-            self.complete_group(step_group)
-        elif one_failed:
-            step_group['status'] = 'Failed'
-
-    def raise_error(self, step):
-        if 'error' in step:
-            raise YayException(step['error'])
-
-        if 'steps' in step:
-            for substep in step['steps']:
-                self.raise_error(substep)
-
+    #
+    # Execution
+    #
 
     def run_script(self, script):
-        persistent_script = self.to_persistent_script(script)
+        persistent_script = to_persistent_script(script, self.command_handlers)
 
         self.save(persistent_script)
 
@@ -145,72 +88,11 @@ class PersistentExecutionContext():
 
         self.raise_error(self.script)
 
-    def to_persistent_script(self, script):
-        # run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
-        run = {'variables': {}, 'command': 'Do', 'steps':[], 'status': 'Planned'}
-        for task_block in script:
-            block = {
-                'command': 'Do',
-                'status': 'Planned',
-                'steps': self.to_persistent_steps(task_block)
-            }
-            run['steps'].append(block)
-        return run
+    def run_from_database(self, id):
+        self.load(id)
 
-    def to_persistent_steps(self, task_block):
-        return [self.to_persistent_step(command, task_block) for command in task_block]
-
-    def to_persistent_step(self, command, task_block):
-        command, data = self.unpack(command, task_block)
-
-        step = {'status': 'Planned'}
-
-        # Variable assignment
-        variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
-        if variableMatch:
-            step['command'] = 'Set variable'
-            step['data'] = {variableMatch.group(1): data}
-            return step
-
-        # Expand list of arguments to individual invocations
-        handler = self.command_handlers.get(command)
-        if is_list(data) and not handler.list_processor and not command == 'Do':
-            step['join_output'] = True
-            data = [{command: item} for item in data]
-            command = 'Do'
-
-        # Convert 'Do in parallel' to 'Do'
-        if command == 'Do in parallel':
-            step['parallel'] = True
-            step['join_output'] = True
-            command = 'Do'
-
-        # Control structures
-        if command == 'Do':
-            step['steps'] = self.to_persistent_steps(data)
-            step['join_output'] = is_list(data)
-            data = {}
-        elif command == 'For each':
-            data = self.to_persistent_steps(data)
-            step['join_output'] = True
-        elif command in ['If', 'If any']:
-            step['steps'] = self.to_persistent_steps({'Do': data['Do']})
-            del data['Do']
-        elif command == 'Repeat':
-            step['until'] = data['Until']
-            data = self.to_persistent_steps({'Do': data['Do']})
-
-        step['command'] = command
-        step['data'] = data
-
-        return step
-
-    def unpack(self, command, task_block):
-        if is_dict(command):
-            command_key = list(command.keys())[0]
-            return command_key, command[command_key]
-        else:
-            return command, task_block[command]
+        while self.script['status'] not in ['Completed', 'Failed']:
+            self.run_next_step(self.script)
 
     def run_next_step(self, step_group):
 
@@ -320,12 +202,6 @@ class PersistentExecutionContext():
         # Execute action
         return handler.handler_method(data, self)
 
-    def output(self, value=None):
-        if value:
-            self.variables[vars.OUTPUT_VARIABLE] = value
-
-        return self.variables.get(vars.OUTPUT_VARIABLE)
-
     def expand_for_each(self, for_each_command):
         for_each_command['steps'] = []
         set_variable_command = for_each_command['data'][0]['data']
@@ -336,6 +212,142 @@ class PersistentExecutionContext():
             for_each_body = copy.deepcopy(for_each_command['data'])
             for_each_body[0]['data'][variable] = value
             for_each_command['steps'].extend(for_each_body)
+
+    def update_state(self):
+        self.update_step_group_state(self.script)
+        self.update()
+
+    def update_step_group_state(self, step_group):
+        if 'steps' not in step_group:
+            return
+
+        all_completed = True
+        one_failed = False
+
+        for step in step_group['steps']:
+            self.update_step_group_state(step)
+
+            if step['status'] == 'Failed':
+                one_failed = True
+                break;
+
+            all_completed = all_completed and step['status'] == 'Completed'
+
+        if all_completed and step_group['status'] == 'In progress':
+            step_group['status'] = 'Completed'
+            self.complete_group(step_group)
+        elif one_failed:
+            step_group['status'] = 'Failed'
+
+    def raise_error(self, step):
+        if 'error' in step:
+            raise YayException(step['error'])
+
+        if 'steps' in step:
+            for substep in step['steps']:
+                self.raise_error(substep)
+
+#
+# Convert Yay to pipecode
+#
+
+def to_persistent_script(script, command_handlers):
+    # run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
+    run = {'variables': {}, 'command': 'Do', 'steps': [], 'status': 'Planned'}
+    for task_block in script:
+        block = {
+            'command': 'Do',
+            'status': 'Planned',
+            'steps': to_persistent_steps(task_block, command_handlers)
+        }
+        run['steps'].append(block)
+    return run
+
+
+def to_persistent_steps(task_block, command_handlers):
+    return [to_persistent_step(command, task_block, command_handlers) for command in task_block]
+
+
+def to_persistent_step(command, task_block, command_handlers):
+    command, data = get_command_and_data(command, task_block)
+
+    step = {'status': 'Planned'}
+
+    # Variable assignment
+    variableMatch = re.search(vars.VariableMatcher.ONE_VARIABLE_ONLY_REGEX, command)
+    if variableMatch:
+        step['command'] = 'Set variable'
+        step['data'] = {variableMatch.group(1): data}
+        return step
+
+    # Expand list of arguments to individual invocations
+    handler = command_handlers.get(command)
+    if is_list(data) and not handler.list_processor and not command == 'Do':
+        step['join_output'] = True
+        data = [{command: item} for item in data]
+        command = 'Do'
+
+    # Convert 'Do in parallel' to 'Do'
+    if command == 'Do in parallel':
+        step['parallel'] = True
+        step['join_output'] = True
+        command = 'Do'
+
+    # Control structures
+    if command == 'Do':
+        step['steps'] = to_persistent_steps(data, command_handlers)
+        step['join_output'] = is_list(data)
+        data = {}
+    elif command == 'For each':
+        data = to_persistent_steps(data, command_handlers)
+        step['join_output'] = True
+    elif command in ['If', 'If any']:
+        step['steps'] = to_persistent_steps({'Do': data['Do']}, command_handlers)
+        del data['Do']
+    elif command == 'Repeat':
+        step['until'] = data['Until']
+        data = to_persistent_steps({'Do': data['Do']}, command_handlers)
+
+    step['command'] = command
+    step['data'] = data
+
+    return step
+
+
+def get_command_and_data(command, task_block):
+    if is_dict(command):
+        command_key = list(command.keys())[0]
+        return command_key, command[command_key]
+    else:
+        return command, task_block[command]
+
+#
+# Execution
+#
+
+def find_next_planned_step(step_group, parent=None):
+    if step_group['status'] == 'Planned':
+        return (step_group, parent)
+
+    if 'steps' in step_group and step_group['status'] == 'In progress':
+        for step in step_group['steps']:
+            (next, next_parent) = find_next_planned_step(step, step_group)
+            if next:
+                return (next, next_parent)
+    return (None, None)
+
+
+def collect_outputs(step_group):
+    outputs = []
+    for step in step_group['steps']:
+        output = step.get('output')
+        if output:
+            outputs.append(output)
+
+    if len(outputs) == 1:
+        return outputs[0]
+
+    return outputs
 
 
 class CommandHandler():
