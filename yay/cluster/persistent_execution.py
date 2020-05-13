@@ -77,16 +77,28 @@ class PersistentExecutionContext():
         script_collection.update({'_id':self.id}, {"$set": self.to_document()}, upsert=False)
 
     def to_document(self):
+        variables = {}
+        raw_variables = {}
+        for (key, value) in self.variables.items():
+            if is_raw(value):
+                raw_variables[key] = value
+            else:
+                variables[key] = value
+
         document = {
             'script': self.script,
-            'variables': self.variables
+            'variables': variables,
+            'raw_variables': raw_variables
         }
+
         return document
 
     def from_document(self, document):
         self.id = document['_id']
         self.script = document['script']
         self.variables = document['variables']
+        for (key, value) in document['raw_variables'].items():
+            self.variables[key] = raw(value)
 
     def update_state(self):
         self.update_step_group_state(self.script)
