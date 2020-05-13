@@ -13,20 +13,16 @@ yay_db = mongo_client["yay-db"]
 script_collection = yay_db["scripts"]
 
 
-def find_next_planned_step(step_group):
+def find_next_planned_step(step_group, parent=None):
 
     if step_group['status'] == 'Planned':
-        return (step_group, None)
+        return (step_group, parent)
 
-    for step in step_group['steps']:
-        if step['status'] == 'Planned':
-            return (step, step_group)
-        if step['status'] == 'In progress':
-            if 'steps' in step:
-                (next_step, parent) = find_next_planned_step(step)
-                return (next_step, step)
-            else:
-                return (None, None)
+    if 'steps' in step_group and step_group['status'] == 'In progress':
+        for step in step_group['steps']:
+            (next, next_parent) = find_next_planned_step(step, step_group)
+            if next:
+                return (next, next_parent)
     return (None, None)
 
 
