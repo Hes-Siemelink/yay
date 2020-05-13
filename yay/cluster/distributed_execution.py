@@ -1,3 +1,5 @@
+from time import sleep
+
 from celery import Celery
 import pymongo
 from bson.objectid import ObjectId
@@ -64,6 +66,19 @@ script_collection = yay_db["scripts"]
 class DistributedPersistentContext(PersistentExecutionContext):
 
     def run_from_database(self, id):
+        celery_task = do_next_step.apply_async((id, ), serializer='pickle')
+
+        finished = False
+        while not finished:
+            sleep(1)
+
+            self.load(id)
+
+            finished = self.script['status'] not in ['Planned', 'In progress']
+
+        print_as_yaml(self.script)
+
+    def run_next_asynch(self, id):
         do_next_step.apply_async((id, ), serializer='pickle')
 
 @app.task
@@ -77,4 +92,4 @@ def do_next_step(id):
     # print_as_yaml(context.script)
 
     if context.script['status'] != 'Completed':
-        context.run_from_database(id)
+        context.run_next_asynch(id)
