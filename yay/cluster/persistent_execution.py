@@ -80,7 +80,7 @@ class PersistentExecutionContext():
     #
 
     def run_script(self, script):
-        persistent_script = to_persistent_script(script, self.command_handlers)
+        persistent_script = to_pipeline_script(script, self.command_handlers)
 
         self.save(persistent_script)
 
@@ -251,25 +251,25 @@ class PersistentExecutionContext():
 # Convert Yay to pipecode
 #
 
-def to_persistent_script(script, command_handlers):
-    # run = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
-    run = {'variables': {}, 'command': 'Do', 'steps': [], 'status': 'Planned'}
-    for task_block in script:
-        block = {
+def to_pipeline_script(yay_script, command_handlers):
+    # pipeline = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
+    pipeline = {'variables': {}, 'command': 'Do', 'steps': [], 'status': 'Planned'}
+    for yay_block in yay_script:
+        step = {
             'command': 'Do',
             'status': 'Planned',
-            'steps': to_persistent_steps(task_block, command_handlers)
+            'steps': to_pipeline_steps(yay_block, command_handlers)
         }
-        run['steps'].append(block)
-    return run
+        pipeline['steps'].append(step)
+    return pipeline
 
 
-def to_persistent_steps(task_block, command_handlers):
-    return [to_persistent_step(command, task_block, command_handlers) for command in task_block]
+def to_pipeline_steps(yay_block, command_handlers):
+    return [to_pipeline_step(command, yay_block, command_handlers) for command in yay_block]
 
 
-def to_persistent_step(command, task_block, command_handlers):
-    command, data = get_command_and_data(command, task_block)
+def to_pipeline_step(command, yay_block, command_handlers):
+    command, data = get_command_and_data(command, yay_block)
 
     step = {'status': 'Planned'}
 
@@ -295,18 +295,18 @@ def to_persistent_step(command, task_block, command_handlers):
 
     # Control structures
     if command == 'Do':
-        step['steps'] = to_persistent_steps(data, command_handlers)
+        step['steps'] = to_pipeline_steps(data, command_handlers)
         step['join_output'] = is_list(data)
         data = {}
     elif command == 'For each':
-        data = to_persistent_steps(data, command_handlers)
+        data = to_pipeline_steps(data, command_handlers)
         step['join_output'] = True
     elif command in ['If', 'If any']:
-        step['steps'] = to_persistent_steps({'Do': data['Do']}, command_handlers)
+        step['steps'] = to_pipeline_steps({'Do': data['Do']}, command_handlers)
         del data['Do']
     elif command == 'Repeat':
         step['until'] = data['Until']
-        data = to_persistent_steps({'Do': data['Do']}, command_handlers)
+        data = to_pipeline_steps({'Do': data['Do']}, command_handlers)
 
     step['command'] = command
     step['data'] = data
@@ -314,12 +314,12 @@ def to_persistent_step(command, task_block, command_handlers):
     return step
 
 
-def get_command_and_data(command, task_block):
+def get_command_and_data(command, yay_block):
     if is_dict(command):
         command_key = list(command.keys())[0]
         return command_key, command[command_key]
     else:
-        return command, task_block[command]
+        return command, yay_block[command]
 
 #
 # Execution
