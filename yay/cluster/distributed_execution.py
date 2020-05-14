@@ -66,8 +66,11 @@ script_collection = yay_db["scripts"]
 class DistributedPersistentContext(PersistentExecutionContext):
 
     def run_from_database(self, id):
-        celery_task = do_next_step.apply_async((id, ), serializer='pickle')
 
+        # Dispatch next step to worker
+        self.run_next_asynch(id)
+
+        # Check if finished by polling the database
         finished = False
         while not finished:
             sleep(1)
@@ -76,7 +79,8 @@ class DistributedPersistentContext(PersistentExecutionContext):
 
             finished = self.script['status'] not in ['Planned', 'In progress']
 
-        self.raise_error(self.script)
+        # Raise any error if occurred
+        self.raise_any_error(self.script)
 
     def run_next_asynch(self, id):
         do_next_step.apply_async((id, ), serializer='pickle')

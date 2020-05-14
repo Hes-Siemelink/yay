@@ -74,7 +74,6 @@ class PersistentExecutionContext():
         for (key, value) in document['raw_variables'].items():
             self.variables[key] = raw(value)
 
-
     #
     # Execution
     #
@@ -86,12 +85,12 @@ class PersistentExecutionContext():
 
         self.run_from_database(self.id)
 
-        self.raise_error(self.script)
+        self.raise_any_error(self.script)
 
     def run_from_database(self, id):
         self.load(id)
 
-        while self.script['status'] not in ['Completed', 'Failed']:
+        while self.script['status'] in ['Planned', 'In progress']:
             self.run_next_step(self.script)
 
     def run_next_step(self, step_group):
@@ -99,9 +98,7 @@ class PersistentExecutionContext():
         # Find next step in child hierarchy
         step, parent = find_next_planned_step(step_group)
 
-        if not step:
-            print("No step found")
-            print_as_yaml(self.script)
+        assert step, f"No step found for {step_group}"
 
         # Start step
         step['status'] = 'In progress'
@@ -134,11 +131,45 @@ class PersistentExecutionContext():
 
         self.update_state()
 
+    def update_state(self):
+        self.update_step_group_state(self.script)
+        self.update()
+
+    def update_step_group_state(self, step_group):
+        if 'steps' not in step_group:
+            return
+
+        all_completed = True
+        one_failed = False
+
+        for step in step_group['steps']:
+            self.update_step_group_state(step)
+
+            if step['status'] == 'Failed':
+                one_failed = True
+                break;
+
+            all_completed = all_completed and step['status'] == 'Completed'
+
+        if all_completed and step_group['status'] == 'In progress':
+            step_group['status'] = 'Completed'
+            self.complete_group(step_group)
+        elif one_failed:
+            step_group['status'] = 'Failed'
+
     def complete_group(self, step_group):
         step_group['status'] = 'Completed'
         if step_group.get('join_output') == True:
             self.output(collect_outputs(step_group))
         self.update()
+
+    def raise_any_error(self, step):
+        if 'error' in step:
+            raise YayException(step['error'])
+
+        if 'steps' in step:
+            for substep in step['steps']:
+                self.raise_any_error(substep)
 
     def handle_until(self, until, output):
         if is_dict(until):
@@ -213,47 +244,13 @@ class PersistentExecutionContext():
             for_each_body[0]['data'][variable] = value
             for_each_command['steps'].extend(for_each_body)
 
-    def update_state(self):
-        self.update_step_group_state(self.script)
-        self.update()
-
-    def update_step_group_state(self, step_group):
-        if 'steps' not in step_group:
-            return
-
-        all_completed = True
-        one_failed = False
-
-        for step in step_group['steps']:
-            self.update_step_group_state(step)
-
-            if step['status'] == 'Failed':
-                one_failed = True
-                break;
-
-            all_completed = all_completed and step['status'] == 'Completed'
-
-        if all_completed and step_group['status'] == 'In progress':
-            step_group['status'] = 'Completed'
-            self.complete_group(step_group)
-        elif one_failed:
-            step_group['status'] = 'Failed'
-
-    def raise_error(self, step):
-        if 'error' in step:
-            raise YayException(step['error'])
-
-        if 'steps' in step:
-            for substep in step['steps']:
-                self.raise_error(substep)
 
 #
 # Convert Yay to pipecode
 #
 
 def to_pipeline_script(yay_script, command_handlers):
-    # pipeline = {'variables': self.variables, 'command': 'Do', 'steps':[], 'status': 'Planned'}
-    pipeline = {'variables': {}, 'command': 'Do', 'steps': [], 'status': 'Planned'}
+    pipeline = {'command': 'Do', 'steps': [], 'status': 'Planned'}
     for yay_block in yay_script:
         step = {
             'command': 'Do',
@@ -321,20 +318,21 @@ def get_command_and_data(command, yay_block):
     else:
         return command, yay_block[command]
 
+
 #
 # Execution
 #
 
 def find_next_planned_step(step_group, parent=None):
     if step_group['status'] == 'Planned':
-        return (step_group, parent)
+        return step_group, parent
 
     if 'steps' in step_group and step_group['status'] == 'In progress':
         for step in step_group['steps']:
-            (next, next_parent) = find_next_planned_step(step, step_group)
-            if next:
-                return (next, next_parent)
-    return (None, None)
+            next_step, parent_of_next_step = find_next_planned_step(step, step_group)
+            if next_step:
+                return next_step, parent_of_next_step
+    return None, None
 
 
 def collect_outputs(step_group):
