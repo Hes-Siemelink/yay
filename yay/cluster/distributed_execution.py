@@ -77,16 +77,16 @@ class DistributedPersistentContext(PersistentExecutionContext):
 
             self.load(id)
 
-            finished = self.script['status'] not in ['Planned', 'In progress']
+            finished = self.script['status'] in ['Completed', 'Failed']
 
         # Raise any error if occurred
         self.raise_any_error(self.script)
 
-    def run_next_asynch(self, id):
-        do_next_step.apply_async((id, ), serializer='pickle')
+    def run_next_asynch(self, id, do_next=True):
+        do_next_step.apply_async((id, do_next), serializer='pickle')
 
 @app.task
-def do_next_step(id):
+def do_next_step(id, do_next=True):
     context = DistributedPersistentContext(command_handlers=runtime.default_command_handlers)
     context.load(id)
 
@@ -97,5 +97,6 @@ def do_next_step(id):
         context.script['error'] = str(e)
         context.update()
 
-    if context.script['status'] not in ['Completed', 'Failed']:
+    if do_next and context.script['status'] in ['Planned', 'In progress']:
         context.run_next_asynch(id)
+

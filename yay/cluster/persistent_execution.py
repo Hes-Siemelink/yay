@@ -78,10 +78,16 @@ class PersistentExecutionContext():
     # Execution
     #
 
-    def run_script(self, script):
+    def create_pipeline(self, script):
         persistent_script = to_pipeline_script(script, self.command_handlers)
 
         self.save(persistent_script)
+
+        return self.id
+
+    def run_script(self, script):
+
+        self.create_pipeline(script)
 
         self.run_from_database(self.id)
 
@@ -98,7 +104,9 @@ class PersistentExecutionContext():
         # Find next step in child hierarchy
         step, parent = find_next_planned_step(step_group)
 
-        assert step, f"No step found for {step_group}"
+        # assert step, f"No step found for {step_group}"
+        if not step:
+            return
 
         # Start step
         step['status'] = 'In progress'

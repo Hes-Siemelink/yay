@@ -1,0 +1,12 @@
+Http endpoint: http://127.0.0.1:5000/
+
+---
+Read file: ${file}
+As: script
+
+---
+Http POST:
+  path: /pipeline
+  body: ${script}
+
+Print: Created pipeline with ID ${output}
