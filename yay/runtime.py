@@ -24,7 +24,7 @@ def command_handler(command, delayed_variable_resolver=False, list_processor=Fal
 #
 
 importlib.import_module('yay.core_lib')
-importlib.import_module('yay.http')
+importlib.import_module('yay.http_handlers')
 importlib.import_module('yay.files')
 importlib.import_module('yay.script')
 importlib.import_module('yay.input')
