@@ -1,51 +1,39 @@
+Test case: Variables in nested for each
 
----
-Test case: Recycle variables in for each
+${nameTags}: []
 
-${allTasks}: []
-${gates}: []
+# Create a flat list of name tags for parents and children
 For each:
-  ${directive}:
-    - name: My name 1
-      controls:
-        - name: control 1
-    - name: My name 2
-      controls: []
+  ${parent}:
+    - name: Mary
+      children:
+      - name: Alice
+    - name: Caroline
+      children: []
 
-  ${gates}: []
-  Assert that:
-    object: ${gates}
-    equals: []
+  # Create tag for parent
+  ${tag}:
+    - name: ${parent.name}
 
-
-  # Create first one
-  ${task}:
-    - name: ${directive.name}
-
-
-  # Add all controls behind it
+  # Add tags for children if there are any
   For each:
-    ${control}: ${directive.controls}
+    ${child}: ${parent.children}
 
-    Print:
-    - ${directive.controls}
-    - ${control}
     Output:
-      name: ${control.name}
-  As: gates
+      name: ${child.name}
+  As: additionalTags
 
-
+  # Put tags in the list
   Merge:
-    - ${allTasks}
-    - ${task}
-    - ${gates}
+    - ${nameTags}
+    - ${tag}
+    - ${additionalTags}
+  ${nameTags}: ${output}
 
-  Set variable:
-    allTasks: ${output}
+# Collect flat list
+Output: ${nameTags}
 
-
-Output: ${allTasks}
 Expected output:
-- name: My name 1
-- name: control 1
-- name: My name 2
+- name: Mary
+- name: Alice
+- name: Caroline
