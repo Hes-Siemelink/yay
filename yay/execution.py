@@ -93,7 +93,7 @@ class YayExecutionContext():
         return handler.handler_method(data, self)
 
     def output(self, value=None):
-        if value:
+        if value is not None:
             self.variables[vars.OUTPUT_VARIABLE] = value
 
         return self.variables.get(vars.OUTPUT_VARIABLE)
