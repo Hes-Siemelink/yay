@@ -3,7 +3,7 @@ import importlib
 
 from yay.util import *
 from yay.execution import YayExecutionContext, CommandHandler
-
+from yay.vars import OUTPUT_VARIABLE
 
 #
 # Register command handlers
@@ -53,13 +53,13 @@ def run_yay_file(data, context, file=None):
 #
 
 # Use distributed context
-# from yay.cluster.execution import DistributedYayExecutionContext, get_celery_app
+# from yay.cluster.distributed_execution import DistributedContext, DistributedPersistentContext, get_celery_app
 # app = get_celery_app()
-# defaultContext = DistributedYayExecutionContext()
+# defaultContext = DistributedPersistentContext(command_handlers=default_command_handlers)
 
 # Use persistent context
-from yay.cluster.persistent_execution import PersistentExecutionContext
-defaultContext = PersistentExecutionContext(command_handlers=default_command_handlers)
+# from yay.cluster.persistent_execution import PersistentExecutionContext
+# defaultContext = PersistentExecutionContext(command_handlers=default_command_handlers)
 
 # Use normal context
 defaultContext = YayExecutionContext(command_handlers=default_command_handlers)
@@ -79,6 +79,7 @@ class YayRuntime():
 
     def update_variables(self, variables):
         self.context.variables.update(variables)
+        self.context.variables[OUTPUT_VARIABLE] = ''
 
     def run_script(self, script):
         return self.context.run_script(script)
