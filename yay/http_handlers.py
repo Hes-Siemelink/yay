@@ -67,7 +67,7 @@ def send_request(data, context):
     # Parameters
     url = get_parameter(vars, 'url')
     path = vars['path'] if 'path' in vars else ''
-    body = vars['body'] if 'body' in vars else None
+    body = json.dumps(vars['body']) if 'body' in vars else None
     method = vars['method'] if 'method' in vars else 'GET'
     file = vars['save as'] if 'save as' in vars else None
     verify = vars['verify certificate'] if 'verify certificate' in vars else True
@@ -86,7 +86,7 @@ def send_request(data, context):
                          headers=headers,
                          auth=auth,
                          verify=verify,
-                         data=json.dumps(body))
+                         data=body)
 
     # Check result
     if r.status_code >= 300:
