@@ -79,3 +79,15 @@ Assert equals:
       - (One)
       - (Two)
       - (Three)
+
+---
+Test case: For each should replace output variable with empty list
+
+Output: something to begin with
+
+For each:
+  ${nothing}: []
+
+  Output: something else
+
+Expected output: []

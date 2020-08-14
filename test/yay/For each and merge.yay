@@ -1,0 +1,51 @@
+
+---
+Test case: Recycle variables in for each
+
+${allTasks}: []
+${gates}: []
+For each:
+  ${directive}:
+    - name: My name 1
+      controls:
+        - name: control 1
+    - name: My name 2
+      controls: []
+
+  ${gates}: []
+  Assert that:
+    object: ${gates}
+    equals: []
+
+
+  # Create first one
+  ${task}:
+    - name: ${directive.name}
+
+
+  # Add all controls behind it
+  For each:
+    ${control}: ${directive.controls}
+
+    Print:
+    - ${directive.controls}
+    - ${control}
+    Output:
+      name: ${control.name}
+  As: gates
+
+
+  Merge:
+    - ${allTasks}
+    - ${task}
+    - ${gates}
+
+  Set variable:
+    allTasks: ${output}
+
+
+Output: ${allTasks}
+Expected output:
+- name: My name 1
+- name: control 1
+- name: My name 2

@@ -54,7 +54,7 @@ def for_each(data, context):
     items = vars.resolve_variables(items, context.variables)
     for value in as_list(items):
         data[variable_assignment] = value
-        result = context.run_task({'Do': data})
+        result = context.run_task({'Do': copy.deepcopy(data)})
         output.append(result)
 
     return output
