@@ -107,3 +107,17 @@ If:
     Output: Success
 
 Expected output: Success
+
+---
+Test case: Not
+
+Output: Failure
+
+If:
+  not:
+    object: true
+    equals: false
+  Do:
+    Output: Success
+
+Expected output: Success

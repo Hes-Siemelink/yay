@@ -15,13 +15,18 @@ def parse_condition(data):
 
     elif 'all' in data:
         all = get_parameter(data, 'all')
-        list = [parse_condition(condition) for condition in all]
-        return All(list)
+        expressions = [parse_condition(condition) for condition in all]
+        return All(expressions)
 
     elif 'any' in data:
         any = get_parameter(data, 'any')
-        list = [parse_condition(condition) for condition in any]
-        return Any(list)
+        expressions = [parse_condition(condition) for condition in any]
+        return Any(expressions)
+
+    elif 'not' in data:
+        not_expression = get_parameter(data, 'not')
+        expression = parse_condition(not_expression)
+        return Not(expression)
 
     else:
         raise YayException("Condition needs 'object', 'all' or 'any'.")
@@ -77,17 +82,17 @@ def contains_all(subset, superset):
 
 class All():
 
-    def __init__(self, list):
-        self.list = list
+    def __init__(self, expressions):
+        self.expressions = expressions
 
     def is_true(self):
-        return all([object.is_true() for object in self.list])
+        return all([object.is_true() for object in self.expressions])
 
     def __repr__(self):
-        return f"ALL {self.list}"
+        return f"ALL {self.expressions}"
 
     def as_dict(self):
-        dict = {'all': as_dict(self.list)}
+        dict = {'all': as_dict(self.expressions)}
         if not self.is_true():
             dict['RESULT'] = 'FALSE'
         return dict
@@ -95,17 +100,34 @@ class All():
 
 class Any():
 
-    def __init__(self, list):
-        self.list = list
+    def __init__(self, expressions):
+        self.expressions = expressions
 
     def is_true(self):
-        return any([object.is_true() for object in self.list])
+        return any([object.is_true() for object in self.expressions])
 
     def __repr__(self):
-        return f"ANY {self.list}"
+        return f"ANY {self.expressions}"
 
     def as_dict(self):
-        dict = {'any': as_dict(self.list)}
+        dict = {'any': as_dict(self.expressions)}
+        if not self.is_true():
+            dict['RESULT'] = 'FALSE'
+        return dict
+
+class Not():
+
+    def __init__(self, expression):
+        self.expression = expression
+
+    def is_true(self):
+        return not self.expression.is_true()
+
+    def __repr__(self):
+        return f"NOT {self.expression}"
+
+    def as_dict(self):
+        dict = {'not': as_dict(self.expression)}
         if not self.is_true():
             dict['RESULT'] = 'FALSE'
         return dict
