@@ -6,6 +6,16 @@ import os
 class YayException(Exception):
     pass
 
+# Special loader with duplicate key checking
+class UniqueKeyLoader(yaml.SafeLoader):
+    def construct_mapping(self, node, deep=False):
+        mapping = []
+        for key_node, value_node in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            if key in mapping:
+                raise YayException(f"Duplicate key '{key}'{key_node.start_mark}")
+            mapping.append(key)
+        return super().construct_mapping(node, deep)
 
 def format_json(dict):
     return json.dumps(dict, indent=2, sort_keys=False)
@@ -33,7 +43,7 @@ def read_yaml_file(fileArgument, data=None):
         data = []
 
     with open(fileArgument, 'r') as stream:
-        for fileData in yaml.load_all(stream, Loader=yaml.Loader):
+        for fileData in yaml.load_all(stream, Loader=UniqueKeyLoader):
             data.append(fileData)
     return data
 

@@ -14,10 +14,16 @@ def main():
     # Run script
     try:
         run_yay_script(script_name, profile, variables)
+    except YayException as yay_exception:
+        print("Yay scripting error", file=sys.stderr)
+        print(yay_exception, file=sys.stderr)
+        sys.exit(1)
     except Exception as exception:
+        print("Yay internal error", file=sys.stderr)
         import traceback
-        traceback.print_exc()
-        print(exception)
+        traceback.print_exc(file=sys.stderr)
+        print(exception, file=sys.stderr)
+        sys.exit(1)
 
 
 def run_yay_script(script_name, profile, variables):
