@@ -1,3 +1,6 @@
+import pytest
+from yay.util import YayException
+
 from yay import vars
 
 class TestVariableResolution():
@@ -89,12 +92,12 @@ class TestVariableResolution():
 
         assert result == 'My stuff'
 
-    def test_resolve_unknow_json_path(self):
+    def test_unknown_json_path_returns_empty_list(self):
         input = '${dict.unknown}'
 
         result = vars.resolve_variables(input, self.variables)
 
-        assert result == input
+        assert result == []
 
     def test_resolve_json_path_index(self):
         input = '${list[0]}'

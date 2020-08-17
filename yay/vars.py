@@ -3,7 +3,7 @@
 #
 
 import re
-from jsonpath_ng import jsonpath, parse
+from jsonpath_ng import parse
 
 from yay.util import *
 
@@ -76,7 +76,7 @@ def get_value_with_path(variable, variables):
         part = get_json_path(value, path)
         if part == None:
             # unknown JSON path
-            return in_var_syntax(variable)
+            return []
         elif is_raw(value):
             return part
         else:
