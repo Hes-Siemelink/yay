@@ -1,9 +1,15 @@
 from yay.util import *
 
 
+def pop_conditions(data):
+    condition_keys = ['object','equals', 'in', 'all', 'any', 'not']
+    conditions = {key: data.pop(key) for key in condition_keys if key in data}
+    return conditions
+
 def parse_condition(data):
+
     if 'object' in data:
-        object = get_parameter(data, 'object')
+        object = data['object']
 
         if 'equals' in data:
             return Equals(object, data['equals'])
@@ -14,23 +20,24 @@ def parse_condition(data):
         raise YayException("Condition with 'object' should have either 'equals' or 'in'.")
 
     elif 'all' in data:
-        all = get_parameter(data, 'all')
+        all = data['all']
         expressions = [parse_condition(condition) for condition in all]
         return All(expressions)
 
     elif 'any' in data:
-        any = get_parameter(data, 'any')
+        any = data['any']
         expressions = [parse_condition(condition) for condition in any]
         return Any(expressions)
 
     elif 'not' in data:
-        not_expression = get_parameter(data, 'not')
+        not_expression = data['not']
         expression = parse_condition(not_expression)
         return Not(expression)
 
     else:
-        raise YayException("Condition needs 'object', 'all' or 'any'.")
+        raise YayException("Condition needs 'object', 'all', 'any' or 'not'.")
 
+    return condition
 
 class Equals():
 

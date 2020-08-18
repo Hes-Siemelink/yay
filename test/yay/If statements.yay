@@ -3,8 +3,8 @@ Test case:  Simple if with equals
 If:
   object: a value
   equals: a value
-  Do:
-    Output: Match
+
+  Output: Match
 
 Expected output: Match
 
@@ -18,8 +18,8 @@ If:
   - milk
   - chocolate
   - cookies
-  Do:
-    ${chocolate}: Found
+
+  ${chocolate}: Found
 
 Assert that:
 - object: ${chocolate}
@@ -37,8 +37,8 @@ If:
       equals: nothing
     - object: selection
       equals: selection
-  Do:
-    Output: Any Match
+
+  Output: Any Match
 
 Expected output: Any Match
 
@@ -49,12 +49,13 @@ Test case:  If matching each item; no break
 If:
 - object: one
   equals: one
-  Do:
-    ${one}: 1
+
+  ${one}: 1
+
 - object: two
   equals: two
-  Do:
-    ${two}: 2
+
+  ${two}: 2
 
 Assert equals:
 - actual:
@@ -71,12 +72,13 @@ Test case: Switch-like if; break after successful match
 If any:
 - object: a value
   equals: a value
-  Do:
-    Output: First match
+
+  Output: First match
+
 - object: another value
   in: another value
-  Do:
-    Output: Second match
+
+  Output: Second match
 
 Expected output: First match
 
@@ -88,6 +90,7 @@ ${output}: one
 If:
   object: something
   equals: something
+
   Do:
   - ${output}: two
   - ${var}: ${output}
@@ -103,8 +106,8 @@ Test case: Test against an empty list
 If:
   object: []
   equals: []
-  Do:
-    Output: Success
+
+  Output: Success
 
 Expected output: Success
 
@@ -117,7 +120,7 @@ If:
   not:
     object: true
     equals: false
-  Do:
-    Output: Success
+
+  Output: Success
 
 Expected output: Success
