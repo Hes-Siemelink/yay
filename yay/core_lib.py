@@ -98,15 +98,15 @@ def if_any_statement(data, context):
 
 @command_handler('If', delayed_variable_resolver=True)
 def if_statement(data, context, break_on_success=False):
-    actions = get_parameter(data, 'Do')
-    del data['Do']
 
-    data = vars.resolve_variables(data, context.variables)
-
-    condition = conditions.parse_condition(data)
+    cons = conditions.pop_conditions(data)
+    cons = vars.resolve_variables(cons, context.variables)
+    condition = conditions.parse_condition(cons)
 
     if condition.is_true():
-        context.run_task({'Do': actions})
+        context.run_task({'Do': data})
+
+        # context.run_task({'Do': actions})
 
         if break_on_success:
             raise FlowBreak()

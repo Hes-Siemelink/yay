@@ -1,3 +1,14 @@
+${output}: one
+
+Do:
+  - ${output}: two
+  - ${var}: ${output}
+
+Assert equals:
+  - actual: ${var}
+    expected: two
+
+---
 Output: Hello
 Do in parallel:
 - Output: ${output} Alice!

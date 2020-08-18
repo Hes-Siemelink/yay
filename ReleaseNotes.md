@@ -16,7 +16,7 @@
 ### Features
 * Non-mathing JSON path variable syntax now returns empty list. Was: unresolved variable syntax.
 * 'Not' expression for If statements
-
+* If can take any command in body, not just 'Do'
 
 ## Yay 0.10 - April 24th, 2020
 
