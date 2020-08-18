@@ -194,6 +194,7 @@ def noop(data, context):
 # Join and merge
 #
 
+@command_handler('Update')
 @command_handler('Join')
 def join(data, context):
     for var in data:

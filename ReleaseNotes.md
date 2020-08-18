@@ -10,11 +10,13 @@
 
 ### New commands
 
+* **Update** -- Updates the contents of an object. Same as `Join` which is now deprecated.
 * **Do in parallel** -- To divide work in parallel threads
 
 ### Features
 * Non-mathing JSON path variable syntax now returns empty list. Was: unresolved variable syntax.
 * 'Not' expression for If statements
+
 
 ## Yay 0.10 - April 24th, 2020
 
