@@ -50,3 +50,18 @@ Assert equals:
     1st: One
     2nd: Two
     3rd: Three
+
+
+---
+Test case: Allow raw data and transform into live
+
+Raw data:
+  item: ${missing_variable}
+As: data
+
+${missing_variable}: something
+
+Live data: ${data}
+
+Expected output:
+  item: something

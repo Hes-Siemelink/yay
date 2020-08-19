@@ -180,6 +180,26 @@ def return_input(data, context):
     return data
 
 
+@command_handler('Raw data', delayed_variable_resolver=True)
+def to_raw(data, context):
+    if is_raw(data):
+        return data
+
+    return raw(data)
+
+
+@command_handler('Live data')
+def to_live(data, context):
+    if not is_raw(data):
+        return data
+
+    return vars.resolve_variables(live(data), context.variables)
+
+
+@command_handler('Apply variables')
+def apply_variables(data, context):
+    return raw(vars.resolve_variables(live(data), context.variables))
+
 #
 # Meta info
 #
@@ -239,11 +259,6 @@ def merge(data, context):
             output.extend(as_list(item))
 
     return output
-
-
-@command_handler('Apply variables')
-def apply_variables(data, context):
-    return raw(vars.resolve_variables(live(data), context.variables))
 
 
 #
