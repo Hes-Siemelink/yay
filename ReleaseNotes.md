@@ -20,6 +20,7 @@
 * Non-mathing JSON path variable syntax now returns empty list. Was: unresolved variable syntax.
 * 'Not' expression for If statements
 * If can take any command in body, not just 'Do'
+* Replace works in lists and dicts too.
 
 ## Yay 0.10 - April 24th, 2020
 

@@ -1,0 +1,33 @@
+Test case: Allow raw data and transform into live
+
+Raw data:
+  item: ${missing_variable}
+As: data
+
+${missing_variable}: something
+
+Live data: ${data}
+
+Expected output:
+  item: something
+
+---
+Test case: Put a var in var syntax
+
+${parameter}: ready
+
+Raw data:
+  something: ${PLACEHOLDER}
+  result: ${ready}
+As: raw
+
+Replace:
+  in: ${raw}
+  part: PLACEHOLDER
+  with: ${parameter}
+${raw}: ${output}
+
+Assert equals:
+  actual: ${raw.something}
+  expected: ${raw.result}
+

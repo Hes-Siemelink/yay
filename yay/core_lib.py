@@ -267,11 +267,22 @@ def merge(data, context):
 
 @command_handler('Replace')
 def replace_text(data, context):
-    part = get_parameter(data, 'part')
-    text = get_parameter(data, 'in')
-    replacement = get_parameter(data, 'with')
+    return replace(get_parameter(data, 'in'), get_parameter(data, 'part'), get_parameter(data, 'with'))
 
-    return text.replace(part, replacement)
+
+def replace(source, part, replacement):
+    if is_scalar(source):
+        return source.replace(part, replacement)
+
+    if is_list(source):
+        result = [replace(item, part, replacement) for item in source]
+        return raw(result) if is_raw(source) else result
+
+    if is_dict(source):
+        result = {key: replace(value, part, replacement) for (key, value) in source.items()}
+        return raw(result) if is_raw(source) else result
+
+    return source
 
 
 #

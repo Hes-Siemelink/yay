@@ -1,6 +1,44 @@
+Test case: Replace in text
+
 Replace:
   in: Hello me
   part: me
   with: World
 
 Expected output: Hello World
+
+---
+Test case: Replace in list
+
+Replace:
+  in:
+    - one
+    - two
+    - three
+  part: o
+  with: a
+
+Expected output:
+- ane
+- twa
+- three
+
+---
+Test case: Replace in map
+
+Replace:
+  in:
+    building:
+      room:
+        kitchen: vinyl
+        bathroom: vinyl
+        living room: wood
+  part: vinyl
+  with: tiles
+
+Expected output:
+  building:
+    room:
+      kitchen: tiles
+      bathroom: tiles
+      living room: wood
