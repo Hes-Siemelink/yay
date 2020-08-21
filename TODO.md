@@ -24,6 +24,6 @@
 * Hash out Webhook receivers
 
 ## Bugs
-* Print as YAML in different scenarios and with raw dicts
+* Print as YAML / JSON in different scenarios and with raw dicts, lists and strings
 
 

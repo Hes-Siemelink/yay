@@ -306,10 +306,10 @@ def print_text(data, context):
 @command_handler('Print JSON')
 @command_handler('Print as JSON')
 def print_json(data, context):
-    print_as_json(data)
+    print_as_json(live_all(data))
 
 
 @command_handler('Print YAML')
 @command_handler('Print as YAML')
 def print_yaml(data, context):
-    print_as_yaml(data)
+    print_as_yaml(live_all(data))

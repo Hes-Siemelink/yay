@@ -31,3 +31,20 @@ Assert equals:
   actual: ${raw.something}
   expected: ${raw.result}
 
+---
+Test case: raw strings
+
+Raw data: ${PLACEHOLDER}
+As: raw
+
+${sample}:
+  something: ${raw}
+
+Do:
+  Raw data:
+    something: ${PLACEHOLDER}
+  As: result
+
+Assert equals:
+  actual: ${sample}
+  expected: ${result}

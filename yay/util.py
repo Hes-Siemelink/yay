@@ -1,6 +1,10 @@
 import json
+from collections import UserString
+
 import yaml
 import os
+
+from yaml.representer import SafeRepresenter, Representer
 
 
 class YayException(Exception):
@@ -96,9 +100,19 @@ class RawList(list):
     def __init__(self, *args, **kwargs):
         list.__init__(self, *args, **kwargs)
 
+class RawString(UserString):
+    pass
+
+# Pyyaml hacks to make it work
+# Render custom dicts as normal Yaml
+Representer.add_representer(RawDict, SafeRepresenter.represent_dict)
+Representer.add_representer(RawList, SafeRepresenter.represent_list)
+Representer.add_representer(RawString, SafeRepresenter.represent_str)
+# Don't render yaml pointers.
+yaml.Dumper.ignore_aliases = lambda *args : True
 
 def is_raw(item):
-    return isinstance(item, RawDict) or isinstance(item, RawList)
+    return isinstance(item, RawDict) or isinstance(item, RawList) or isinstance(item, RawString)
 
 
 def raw(item):
@@ -106,8 +120,10 @@ def raw(item):
         return RawList(item)
     if is_dict(item):
         return RawDict(item)
+    if is_scalar(item):
+        return RawString(item)
 
-    return item  # TODO handle strings
+    return item
 
 
 def live(item):
@@ -116,7 +132,15 @@ def live(item):
     if is_dict(item):
         return dict(item)
 
-    return item  # TODO handle strings
+    return str(item)
+
+def live_all(item):
+    if is_list(item):
+        return [live_all(entry) for entry in item]
+    if is_dict(item):
+        return {key: live_all(value) for (key, value) in item.items()}
+
+    return str(item)
 
 
 def is_empty(item):
