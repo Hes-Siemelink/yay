@@ -1,9 +1,9 @@
 import json
+import os
+import re
 from collections import UserString
 
 import yaml
-import os
-
 from yaml.representer import SafeRepresenter, Representer
 
 
@@ -21,6 +21,10 @@ class UniqueKeyLoader(yaml.SafeLoader):
             mapping.append(key)
         return super().construct_mapping(node, deep)
 
+#
+# JSON & YAML
+#
+
 def format_json(dict):
     return json.dumps(dict, indent=2, sort_keys=False)
 
@@ -36,6 +40,10 @@ def format_yaml(dict):
 def print_as_yaml(dict):
     print(format_yaml(dict))
 
+
+#
+# Read files
+#
 
 def read_file(filename):
     with open(filename, 'r') as file:
@@ -78,6 +86,10 @@ def read_yaml_files(fileArgument, data=None):
 
     return data
 
+#
+# Supported data types: dict, list and scalar (str)
+#
+
 
 def is_dict(item):
     return isinstance(item, dict)
@@ -89,6 +101,22 @@ def is_list(item):
 
 def is_scalar(item):
     return isinstance(item, str)
+
+#
+# Escaping ${
+#
+
+
+DOLLAR_CURLY = re.compile(r'\$(-*){')
+ESCAPED_DOLLAR_CURLY = re.compile(r'\$(-*)-{')
+
+
+def escape(text):
+    return DOLLAR_CURLY.sub(r'$-\1{', text)
+
+
+def unescape(text):
+    return ESCAPED_DOLLAR_CURLY.sub(r'$\1{', text)
 
 
 class RawDict(dict):
