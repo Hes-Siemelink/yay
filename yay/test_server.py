@@ -86,6 +86,13 @@ def echo_header(name):
 
     return flask.jsonify({name: header})
 
+@app.route('/echo/cookies', methods=['GET'])
+def echo_cookies():
+    response = flask.jsonify({'cookies': request.cookies})
+    for key, value in request.cookies.items():
+        response.set_cookie(key, value)
+    return response
+
 #
 # Server start
 #

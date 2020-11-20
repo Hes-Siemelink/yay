@@ -71,6 +71,11 @@ def send_request(data, context):
     method = vars['method'] if 'method' in vars else 'GET'
     file = vars['save as'] if 'save as' in vars else None
     verify = vars['verify certificate'] if 'verify certificate' in vars else True
+    cookies = {}
+    if 'cookies' in defaults:
+        cookies.update(defaults['cookies'])
+    if 'cookies' in vars:
+        cookies.update(vars['cookies'])
 
     # Headers
     headers = dict(jsonHeaders)
@@ -86,7 +91,8 @@ def send_request(data, context):
                          headers=headers,
                          auth=auth,
                          verify=verify,
-                         data=body)
+                         data=body,
+                         cookies=cookies)
 
     # Check result
     if r.status_code >= 300:
@@ -96,6 +102,13 @@ def send_request(data, context):
 
     if r.status_code > 200:
         return
+
+    # Update cookies
+    if r.cookies and defaults:
+        if 'cookies' in defaults:
+            defaults['cookies'].update(r.cookies)
+        else:
+            defaults[cookies] = r.cookies.copy()
 
     # Save to file
     try:

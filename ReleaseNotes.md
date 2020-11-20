@@ -13,14 +13,14 @@
 * **Update** -- Updates the contents of an object. Same as `Join` which is now deprecated.
 * **Do in parallel** -- To divide work in parallel threads
 * **Raw data** and **Live data** to convert back and forth between interpreted data and raw data.
-  Note: does not work for strings yet, only lists and dicts.
-
 
 ### Features
 * Non-mathing JSON path variable syntax now returns empty list. Was: unresolved variable syntax.
 * 'Not' expression for If statements
 * If can take any command in body, not just 'Do'
 * Replace works in lists and dicts too.
+* Support for cookies in HTTP requests. Cookies returned by the server are remembered
+
 
 ## Yay 0.10 - April 24th, 2020
 

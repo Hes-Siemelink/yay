@@ -1,6 +1,9 @@
 Http endpoint:
   url: http://localhost:5000
   verify certificate: false
+  cookies:
+    maria: biscuit
+
 
 ---
 Test case: GET with explicit parameters
@@ -45,3 +48,30 @@ Http GET:
 
 Expected output:
   Test: something
+
+---
+Test case: Send cookie
+
+Http GET:
+  path: /echo/cookies
+  cookies:
+    speculaas: spicy
+
+Expected output:
+  cookies:
+    maria: biscuit
+    speculaas: spicy
+
+---
+Test case: Sticky cookies (depends on previous test)
+
+Http GET:
+  path: /echo/cookies
+  cookies:
+    polvoron: crumbly
+
+Expected output:
+  cookies:
+    maria: biscuit
+    speculaas: spicy
+    polvoron: crumbly
