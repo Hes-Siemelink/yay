@@ -103,13 +103,6 @@ def send_request(data, context):
     if r.status_code > 200:
         return
 
-    # Update cookies
-    if r.cookies and defaults:
-        if 'cookies' in defaults:
-            defaults['cookies'].update(r.cookies)
-        else:
-            defaults[cookies] = r.cookies.copy()
-
     # Save to file
     try:
         if file:

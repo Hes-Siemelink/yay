@@ -61,17 +61,3 @@ Expected output:
   cookies:
     maria: biscuit
     speculaas: spicy
-
----
-Test case: Sticky cookies (depends on previous test)
-
-Http GET:
-  path: /echo/cookies
-  cookies:
-    polvoron: crumbly
-
-Expected output:
-  cookies:
-    maria: biscuit
-    speculaas: spicy
-    polvoron: crumbly
