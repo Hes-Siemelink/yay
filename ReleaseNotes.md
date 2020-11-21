@@ -1,6 +1,6 @@
 # Yay Release Notes
 
-## Yay 0.11 - unreleased
+## Yay 0.11 - November 21st, 2020
 
 ### BREAKING CHANGES
 
@@ -20,6 +20,7 @@
 * If can take any command in body, not just 'Do'
 * Replace works in lists and dicts too.
 * Support for cookies in HTTP requests. Cookies returned by the server are remembered
+* _Experimental_: Distributed Yay execution in a Celery cluster. (Source switch only)
 
 
 ## Yay 0.10 - April 24th, 2020
