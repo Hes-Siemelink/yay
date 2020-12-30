@@ -132,7 +132,7 @@ Create a local installaion
 
     $ python setup.py install
     
-Tag latest commit with the version that was produced, e.g. `yay-0.11`.
+Tag latest commit with the version that was produced, e.g. `yay-0.12`.
 
 To create the Dockerfile, run the following command, then tag the image and upload it to Dockerhub
 
