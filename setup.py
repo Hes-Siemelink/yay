@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="yay",
-    version="0.11",
+    version="0.12-SNAPSHOT",
     author="Hes Siemelink",
     author_email="author@example.com",
     description="YAML script",
@@ -23,7 +23,7 @@ setuptools.setup(
         'pyyaml',
         'requests',
         'jsonpath-ng',
-        'PyInquirer',
+        'InquirerPy',
         'flask',
         'python-arango',
         'celery',

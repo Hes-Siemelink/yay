@@ -1,6 +1,6 @@
 from yay.runtime import command_handler
 from yay.vars import OUTPUT_VARIABLE
-from PyInquirer import prompt
+from InquirerPy import prompt
 
 
 @command_handler('User Input')

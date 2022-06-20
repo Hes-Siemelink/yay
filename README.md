@@ -65,6 +65,13 @@ For a more detailed look at Yay code, take a look at the [test/yay](test/yay) di
 
 Yay is written in Python 3.7. So you will need to install Python 3.7 on your local machine (Please Google the current recommended way to do so) or use the supplied [Dockerfile](Dockerfile) to run Yay in a container.
 
+Notes to install on Macos Monterey with Python 3.10:
+
+    $ python3 -m pip install wheel
+    $ python3 setup.py bdist_wheel
+    $ sudo python3 -m pip install dist/*.whl
+    $ sudo python3 setup.py develop
+
 Use the following command to install Yay locally:
 
     $ python setup.py install

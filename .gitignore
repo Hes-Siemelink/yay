@@ -41,3 +41,5 @@ __pycache__
 venv
 Pipfile
 Pipfile.lock
+lib
+pyvenv.cfg
