@@ -62,6 +62,9 @@ def send_request(data, context):
     if not data: return
 
     defaults = context.variables.get(HTTP_DEFAULTS)
+    if defaults == None:
+        defaults = {}
+
     vars = {**defaults, **data} if defaults else data
 
     # Parameters

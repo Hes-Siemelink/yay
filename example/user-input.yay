@@ -3,11 +3,17 @@ User Input:
   message: Select region
   choices:
   - name: Africa
+    value: Africa
   - name: Asia
+    value: Asia
   - name: Europe
+    value: Europe
   - name: America
+    value: America
   - name: Antarctica
+    value: Antarctica
   - name: Australia/Oceania
+    value: Australia/Oceania
 ---
 Print: 'You chose:'
 Print YAML: ${output}

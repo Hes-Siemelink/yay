@@ -125,7 +125,7 @@ Use the following command to install Yay locally and have changes in the Yay cod
     
 Run the tests with the following command:
 
-    $ pytest -v
+    $ pytest -v test
     
 Most of the tests are written in Yay and can be found in the [test/yay](test/yay) directory.    
     
