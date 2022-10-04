@@ -67,11 +67,21 @@ def send_request(data, context):
 
     vars = {**defaults, **data} if defaults else data
 
+    # Headers
+    headers = dict(jsonHeaders)
+    if 'headers' in vars:
+        headers.update(vars['headers'])
+
     # Parameters
     url = get_parameter(vars, 'url')
     path = vars['path'] if 'path' in vars else ''
-    body = json.dumps(vars['body']) if 'body' in vars else None
     method = vars['method'] if 'method' in vars else 'GET'
+    body = None
+    if 'body' in vars:
+        if headers['Content-Type'] == 'application/json':
+            body = json.dumps(vars['body'])
+        else:
+            body = vars['body']
     file = vars['save as'] if 'save as' in vars else None
     verify = vars['verify certificate'] if 'verify certificate' in vars else True
     cookies = {}
@@ -79,11 +89,6 @@ def send_request(data, context):
         cookies.update(defaults['cookies'])
     if 'cookies' in vars:
         cookies.update(vars['cookies'])
-
-    # Headers
-    headers = dict(jsonHeaders)
-    if 'headers' in vars:
-        headers.update(vars['headers'])
 
     # Authorization
     auth = get_authorization(vars)
