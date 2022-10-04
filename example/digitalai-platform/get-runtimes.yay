@@ -1,0 +1,23 @@
+Get token:
+  endpoint: ${digitalaiStaging}
+Http endpoint: ${output}
+
+---
+Http GET: /workload/v1/agent_runtimes/
+
+For each:
+  ${runtime}: ${output.agent_runtimes}
+  Output:
+    name: ${runtime.name}
+    value: ${runtime.id}
+As: runtimes
+
+---
+User Input:
+  type: checkbox
+  message: Select runtime to add
+  choices: ${runtimes}
+As: runtime_id
+
+Print as YAML:
+  Adding: ${runtime_id}

@@ -1,0 +1,17 @@
+Http POST:
+  url: ${endpoint.url}
+  path: /auth/realms/acme3/protocol/openid-connect/token
+  headers:
+    Content-Type: application/x-www-form-urlencoded
+  body:
+    grant_type: password
+    client_id: dai-svc-consumer
+    username: ${endpoint.auth.username}
+    password: ${endpoint.auth.password}
+    scope: "openid dai-svc"
+
+Output: # To be used in 'Http endpoint'
+  url: ${endpoint.api}
+  headers:
+    Authorization: Bearer ${output.access_token}
+
