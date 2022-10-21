@@ -1,0 +1,8 @@
+Get token:
+  endpoint: ${digitalaiStaging}
+Http endpoint: ${output}
+
+---
+Http GET: /workload/v1/agent_instances/
+
+Print as YAML: ${output}

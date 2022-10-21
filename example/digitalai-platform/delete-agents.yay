@@ -1,0 +1,24 @@
+Get token:
+  endpoint: ${digitalaiStaging}
+Http endpoint: ${output}
+
+---
+Http GET: /workload/v1/agent_instances/
+
+For each:
+  ${agent}: ${output.agent_instances}
+  Output:
+    name: ${agent.alias} (${agent.description})
+    value: ${agent.id}
+
+User Input:
+  type: checkbox
+  message: Select agent to delete
+  choices: ${output}
+As: agent_id
+
+---
+For each:
+  ${agent_instance_id}: ${agent_id}
+  Print: DELETE /workload/v1/agent_instances/${agent_instance_id}
+  Http DELETE: /workload/v1/agent_instances/${agent_instance_id}

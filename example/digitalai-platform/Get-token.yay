@@ -1,6 +1,6 @@
 Http POST:
   url: ${endpoint.url}
-  path: /auth/realms/acme3/protocol/openid-connect/token
+  path: /auth/realms/${endpoint.realm}/protocol/openid-connect/token
   headers:
     Content-Type: application/x-www-form-urlencoded
   body:

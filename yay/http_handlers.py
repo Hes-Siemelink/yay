@@ -44,6 +44,10 @@ def http_put(data, context):
 
 @command_handler('Http DELETE')
 def http_delete(data, context):
+    if is_scalar(data):
+        data = {
+            'path': data
+        }
     data['method'] = 'DELETE'
     return process_request(data, context)
 

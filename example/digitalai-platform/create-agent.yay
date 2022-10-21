@@ -1,0 +1,46 @@
+# Ask where Release is running
+Check Input:
+  host: Release URL
+  token: Access token for Remote Runner
+
+---
+# Log in to Platform API
+Get token:
+  endpoint: ${digitalaiStaging}
+Http endpoint: ${output}
+
+---
+# Get available runtimes
+Http GET: /workload/v1/agent_runtimes/
+
+---
+# Format runtimes for User Input
+# For each collects all the outputs so you can do like a list comprehension
+For each:
+  ${runtime}: ${output.agent_runtimes}
+  Output:
+    name: ${runtime.name}
+    value: ${runtime.id}
+As: runtimes
+
+---
+# Let user select runtime interactively
+User Input:
+  type: checkbox
+  message: Select runtime to add
+  choices: ${runtimes}
+As: runtime_ids
+
+---
+# Register agent
+Http POST:
+  path: /workload/v1/agent_instances/
+  body:
+    agent_id: ${runtime_ids[0]}
+    alias: digitalai-release
+    description: Remote runner
+    variables:
+        RELEASE_URL: ${host}
+        RUNNER_REGISTRATION_TOKEN: ${token}
+
+Print: "Added agent with runtime id: ${runtime_id}"
