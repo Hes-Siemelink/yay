@@ -8,7 +8,7 @@ def write_file(data, context):
     content = get_parameter(data, 'contents')  # See https://english.stackexchange.com/questions/56831/file-content-vs-file-contents
 
     with open(name, 'w') as file:
-        file.write(format_yaml(content))
+        file.write(live(content))
 
 
 @command_handler('Read file')
