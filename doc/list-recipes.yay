@@ -1,5 +1,5 @@
 Http GET:
-  url:  http://localhost:5000
+  url:  http://localhost:25125
   path: /recipes
 
 Print as JSON: ${output}

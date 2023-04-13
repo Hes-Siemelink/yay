@@ -98,9 +98,9 @@ def echo_cookies():
 #
 
 def start():
-    thread = Thread(name = 'http.server', target = app.run)
-    thread.setDaemon(True)
+    thread = Thread(name = 'http.server', target = app.run, kwargs={ 'port': 25125 })
+    thread.daemon = True
     thread.start()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=25125)

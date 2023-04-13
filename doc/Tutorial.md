@@ -9,14 +9,14 @@ The starting point for Yay is to reuse HTTP requests that you would do off the c
 
 Suppose you have this request:
 
-    $ http GET http://localhost:5000/recipes
+    $ http GET http://localhost:25125/recipes
     
 You can save it in a YAML file and reuse it using Yay.
 
 **File: list-recipes.yay**
 ```
 Http GET:
-  url:  http://localhost:5000
+  url:  http://localhost:25125
   path: /recipes
 Print as JSON: ${output}
 ```
@@ -61,7 +61,7 @@ For example, let's do a search using a variable:
 **File: search.yay**
 ```
 Http GET:
-  url:  http://localhost:5000
+  url:  http://localhost:25125
   path: /recipes/search?keyword=${keyword}
 Print as YAML: ${output}
 ```
@@ -81,7 +81,7 @@ Suppose you need to authenticate. You don't want to type in your credentials all
 
 **File: ~/.yay/default-variables.yaml**
 ```
-exampleUrl: http://user:pass@localhost:5000
+exampleUrl: http://user:pass@localhost:25125
 ```
 
 **File: search2.yay**

@@ -1,5 +1,5 @@
 Http endpoint:
-  url: http://localhost:5000
+  url: http://localhost:25125
   verify certificate: false
   cookies:
     maria: biscuit

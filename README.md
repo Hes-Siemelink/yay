@@ -22,14 +22,14 @@ The starting point for Yay is to reuse HTTP requests that you would do off the c
 
 Suppose you have this request:
 
-    $ http GET http://localhost:5000/recipes
+    $ http GET http://localhost:25125/recipes
     
 You can save it in a YAML file and reuse it using Yay.
 
 **File: list-recipes.yay**
 ```
 Http GET:
-  url:  http://localhost:5000
+  url:  http://localhost:25125
   path: /recipes
 Print as JSON: ${output}
 ```
@@ -95,7 +95,7 @@ The `default-variables.yaml` file contains default variables. Useful for server 
 
 Example:
 
-    exampleUrl: http://user:pass@example.com:5000
+    exampleUrl: http://user:pass@example.com:25125
     exampleEndpoint:
         url: http://example.com
         username: user
