@@ -20,3 +20,25 @@
 
 ► Print as YAML:
   Runtime ID: ${runtime_id}
+
+---
+Modes:
+  - Data
+  - Execute a function (►)
+  - Get value out of a variable (${...})
+  - Assign a variable
+  - Define a function
+
+let:
+  var: runtime id
+  be:
+    ► User Input:
+        type: checkbox
+        message: Select runtime to add
+        choices: ${runtimes}
+
+${runtime_id}:
+  ► User Input:
+    type: checkbox
+    message: Select runtime to add
+    choices: {runtimes}
